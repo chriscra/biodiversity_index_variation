@@ -1,7 +1,7 @@
 # Authors
-Christopher L. Crawford^[*1], Lyndon D. Estes^[2], Timothy D. Searchinger^[1], and David S. Wilcove^[1, 3]
+Christopher L. Crawford [\*1], Lyndon D. Estes [2], Timothy D. Searchinger [1], and David S. Wilcove [1, 3]
 
-*Corresponding Author, @chriscra, ccrawford@princeton.edu, Robertson Hall, Princeton University, Princeton, NJ  
+\*Corresponding Author, @chriscra, ccrawford@princeton.edu, Robertson Hall, Princeton University, Princeton, NJ  
 1. Princeton School of Public and International Affairs, Princeton University, Princeton, NJ  
 2. Graduate School of Geography, Clark University, Worcester, MA  
 3. Department of Ecology & Evolutionary Biology, Princeton University, Princeton, NJ  
