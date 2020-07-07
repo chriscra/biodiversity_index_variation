@@ -1,0 +1,625 @@
+---
+title: "Zambia Start File"
+output: html_notebook
+editor_options: 
+  chunk_output_type: console
+---
+```{r start-up, eval=TRUE}
+## libraries --------------------------------------------------------------------------------
+source("scripts/cc_libraries.R")
+source("scripts/cc_functions.R")
+source("scripts/cc_pathnames.R")
+source("scripts/cc_plot_things.R")
+
+# setwd("/Users/christophercrawford/Google Drive/_Projects/Zambia")
+
+```
+
+```{r load-basic-gis-files}
+# Other helpful files ----------------------------------------------------------------
+aaeac <- sf::st_crs("+proj=aea +lat_1=20 +lat_2=-23 +lat_0=0 +lon_0=25 +x_0=0 +y_0=0 +ellps=WGS84 +datum=WGS84 +units=m +no_defs") # Africa Albers Equal Area Conic projection.
+# could probably also use raster::crs
+CRSobj <- sp::CRS("+proj=aea +lat_1=20 +lat_2=-23 +lat_0=0 +lon_0=25 +x_0=0 +y_0=0 +ellps=WGS84 +towgs84=0,0,0,0,0,0,0 +units=m +no_defs") # set CRS object for model runs, noting that this must be a CRS object for sp*, not a crs object
+class(aaeac)
+class(CRSobj)
+
+crs_longlat <- sf::st_crs("+proj=longlat +datum=WGS84 +no_defs")
+
+load(file = fp(p_ZA,"parks_roads.rda")) # includes roads (a SpatialLinesDataFrame), pas (SpatialPolygonsDataFrame, a shapefile that includes both national parks and GMAs), and zambia (SpatialPolygonsDataFrame, outline of Zambia)
+msk_shp <- readOGR(fp(p_datnew,"msk.shp")) %>% 
+  spTransform(CRS("+proj=aea +lat_1=20 +lat_2=-23 +lat_0=0 +lon_0=25 +x_0=0 +y_0=0 +ellps=WGS84 +datum=WGS84 +units=m +no_defs"))
+msk_sf <- st_read(fp(p_datnew,"msk.shp")) %>% st_transform(aaeac)
+msk_sf_noholes <- smoothr::fill_holes(msk_sf, threshold = units::set_units(10000, km^2)) # a method to fill holes. could also use spatialEco::remove.holes() on sp* type data.
+msk_sf_buff <- st_buffer(msk_sf, units::set_units(100, km))
+
+msk_sf_ll <- st_transform(msk_sf, crs_longlat)
+msk_sf_ll_noholes <- st_transform(msk_sf_noholes, crs_longlat)
+msk_sf_ll_buff <- st_buffer(msk_sf_ll, units::set_units(1, degree))
+
+msk <- raster(fp(p_datnew,"msk.tif")) # the actual high resolution msk, created directly from the csv in "bd_new_prep.Rmd"
+# also equal to this: plot(dt_to_raster(il$mask, CRSobj))
+
+# files from Estes model run
+cp <- read.csv(fp(p_ZA,"ZA-cons-priorities.csv"))
+cp.dt <- fread(fp(p_ZA,"ZA-cons-priorities.csv"))
+
+cp_raster <- raster(fp(p_datnew,"cons-priorities_from_csv.tif"))
+
+
+
+```
+
+```{r inputs_agroEcoTradeoff}
+
+# -----------------------------------------------------------------------
+# inputs forand from agroEcoTradeoff model
+# -----------------------------------------------------------------------
+il <- agroEcoTradeoff::fetch_inputs(path = p_ZA)
+tradeoff_batch()
+tradeoff_mod()
+    # conv <- constraints(inlist = list(Y = il$y_std, C = il$carbon_p, 
+    #     BD = il$cons_p, COST = il$cost_p), cbetas = cbetas, silent = silent)
+    # converted <- convert(conv_prob = conv, target = target, pot_yield = il$p_yield, 
+    #     cropnames = il$cropnames, base = il$mask, ha = il$sp$ha, 
+    #     keep_index = FALSE)
+# standardize()
+
+
+msk_csv <- il$mask[,-"ind"] # msk_csv, for use in creating rasters later on
+## note: this is identical to il$mask
+# msk_csv <- fread(paste0(p_dat, .Platform$file.sep,
+#                         "ZA", .Platform$file.sep,
+#                         "ZA", "-mask.csv"))
+
+agroEcoTradeoff::input_handler()
+agroEcoTradeoff::standardize()
+
+# load convertible areas - this is a layer of the proportion of each cell that is not in ag or urban land use (i.e. the proportion of land that is convertible).  This is the same as the file listed as an input in the tradeoff model outputs, e.g. "reference_y_toff$inputs$convertible"
+
+#convertible <- fread(fp(p_dat, "ZA/ZA-convertible.csv"))
+
+convertible_r <- il$convertible %>%
+  cbind(msk_csv, .) %>%
+  dt_to_raster(., CRSobj)
+
+# convertible without the Protected Areas (PAs)
+
+intpa <- fread(paste0(p_dat, .Platform$file.sep,
+                        "ZA", .Platform$file.sep,
+                        "ZA", "-intpa.csv"))
+
+valinds <- which(il$convertible > 0)
+
+il$convertible[valinds, ] # selecting only cells that are at least partially convertible (i.e. outside of pas and entirely urban areas). This is the data.table method for masking
+il$convertible[which(il$convertible > 0), ]
+
+# to make a new convertible raster, excluding all of the cells with a value of 0:
+convertible <- cbind(il$mask, il$convertible)
+convertible[valinds, ]
+convertible_r0 <- dt_to_raster(convertible[valinds, ], CRSobj)$convertible
+
+test <- il$convertible[valinds, ] %>% 
+  cbind(msk_csv_no_pas) %>% 
+  dt_to_raster(CRSobj)
+
+plot(test$convertible)
+plot(convertible_r0)
+identical(test$convertible, convertible_r0)
+
+# can also just manually set cells with 0 to NA:
+test <- convertible_r
+test[test == 0] <- NA
+plot(test)
+
+
+dt_m[,3]
+msk_csv_no_pas <- msk_csv[valinds, ]
+plot(dt_to_raster(msk_csv_no_pas, CRSobj))
+plot(dt_to_raster(convertible, CRSobj)$convertible)
+
+
+dt_m[, 3]
+plot(facet_r_b$all_b)
+# plot(convertible_r)
+
+plot(dt_to_raster(cbind(msk_csv_no_pas, il$convertible[valinds, ]), CRSobj))
+il$convertible[valinds, ] 
+
+```
+
+
+```{r load_vert_files}
+# final layers:
+# load-vert-bricks ----------------------------------------------------------------------------
+# create layer names object
+layer_names <- c("mam", "bird", "amp", "rep", "sum", "sum_norm", "norm_sum", "mam_10", "bird_10", "amp_10", "rep_10", "norm_sum_10", "mam_110", "bird_110", "amp_110", "rep_110", "norm_sum_110")
+
+richness_names <- c("all_richness", "endemism_richness", "endemism_zam_richness", "threat_richness", "threat_weighted_richness", "small_richness", "small_zam_richness", "small_threat_richness")
+
+# load in as a list of all rasters
+vert_r <- list(
+  all_richness = brick(paste0(p_iucn_dev, "/", richness_names[1], ".tif")),
+  endemism_richness = brick(paste0(p_iucn_dev, "/", richness_names[2], ".tif")),
+  endemism_zam_richness = brick(paste0(p_iucn_dev, "/", richness_names[3], ".tif")),
+  threat_richness = brick(paste0(p_iucn_dev, "/", richness_names[4], ".tif")),
+  threat_weighted_richness = brick(paste0(p_iucn_dev, "/", richness_names[5], ".tif")),
+  small_richness = brick(paste0(p_iucn_dev, "/", richness_names[6], ".tif")),
+  small_zam_richness = brick(paste0(p_iucn_dev, "/", richness_names[7], ".tif")),
+  small_threat_richness = brick(paste0(p_iucn_dev, "/", richness_names[8], ".tif"))
+  )
+
+# rename layers
+for(i in seq_along(vert_r)) {
+  names(vert_r[[i]]) <- layer_names
+}
+
+
+# vertebrate files -------------------------------------------------------------------------------------
+# valid sf files, made valid, and prepped for use in small ranged species analyses
+load(file = fp(p_iucn_dev,"mam_valid_prepped.RData"), verbose = TRUE)
+load(file = fp(p_iucn_dev,"bird_valid_prepped.RData"), verbose = TRUE)
+load(file = fp(p_iucn_dev,"amp_valid_prepped.RData"), verbose = TRUE)
+load(file = fp(p_iucn_dev,"rep_valid_prepped.RData"), verbose = TRUE)
+
+# vert zambia sf files, prepped and valid
+load(file = fp(p_iucn_dev, "mam_zambia.RData"), verbose = TRUE) # includes mam_zambia, which has had area added, been prepped, and then clipped to zambia
+load(file = fp(p_iucn_dev, "bird_zambia.RData"), verbose = TRUE) # includes bird_zambia, which has had area added, been prepped, and then clipped to zambia
+load(file = fp(p_iucn_dev, "amp_zambia.RData"), verbose = TRUE) # includes amp_zambia, which has had area added, been prepped, and then clipped to zambia
+load(file = fp(p_iucn_dev, "rep_zambia.RData"), verbose = TRUE) # includes rep_zambia, which has had area added, been prepped, and then clipped to zambia
+
+
+# vertebrate lists - important -----------------
+load(file = fp(p_iucn_dev, "vert_lists.RData"), verbose = TRUE)
+
+load(file = fp(p_iucn_dev, "mam_list.RData"))
+load(file = fp(p_iucn_dev, "bird_list.RData"))
+load(file = fp(p_iucn_dev, "amp_list.RData"))
+load(file = fp(p_iucn_dev, "rep_list.RData"))
+
+
+# load-vert-bricks -------------------------------------------------------------------------------
+load(file = fp(p_datnew, "vert_bricks.Rdata"), verbose = TRUE) # this includes mam_brick, bird_brick, amp_brick, rep_brick
+```
+
+
+```{r load-plants-habitats}
+# plants ------------------------------------------------------------------------
+plants_zambia_r <- raster(fp(p_plants_dev, "plants_zambia_r.tif"))
+
+
+# habitats rasters -----------------------------------------------------------------------------
+load(file = fp(p_datnew,"habitat_rasters_zambia.RData"), verbose = TRUE)
+
+ecoregions_weighted_rarity <- raster(fp(p_ecoreg_dev, "ecoregions_weighted_rarity.tif"))
+
+# final zambia rasters:
+load(file = fp(p_datnew,"final-rasters-zambia.RData"), verbose = TRUE)
+```
+
+
+
+
+
+This markdown notebook includes the analyses for the Zambia methods paper.
+
+```{r load-inputs+toffs}
+load(file = fp(p_mod_inputs,"bd_inputs.RData"), verbose = TRUE)
+
+bd_inputs_brick <- brick(fp(p_mod_inputs,"bd_inputs_brick.tif")); names(bd_inputs_brick) <- runs
+# load(file = fp(p_mod_inputs,"bd_inputs.RData"), verbose = TRUE) # or, load individually
+bd_inputs_brick
+
+load(file = fp(p_mod_output, "toff_eq_list.RData"), verbose = TRUE)
+load(file = fp(p_mod_output, "toff_bd50_y50_list.RData"), verbose = TRUE)
+load(file = fp(p_mod_output, "toff_bd100_list.RData"), verbose = TRUE)
+
+load(file = fp(p_mod_output, "reference_files.RData"), verbose = TRUE) # contains: reference_y_toff, reference_y_toff_outputs, reference_yct_toff, reference_yct_toff_outputs, reference_y, reference_yct,
+
+# extras
+load(file = fp(p_mod_output, "toff_eq_outputs_list.RData"), verbose = TRUE)
+load(file = fp(p_mod_output, "toff_bd100_outputs_list.RData"), verbose = TRUE)
+
+
+
+bd_inputs_brick <- brick(fp(p_mod_inputs,"bd_inputs_brick.tif"))
+names(bd_inputs_brick) <- runs
+
+```
+
+```{r load_results}
+# ---------------------------------------
+# load in conv ensemble rasters 
+# ---------------------------------------
+conv_eq_dt_ensembles_r <- brick(fp(p_mod_output,"conv_eq_dt_ensembles_r.tif"))
+conv_bd50_y50_dt_ensembles_r <- brick(fp(p_mod_output,"conv_bd50_y50_dt_ensembles_r.tif"))
+conv_bd100_dt_ensembles_r <- brick(fp(p_mod_output,"conv_bd100_dt_ensembles_r.tif"))
+# conv_10p_bd_dt_ensembles_r <- brick(fp(p_mod_output,"conv_10p_bd_dt_ensembles_r.tif"))
+
+# add the layer names back again
+names(conv_eq_dt_ensembles_r) <- c("x", "y", runs_w_ensembles)
+names(conv_bd50_y50_dt_ensembles_r) <- c("x", "y", runs_w_ensembles)
+names(conv_bd100_dt_ensembles_r) <- c("x", "y", runs_w_ensembles)
+# names(conv_10p_bd_dt_ensembles_r) <- c("x", "y", runs_w_ensembles)
+
+
+# ---------------------------------------
+# create new ensembles list
+# ---------------------------------------
+conv_r <- list(
+  "bd100" = conv_bd100_dt_ensembles_r, 
+  "bd50_y50" = conv_bd50_y50_dt_ensembles_r, 
+  "eq" = conv_eq_dt_ensembles_r#, 
+#  "10p_bd" = conv_10p_bd_dt_ensembles_r
+  )
+
+
+bd_dt_ensembles <- fread(file = fp(p_mod_output, "bd_dt_ensembles.csv"))
+
+
+# from the first iteration, looking at each conversion map individually:
+results_combo <- read.csv(file = fp(p_mod_output, "results_combo.csv"))
+overlap_combo <- read.csv(file = fp(p_mod_output, "overlap_combo.csv"))
+jaccard_combo <- read.csv(file = fp(p_mod_output, "jaccard_combo.csv"))
+
+
+# from second iteration, following Xingli's advice.
+```
+
+```{r names_and_ensembles}
+# new runs, May 30th, aka runs_530
+length(runs_1)
+grep("threat", runs_1, value = TRUE, invert = TRUE) %>% length
+
+runs_1 <- c(
+  "vert_all",  # mam, bird, amp, and rep (comprehensive)
+  "vert_endemism", # mam, bird, amp, and rep (comprehensive)
+  "vert_threat", # mam, bird, amp, and rep (but only those reps that were assessed)
+  "vert_small", # mam, bird, amp, and rep (comprehensive)
+  "mam_all", 
+  "bird_all", 
+  "amp_all", 
+  "rep_all",  # comprehensive
+  "plants", 
+  "mam_endemism",
+  "bird_endemism", 
+  "amp_endemism",  
+  "rep_endemism",   # comprehensive
+  "mam_threat",  
+  "bird_threat", 
+  "amp_threat", 
+  "rep_threat",  # non comprehensive
+  "mam_small", 
+  "bird_small", 
+  "amp_small", 
+  "rep_small",  # comprehensive
+  "average_mb",  
+  "average_vp",  
+  "average_ae",
+  "geometric_mb", 
+  "geometric_vp",
+  "geometric_ae", 
+  "max_mb", 
+  "max_vp", 
+  "max_ae",
+  "multi_mb", 
+  "multi_vp", 
+  "multi_ae", 
+  "estes", 
+  "laurance", 
+  "habitats",
+  "bird_composite",
+  "damania"
+)
+runs_1
+runs_10 <- paste0(runs_1, "_10")
+runs_110 <- paste0(runs_1, "_110")
+runs <- c(runs_1, runs_10, runs_110)
+
+
+paste0(runs, "_10")
+38*3
+
+
+
+# 54 layers.
+# runs, from february through May 2020, old. 
+runs <- c(
+  "vert_all",
+  "vert_endemism",
+  "vert_threat",
+  "vert_small",
+  "vert_threat_weighted",
+  "vert_small_threat",
+  "vert_small_zam",
+  "vert_endemism_zam",
+  "mam_all",
+  "bird_all",
+  "amp_all",
+  "rep_all",
+  "plants",
+  "mam_endemism",
+  "bird_endemism",
+  "amp_endemism",
+  "rep_endemism",
+  "mam_threat",
+  "bird_threat",
+  "amp_threat",
+  "rep_threat",
+  "mam_small",
+  "bird_small",
+  "amp_small",
+  "rep_small",
+  "average_mb",
+  "average_vp",
+  "average_ae",
+  "geometric_mb",
+  "geometric_vp",
+  "geometric_ae",
+  "max_mb",
+  "max_vp",
+  "max_ae",
+  "multi_mb",
+  "multi_vp",
+  "multi_ae",
+  "vert_all_10",
+  "vert_endemism_10",
+  "vert_threat_10",
+  "vert_small_10",
+  "vert_all_110",
+  "vert_endemism_110",
+  "vert_threat_110",
+  "vert_small_110",
+  "estes",
+  "laurance",
+  "habitats",
+  "bird_composite",
+  "damania",
+  "vert_all_sum_norm",
+  "vert_endemism_sum_norm",
+  "vert_threat_sum_norm",
+  "vert_small_sum_norm"
+)
+
+
+brick_mod_names <- c(runs, "reference_yct", "reference_y")
+runs_w_ref <- c(runs, "reference_yct", "reference_y")
+runs_w_raw <- c(runs, paste0(runs[1:8], "_raw"))
+
+ensemble_names <- c(
+  "en1_types",
+  "en1_types_b",
+  
+  "en2_taxa_all",
+  "en2_taxa_endemism",
+  "en2_taxa_threat",
+  "en2_taxa_small",
+  
+  "en3_mb",
+  "en3_vp",
+  "en3_ae",
+  
+  "en4_all",
+  "en4_endemism",
+  "en4_threat",
+  "en4_small",
+  
+  "en5_composites",
+  
+  "en6_norm_all",
+  "en6_norm_endemism",
+  "en6_norm_threat",
+  "en6_norm_small",
+  
+  "all")
+
+runs_w_ensembles <- c(runs_w_ref, ensemble_names)
+
+bd_dt_r_names <- c(runs_w_raw, ensemble_names)
+
+runs_w_ref_order <- as.factor(runs_w_ref)
+
+levels(runs_w_ref_order)
+
+
+# runs_reorder <- c(1, 21, 25, 2, 22, 26, 3, 23, 27, 4, 24, 28, 5:13, 15, 17, 19, 16, 18, 20, 14, 29, 30, 31, 32, 33, 34, 35) # ordering
+runs
+runs_reorder <- c(1:12, 14:48, 50, 13, 49) # ordering
+runs_reorder <- c(46, 47, 50, 48, 49, 2, 13, 1, 3:12, 14:45, 51:54)
+runs_reorder_plot <- c(1:4, 18:21, 26:29, 3, 40, 44, 46, 47, 50, 48, 49, 2, 13
+                       #, 5:12, 14:17, 22:25, 30:39, 41:43, 45, 51:54
+                       )
+
+runs[runs_reorder_plot]
+
+runs[en1_taxa_threat]
+
+# -----------------------------------------------------------
+# ensemble_names
+
+en1_types <- c(1:4)
+en1_types_b <- c(5:8)
+
+en2_taxa_all <- c(9:13)
+en2_taxa_endemism <- c(14:17)
+en2_taxa_threat <- c(18:21)
+en2_taxa_small <- c(22:25)
+
+en3_mb <- c(26, 29, 32, 35)
+en3_vp <- c(27, 30, 33, 36)
+en3_ae <- c(28, 31, 34, 37)
+
+en4_all <- c(1, 38, 42)
+en4_endemism <- c(2, 39, 43)
+en4_threat <- c(3, 40, 44)
+en4_small <- c(4, 41, 45)
+
+runs[ensembles_list[[14]]]
+
+en5_composites <- c(46, 47, 50, 48, 49, 2, 13) # including vert_endemism and plants
+
+en6_norm_all <- c(1, 51)
+en6_norm_endemism <- c(2, 52)
+en6_norm_threat <- c(3, 53)
+en6_norm_small <- c(4, 54)
+
+ensembles_list <- list(
+  en1_types,
+  en1_types_b,
+  
+  en2_taxa_all,
+  en2_taxa_endemism,
+  en2_taxa_threat,
+  en2_taxa_small,
+  
+  en3_mb,
+  en3_vp,
+  en3_ae,
+  
+  en4_all,
+  en4_endemism,
+  en4_threat,
+  en4_small,
+  
+  en5_composites,
+  
+  en6_norm_all,
+  en6_norm_endemism,
+  en6_norm_threat,
+  en6_norm_small,
+  
+  seq_along(runs)
+)
+
+
+names(ensembles_list) <- ensemble_names
+
+
+
+
+ensemble_col <- c(rep("en1", 12), rep("en4", 2), rep("en2", 6), rep("en3", 8), rep("en4", 3))
+
+
+runs[en1_types]
+runs[en1_types_b]
+
+runs[en2_taxa_all]
+runs[en2_taxa_endemism]
+runs[en2_taxa_threat]
+runs[en2_taxa_small]
+
+runs[en3_mb]
+runs[en3_vp]
+runs[en3_ae]
+
+runs[en4_all]
+runs[ en4_endemism]
+runs[en4_threat]
+runs[en4_small]
+
+runs[en5_composites]
+
+runs[en6_norm_all]
+runs[en6_norm_endemism]
+runs[en6_norm_threat]
+runs[en6_norm_small]
+
+
+# ---------------------------------------------------------------------------------------------------------
+# new ensembles, for reference:
+
+# 54 layers
+
+en1_types <- c(1:4)
+# 
+# 1.	vert_all
+# 2.	vert_endemism
+# 3.	vert_threat
+# 4.	vert_small
+# 
+en1_types_b <- c(5:8)
+# 
+# 5.	vert_threat_weighted
+# 6.	vert_small_threat
+# 7.	vert_small_zam
+# 8.	vert_endemism_zam
+# 
+en2_taxa_all <- c(9:13)
+# 9.	mam_all
+# 10.	bird_all
+# 11.	amp_all
+# 12.	rep_all
+# 13.	plants
+# 
+en2_taxa_endemism <- c(14:17)
+# 14.	mam_endemism
+# 15.	bird_endemism
+# 16.	amp_endemism
+# 17.	rep_endemism
+# 
+en2_taxa_threat <- c(18:21)
+# 18.	mam_threat
+# 19.	bird_threat
+# 20.	amp_threat
+# 21.	rep_threat
+# 
+en2_taxa_small <- c(22:25)
+# 22.	mam_small
+# 23.	bird_small
+# 24.	amp_small
+# 25.	rep_small
+# 
+en3_mb <- c(26, 29, 32, 35)
+en3_vp <- c(27, 30, 33, 36)
+en3_ae <- c(28, 31, 34, 37)
+# 
+# 26.	average_mb
+# 27.	average_vp
+# 28.	average_ae
+# 
+# 29.	geometric_mb
+# 30.	geometric_vp
+# 31.	geometric_ae
+# 
+# 32.	max_mb
+# 33.	max_vp
+# 34.	max_ae
+# 
+# 35.	multi_mb
+# 36.	multi_vp
+# 37.	multi_ae
+# 
+en4_all <- c(1, 38, 42)
+en4_endemism <- c(2, 39, 43)
+en4_threat <- c(3, 40, 44)
+en4_small <- c(4, 41, 45)
+# 
+# 38.	vert_all_10
+# 39.	vert_endemism_10 
+# 40.	vert_threat_10
+# 41.	vert_small_10
+# 
+# 42.	vert_all_110
+# 43.	vert_endemism_110
+# 44.	vert_threat_110
+# 45.	vert_small_110
+# 
+en5_composites <- c(46:50, 2, 13) # including vert_endemism and plants
+# 46.	estes
+# 47.	laurance
+# 48.	habitats
+# 49.	bird_composite
+# 50.	damania
+
+en6_norm_all <- c(1, 51)
+en6_norm_endemism <- c(2, 52)
+en6_norm_threat <- c(3, 53)
+en6_norm_small <- c(4, 54)
+
+# 
+# 51.	vert_all_sum_norm
+# 52.	vert_endemism_sum_norm
+# 53.	vert_threat_sum_norm
+# 54.	vert_small_sum_norm
+
+
+```

@@ -1,0 +1,2817 @@
+---
+title: "Model Runs: agroEcoTradeoff - Crawford Zambia MS"
+output: html_notebook
+editor_options: 
+  chunk_output_type: console
+---
+This notebook outlines the main `agroEcoTradeoff` model runs 
+
+# Start up:
+See: scripts/cc_Start.Rmd 
+
+Note that in order for these scripts to run, one must download the `agroEcoTradeoff` package, which must be downloaded directly. See: https://github.com/PrincetonUniversity/agroEcoTradeoff. In order to do this in terminal, first you have to install wget (and before that, gdal): https://stackoverflow.com/questions/33886917/how-to-install-wget-in-macos. You can use brew to do this, and then install wget. After that, run the following three lines of code from Lyndon's github, which installed the agroEcoTradeoff package:
+
+wget https://github.com/PrincetonUniversity/agroEcoTradeoff/raw/master/installer.sh
+chmod +x installer.sh
+./installer.sh
+
+The first one uses wget to download the installer.sh script from Lyndon's github. (wget does a similar thing to curl, and I'm not sure why one is preferred over another.)
+The second line changes the scripts permissions to allow it to be executed. "chmod" is a command for modifying the file's permissions. "+x" sets execute permissions. The script name is placed last, so that terminal knows which file to modify.
+The third line runs the script itself.
+
+In order for the agroEcoTradeoff model to work correctly, the working directory of your R project *must* be set to your agroEcoTradeoff/ directory. If you're working in a git repository, you can have it be a different name from the folder within which your R project lives.  You can create a scripts folder within your agroEcoTradeoff/ directory, and go from there. The data that the agroEcoTradeoff model pulls from is housed in a folder within external/data/folder_name. You use the name of this folder as the "input key" that points the model towards the folder you want when you run `tradeoff_mod(input_key = "folder_name")` function.
+
+
+
+```{r helpful-files}
+getwd()
+# Other helpful files ----------------------------------------------------------------
+aaeac <- sf::st_crs("+proj=aea +lat_1=20 +lat_2=-23 +lat_0=0 +lon_0=25 +x_0=0 +y_0=0 +ellps=WGS84 +datum=WGS84 +units=m +no_defs") # Africa Albers Equal Area Conic projection.
+# could probably also use raster::crs
+CRSobj <- sp::CRS("+proj=aea +lat_1=20 +lat_2=-23 +lat_0=0 +lon_0=25 +x_0=0 +y_0=0 +ellps=WGS84 +towgs84=0,0,0,0,0,0,0 +units=m +no_defs") # set CRS object for model runs, noting that this must be a CRS object for sp*, not a crs object
+class(aaeac)
+class(CRSobj)
+
+crs_longlat <- sf::st_crs("+proj=longlat +datum=WGS84 +no_defs")
+
+load(file = fp(p_ZA,"parks_roads.rda")) # includes roads (a SpatialLinesDataFrame), pas (SpatialPolygonsDataFrame, a shapefile that includes both national parks and GMAs), and zambia (SpatialPolygonsDataFrame, outline of Zambia)
+msk_shp <- readOGR(fp(p_datnew,"msk.shp")) %>% 
+  spTransform(CRS("+proj=aea +lat_1=20 +lat_2=-23 +lat_0=0 +lon_0=25 +x_0=0 +y_0=0 +ellps=WGS84 +datum=WGS84 +units=m +no_defs"))
+msk_sf <- st_read(fp(p_datnew,"msk.shp")) %>% st_transform(aaeac)
+msk_sf_noholes <- smoothr::fill_holes(msk_sf, threshold = units::set_units(10000, km^2)) # a method to fill holes. could also use spatialEco::remove.holes() on sp* type data.
+msk_sf_buff <- st_buffer(msk_sf, units::set_units(100, km))
+
+msk_sf_ll <- st_transform(msk_sf, crs_longlat)
+msk_sf_ll_noholes <- st_transform(msk_sf_noholes, crs_longlat)
+msk_sf_ll_buff <- st_buffer(msk_sf_ll, units::set_units(1, degree))
+
+msk <- raster(fp(p_datnew,"msk.tif")) # the actual high resolution msk, created directly from the csv in "bd_new_prep.Rmd"
+
+
+# files from Estes model run
+cp <- read.csv(fp(p_ZA,"ZA-cons-priorities.csv"))
+cp.dt <- fread(fp(p_ZA,"ZA-cons-priorities.csv"))
+
+cp_raster <- raster(fp(p_datnew,"cons-priorities_from_csv.tif"))
+```
+
+```{r input-files, eval=FALSE}
+# final zambia rasters:
+p_datnew <- "/Users/christophercrawford/Google Drive/_Projects/Zambia/agroEcoTradeoff/external/data_new"
+load(file = fp(p_datnew,"final-rasters-zambia.RData"), verbose = TRUE)
+
+
+# rasters 
+# load-vert-bricks ----------------------------------------------------------------------------
+# create layer names object
+layer_names <- c("mam", "bird", "amp", "rep", "sum", "sum_norm", "norm_sum", "mam_10", "bird_10", "amp_10", "rep_10", "norm_sum_10", "mam_110", "bird_110", "amp_110", "rep_110", "norm_sum_110")
+
+# load in as a list of all rasters
+vert_r <- list(
+  all_richness = brick(paste0(p_iucn_dev, "/", richness_names[1], ".tif")),
+  endemism_richness = brick(paste0(p_iucn_dev, "/", richness_names[2], ".tif")),
+  endemism_zam_richness = brick(paste0(p_iucn_dev, "/", richness_names[3], ".tif")),
+  threat_richness = brick(paste0(p_iucn_dev, "/", richness_names[4], ".tif")),
+  threat_weighted_richness = brick(paste0(p_iucn_dev, "/", richness_names[5], ".tif")),
+  small_richness = brick(paste0(p_iucn_dev, "/", richness_names[6], ".tif")),
+  small_zam_richness = brick(paste0(p_iucn_dev, "/", richness_names[7], ".tif")),
+  small_threat_richness = brick(paste0(p_iucn_dev, "/", richness_names[8], ".tif"))
+  )
+
+# rename layers
+for(i in seq_along(vert_r)) {
+  names(vert_r[[i]]) <- layer_names
+}
+
+# plants ------------------------------------------------------------------------
+plants_zambia_r <- raster(fp(p_plants_dev, "plants_zambia_r.tif"))
+
+
+# habitats rasters -----------------------------------------------------------------------------
+load(file = fp(p_datnew,"habitat_rasters_zambia.RData"), verbose = TRUE)
+
+ecoregions_weighted_rarity <- raster(fp(p_ecoreg_dev, "ecoregions_weighted_rarity.tif"))
+
+# basemaps ------------------------------------------------------------------------------------
+load(fp(p_basemaps,"basemaps.RData"), verbose = TRUE)
+
+
+
+# old ----------------------------------------------------------------------------
+# vert_all_richness_brick <- brick(fp(p_datnew, "vert_all_richness_brick.tif"))
+# vert_threat_richness_brick <-brick(fp(p_datnew, "vert_threat_richness_brick.tif"))
+# vert_small_richness_brick <- brick(fp(p_datnew, "vert_small_richness_brick.tif"))
+# vert_small_threat_richness_brick <- brick(fp(p_datnew, "vert_small_threat_richness_brick.tif"))
+# layer_names <- c("mam", "bird", "amp", "rep", "sum", "sum_norm", "norm_sum", "mam_10", "bird_10", "amp_10", "rep_10", "norm_sum_10", "mam_110", "bird_110", "amp_110", "rep_110", "norm_sum_110")
+# 
+# names(vert_all_richness_brick) <- layer_names
+# names(vert_threat_richness_brick) <- layer_names
+# names(vert_small_richness_brick) <- layer_names
+# names(vert_small_threat_richness_brick) <- layer_names
+```
+
+```{r extra-input-files}
+
+# lists, polygons, etc.
+# load vertebrate lists
+load(file = fp(p_datnew, "vert_list4s.RData"), verbose = TRUE)
+load(file = fp(p_datnew, "vert_list4_buffs.RData"), verbose = TRUE)
+
+
+
+# habitat files, polygons
+load(fp(p_datnew,"habitat_polys.RData"), verbose = TRUE) # all valid. includes: hotspots_sf, global and africa; ibas and ebas, global and Africa; ecoregions, global and Africa; # hbwa global and africa; frontier forests global and africa
+
+# habitats lists
+load(file = fp(p_datnew,"habitat_lists.RData"), verbose = TRUE) # hotspots_list, iba_list, eba_list, iba_eba_list, ecoregions_list, hbwa_list, frontier_forests_list.
+
+
+# valid sf files, made valid, and prepped for use in small ranged species analyses
+load(file = fp(p_iucn_dev,"mam_valid_prepped.RData"), verbose = TRUE)
+load(file = fp(p_iucn_dev,"bird_valid_prepped.RData"), verbose = TRUE)
+load(file = fp(p_iucn_dev,"amp_valid_prepped.RData"), verbose = TRUE)
+load(file = fp(p_iucn_dev,"rep_valid_prepped.RData"), verbose = TRUE)
+
+
+# vert zambia files, buffered to 4 deg:
+load(file = fp(p_iucn_dev, "mam_zambia_4deg_buff.RData"), verbose = TRUE)
+load(file = fp(p_iucn_dev, "bird_zambia_4deg_buff.RData"), verbose = TRUE)
+load(file = fp(p_iucn_dev, "amp_zambia_4deg_buff.RData"), verbose = TRUE)
+load(file = fp(p_iucn_dev, "rep_zambia_4deg_buff.RData"), verbose = TRUE)
+
+
+
+load(file = "/Users/christophercrawford/Google Drive/_Projects/Zambia/agroEcoTradeoff/external/data_new/2_plants_dev/plants_list.RData", verbose = TRUE)
+load(file = fp(p_plants_dev, "plants_valid.RData"), verbose = TRUE) # this includes plants, which has been made valid.
+
+load(file = fp(p_plants_dev, "plants_zambia.RData"), verbose = TRUE)
+
+load(file = fp(p_plants_dev, "plants_zambia_4deg_buff.RData"), verbose = TRUE)
+```
+
+```{r plot_colors, include=FALSE}
+# plot colors
+#display.brewer.all(n=9, type="all", select=NULL, exact.n=TRUE, colorblindFriendly=FALSE)
+
+## main color scheme for plots (0 = green / high bd, 1 = pink / convert)
+col_main <- colorRampPalette(brewer.pal(n=11,name='PiYG'))(100) #pink-yellow-green
+col_main2 <- col_main[15:95] # slightly muted on both ends, for s4,5,6,7
+col_main3 <- col_main[16:100] # toned down pink, for s8
+col_main_legend <- c(col_main[15],col_main[85])
+
+col_grad0 <- colorRampPalette(brewer.pal(n=9,name='YlOrRd'))(100) # for graduated plot of tradeoff_mod results rasters
+col_grad <- col_grad0[1:75] # more mellow red at the top end
+col_grad1 <- col_grad0[30:100] # darker yellow at the bottom
+col_grad2 <- col_grad
+col_grad2[76] <- "#662506"
+
+pacols <- c("transparent", "grey70", "grey80") # colors for NPs and GMAs
+
+#col_overlap <- rev(brewer.pal(n=9,name='RdYlGn')) # for diverging plot of overlapping results rasters
+#col_overlap[1] <- "grey90" # removing the dark green color from the front 
+
+#col_overlap <- brewer.pal(n=9,name='Paired')
+col_overlap <- c(
+  "grey90", # grey # no conversion
+  "#1F78B4", # blue # estes maize only
+  "#B2DF8A", # light green # estes soy only
+  "#E31A1C", # red # laurance maize only
+  "#33A02C", # green # both maize
+  "#FF7F00", # orange # L maize, E soy
+  "#FDBF6F", # yellow # laurance soy only
+  "#FB9A99", # pink # Laurance soy, Estes maize
+  "#CAB2D6") # light purple # both soy
+
+col_overlap_maize <- c("grey90","#fec44f","#e31a1c","#41ab5d") # yellow (E), red (L), green (overlap)
+#col_overlap_maize <- c("grey90",brewer.pal(n=3,name='Paired'))
+
+# fonts:
+#font_import()
+#loadfonts() # I don't think I need to run this more than one time.
+#fonts()
+#quartzFonts(avenir = c("Avenir Book", "Avenir Black", "Avenir Book Oblique", "Avenir Black Oblique"))
+#quartzFonts(helvetica = c("Helvetica Neue Light", "Helvetica Neue Bold", "Helvetica Neue Light Italic", "Helvetica Neue Bold Italic"))
+#quartzFonts(Times = c("Times New Roman Regular", "Times New Roman Bold", "Times New Roman Italic", "Times New Roman Bold Italic"))
+```
+
+
+
+# Input layers
+Estes Layer - 
+Laurance Layers:
+1. threatened vertebrate species (birds, mammals, & amphibians originally, and I’ve added reptiles). (Note: they add together all threatened species, and then normalize to 1. This differs from how Brancalion et al. 2019 do it, where they normalize each taxa first, then add, then normalize again.)
+2. Plant species per ecoregion per pixel (plant species richness). 
+3. CI Biodiversity Hotspots 
+4. BirdLife International - Important Bird Areas and Endemic Bird Areas 
+5. WWF’s The Global 200 terrestrial ecoregions 
+6. Frontier Forests and High Biodiversity Wilderness Areas (HBWA) 
+
+```{r load-inputs}
+load(file = fp(p_datnew,"final-rasters-zambia.RData"), verbose = TRUE)
+
+vert_zambia_threat_richness
+vert_r$threat_richness$norm_sum
+plot(vert_r$threat_richness$norm_sum)
+plot(vert_r$threat_richness$sum_norm)
+
+plants_zambia_r
+hotspots_zambia_r
+iba_eba_zambia_r
+ecoregions_zambia_r
+wilderness_zambia_r
+
+s1 <- vert_r$threat_richness$sum_norm
+s2 <- plants_zambia_r %>% normalize() # only plants need to be normalized to 0-1
+s4 <- hotspots_zambia_r
+s5 <- iba_eba_zambia_r
+s6 <- ecoregions_zambia_r
+s7 <- wilderness_zambia_r
+
+
+# original Laurance raster layers
+# s1 <- raster(fp(p_datnew, "s1.tif"))
+# s2 <- raster(fp(p_datnew, "s2.tif"))
+# s3 <- raster(fp(p_datnew, "s3.tif"))
+# s4 <- raster(fp(p_datnew, "s4.tif"))
+# s5 <- raster(fp(p_datnew, "s5.tif"))
+# s6 <- raster(fp(p_datnew, "s6.tif"))
+# s7 <- raster(fp(p_datnew, "s7.tif"))
+# s8 <- raster(fp(p_datnew, "s8.tif"))
+
+# s1 <- raster(fp(p_iucn_dev, "vert_zambia_threat_richness.tif")) %>% normalize()
+# s2 <- raster(fp(p_plants_dev, "plants_zambia_r.tif")) %>% normalize()
+# s4 <- raster(fp(p_hotspot_dev,"hotspots_zambia_r.tif")) %>% normalize()
+# s5 <- raster(fp(p_IBA_dev,"iba_eba_zambia_r.tif")) %>% normalize()
+# s6 <- raster(fp(p_ecoreg_dev,"ecoregions_zambia_r.tif")) %>% normalize()
+# s7 <- raster(fp(p_wilder_dev,"wilderness_zambia_r.tif")) %>% normalize()
+```
+
+# Updated Model Runs:
+(Note: these runs will be referred to using as a shorthand the number of the run, plus a short descriptor. So, the Laurance tradeoff model results will be m2_laurance_toff, and the biodiversity input layer will be m2_laurance_input. Estes will be m1_estes_toff, m1_estes_input etc.)
+
+Basics, exploring differences within species metrics and habitats metrics:
+
+
+## Types of Richness:
+vert_all
+vert_endemism
+vert_threat
+vert_small
+
+vert_threat_weighted
+vert_small_threat
+vert_small_zam
+vert_endemism_zam
+
+## Taxonomic Groups
+mam_all
+bird_all
+amp_all
+rep_all
+plants
+
+mam_endemism
+bird_endemism
+amp_endemism
+rep_endemism
+mam_threat
+bird_threat
+amp_threat
+rep_threat
+mam_small
+bird_small
+amp_small
+rep_small
+
+
+## Methods for combining layers
+
+average_mb
+average_vp
+average_ae
+geometric_mb
+geometric_vp
+geometric_ae
+max_mb
+max_vp
+max_ae
+multi_mb
+multi_vp
+multi_ae
+
+## Resolution
+vert_all_10
+vert_threat_10
+vert_endemism_10 
+vert_small_10
+vert_all_110
+vert_threat_110
+vert_endemism_110
+vert_small_110
+
+
+## Composites
+estes
+laurance
+habitats
+bird_composite
+damania
+plus:
+vert_endemism
+plants
+
+
+## Sum Norm 
+vert_all_sum_norm
+vert_endemism_sum_norm
+vert_threat_sum_norm
+vert_small_sum_norm
+
+1. All vertebrate richness – all species (m1_vert_all)
+2. Threatened vertebrate richness – Threatened species only (m2_vert_threat)
+3. Small-ranged vertebrate richness (m3_vert_small)
+4. Small-ranged or threatened vertebrate richness (m4_vert_small_threat)
+
+Threatened species richness, by taxa
+5_mam_threat.  Threatened mammal species richness (m5_mam_threat)
+6_bird_threat. Threatened bird species richness (m6_bird_threat)
+7_amp_threat. Threatened amphibian species richness (m7_amp_threat)
+8_rep_threat. Threatened reptile species richness (m8_rep_threat)
+
+All species richness, by taxa
+9_mam_all. All mammal species richness (m9_mam_all)
+10_bird_all. All bird species richness (m10_bird_all)
+11_amp_all. All amphibian species richness (m11_amp_all)
+12_rep_all. All reptile species richness (m12_rep_all)
+
+Plant Species richness, and Estes et al. 2016
+13. Plants species richness (number of plants per ecoregion) (m13_plants)
+14. Estes layer derived from vegetation classes, incorporating threat, rarity, and intactness. index = ((rarity*threat) + intactness)/2. (m14_estes)  
+
+
+Methods
+Methods model specifications – exploring different ways to combine the following two groups of two layers: 
+a) bird + mammal - threatened species richness (since they’re the two groups for which we have the best data, and there are relatively higher numbers of threatened species in Zambia) and 
+b) vertebrates + plants – all species (this could be a proxy for alll species being considered equally valuable)
+c) all species richness combined with range area-weighted endemism richness
+
+Arithmetic mean (i.e. equally weight average, Laurance)
+15_mb. Average mammals and birds (m15_average_mb)
+15_vp. Average vertebrates and plants (m15_average_vp)
+
+Geometric mean (the Nth root of the product of N numbers - in the case of combining two layers x and y, a pixels value would be the square root of x*y)
+
+Maximum (Damania and Wheeler)
+16_mb. Max mammals and birds (m16_max_mb)
+16_vp. Max vertebrates and plants (m16_max_vp)
+
+Multiplication of two layers (Estes et al. 2016)
+17_mb. Multiplication of mammals and birds (m17_multi_mb)
+17_vp. Multiplication of vertebrates and plants (m17_multi_vp)
+
+Resolution:
+Next, I’ll explore the impact of changing the Resolution at which the rasters are created, run with all vertebrates richness.
+18. 10 km x 10 km grid cell (100 km2)
+18.1. All species richness, 10 km. (m18.1_vert_all_10)
+18.2. Threatened species richness, 10 km. (m18.2_vert_threat_10)
+18.3. Small-ranged species richness, 10 km. (m18.3_vert_small_10)
+18.4. Small-ranged or threatened species richness, 10 km. (m18.4_vert_small_threat_10)
+
+19. 110 km x 110 km grid cell (12,100 km2) – about 1 degree longitude.
+19.1. All species richness, 110 km. (m19.1_vert_all_110)
+19.2. Threatened species richness, 110 km. (m19.2_vert_threat_110)
+19.3. Small-ranged species richness, 110 km. (m19.3_vert_small_110)
+19.4. Small-ranged or threatened species richness, 110 km. (m19.4_vert_small_threat_110)
+
+Composites
+20. Laurance (all six original layers, biodiversity and habitats). Index = [ (1+2)/2 + (3 + 4 + 5 + 6)/4 ] / 2 (m20_laurance)
+21. Important habitats only (hotspots, ecoregions, IBAs/EBAs, wilderness) (m21_habitats)
+22. Birds species and habitats – bird species richness plus important bird habitats (the rationale being that birds are the only group with both species richness data and taxon-specific habitat prioritizations) (m22_bird_sp_hab)
+
+Normalization tests
+23. Threatened vert richness, sum then normalize (m23_vert_threat_sum_norm)
+24. Laurance, without normalizing the final averaged raster (m24_laurance_not_norm)
+
+
+# Biodiversity Input Rasters
+
+--- Types of Richness ---------------------------------------------------------------------------
+```{r richness}
+# ---- main richness types ---------------------------------------------------------------------------
+vert_all <- vert_r$all_richness$norm_sum
+vert_endemism <- vert_r$endemism_richness$norm_sum
+vert_threat <- vert_r$threat_richness$norm_sum
+vert_small <- vert_r$small_richness$norm_sum
+
+vert_all_10 <- vert_r$all_richness$norm_sum_10
+vert_threat_10 <- vert_r$threat_richness$norm_sum_10
+vert_endemism_10 <- vert_r$endemism_richness$norm_sum_10
+vert_small_10 <- vert_r$small_richness$norm_sum_10
+
+vert_all_110 <- vert_r$all_richness$norm_sum_110
+vert_threat_110 <- vert_r$threat_richness$norm_sum_110
+vert_endemism_110 <- vert_r$endemism_richness$norm_sum_110
+vert_small_110 <- vert_r$small_richness$norm_sum_110
+
+# Extra, vert_combo layers just from mammals, birds, and amphibians
+vert_all_mba <- normalize(
+  normalize(vert_r$all_richness$mam) + 
+    normalize(vert_r$all_richness$bird) + 
+    normalize(vert_r$all_richness$amp)
+  )
+
+vert_endemism_mba <- normalize(
+  normalize(vert_r$endemism_richness$mam) + 
+    normalize(vert_r$endemism_richness$bird) + 
+    normalize(vert_r$endemism_richness$amp)
+  )
+vert_threat_mba <- normalize(
+  normalize(vert_r$threat_richness$mam) + 
+    normalize(vert_r$threat_richness$bird) + 
+    normalize(vert_r$threat_richness$amp)
+  )
+vert_small_mba <- normalize(
+  normalize(vert_r$small_richness$mam) + 
+    normalize(vert_r$small_richness$bird) + 
+    normalize(vert_r$small_richness$amp)
+  )
+
+vert_all_mba_10 <- cc_rescale(vert_all_mba, factor = 10, mask = msk) %>% normalize()
+vert_endemism_mba_10 <- cc_rescale(vert_endemism_mba, factor = 10, mask = msk) %>% normalize()
+vert_threat_mba_10 <- cc_rescale(vert_threat_mba, factor = 10, mask = msk) %>% normalize()
+vert_small_mba_10 <- cc_rescale(vert_small_mba, factor = 10, mask = msk) %>% normalize()
+
+vert_all_mba_110 <- cc_rescale(vert_all_mba, factor = 110, mask = msk) %>% normalize()
+vert_endemism_mba_110 <- cc_rescale(vert_endemism_mba, factor = 110, mask = msk) %>% normalize()
+vert_threat_mba_110 <- cc_rescale(vert_threat_mba, factor = 110, mask = msk) %>% normalize()
+vert_small_mba_110 <- cc_rescale(vert_small_mba, factor = 110, mask = msk) %>% normalize()
+
+
+
+
+# ---- extras ---------------------------------------------------------------------------
+vert_threat_weighted <- vert_r$threat_weighted_richness$norm_sum
+vert_small_threat <- vert_r$small_threat_richness$norm_sum
+vert_small_zam <- vert_r$small_zam_richness$norm_sum
+vert_endemism_zam <- vert_r$endemism_zam_richness$norm_sum
+
+
+# exploratory plots:
+par(mfrow = c(2,1))
+vert_r$endemism_richness$norm_sum %>%
+  cc_percentilize() %T>% 
+  plot(main = "Normalize each Taxa, then Sum, then Normalize", box = FALSE)
+vert_r$endemism_richness$sum_norm %>%
+  cc_percentilize() %T>% 
+  plot(main = "Sum across Taxa, then normalize")
+
+par(mfrow = c(2,4))
+vert_all %>% cc_percentilize() %T>% plot(main = "vert_all")
+vert_endemism %>% cc_percentilize() %T>% plot(main = "vert_endemism")
+vert_threat %>% cc_percentilize() %T>% plot(main = "vert_threat")
+vert_small %>% cc_percentilize() %T>% plot(main = "vert_small")
+
+vert_threat_weighted %>% cc_percentilize() %T>% plot(main = "vert_threat_weighted")
+vert_small_threat %>% cc_percentilize() %T>% plot(main = "vert_small_threat")
+vert_small_zam %>% cc_percentilize() %T>% plot(main = "vert_small_zam")
+vert_endemism_zam %>% cc_percentilize() %T>% plot(main = "vert_endemism_zam")
+
+```
+
+--- Taxonomic Groups ---------------------------------------------------------------------------
+```{r taxa}
+
+# all species richness ----------------------------------------------------------------------------
+mam_all <- vert_r$all_richness$mam %>% normalize()
+bird_all <- vert_r$all_richness$bird %>% normalize()
+amp_all <- vert_r$all_richness$amp %>% normalize()
+rep_all <- vert_r$all_richness$rep %>% normalize()
+
+mam_all_10 <- cc_rescale(mam_all, factor = 10, mask = msk) %>% normalize()
+bird_all_10 <- cc_rescale(bird_all, factor = 10, mask = msk) %>% normalize()
+amp_all_10 <- cc_rescale(amp_all, factor = 10, mask = msk) %>% normalize()
+rep_all_10 <- cc_rescale(rep_all, factor = 10, mask = msk) %>% normalize()
+
+mam_all_110 <- cc_rescale(mam_all, factor = 110, mask = msk) %>% normalize()
+bird_all_110 <- cc_rescale(bird_all, factor = 110, mask = msk) %>% normalize()
+amp_all_110 <- cc_rescale(amp_all, factor = 110, mask = msk) %>% normalize()
+rep_all_110 <- cc_rescale(rep_all, factor = 110, mask = msk) %>% normalize()
+
+
+# range area-weighted endemism richness ----------------------------------------------------------------------------
+mam_endemism <- vert_r$endemism_richness$mam %>% normalize()
+bird_endemism <- vert_r$endemism_richness$bird %>% normalize()
+amp_endemism <- vert_r$endemism_richness$amp %>% normalize()
+rep_endemism <- vert_r$endemism_richness$rep %>% normalize()
+
+mam_endemism_10 <- cc_rescale(mam_endemism, factor = 10, mask = msk) %>% normalize()
+bird_endemism_10 <- cc_rescale(bird_endemism, factor = 10, mask = msk) %>% normalize()
+amp_endemism_10 <- cc_rescale(amp_endemism, factor = 10, mask = msk) %>% normalize()
+rep_endemism_10 <- cc_rescale(rep_endemism, factor = 10, mask = msk) %>% normalize()
+
+mam_endemism_110 <- cc_rescale(mam_endemism, factor = 110, mask = msk) %>% normalize()
+bird_endemism_110 <- cc_rescale(bird_endemism, factor = 110, mask = msk) %>% normalize()
+amp_endemism_110 <- cc_rescale(amp_endemism, factor = 110, mask = msk) %>% normalize()
+rep_endemism_110 <- cc_rescale(rep_endemism, factor = 110, mask = msk) %>% normalize()
+
+
+# threatened species species richness ----------------------------------------------------------------------------
+mam_threat <- vert_r$threat_richness$mam %>% normalize()
+bird_threat <- vert_r$threat_richness$bird %>% normalize()
+amp_threat <- vert_r$threat_richness$amp %>% normalize()
+rep_threat <- vert_r$threat_richness$rep %>% normalize()
+
+mam_threat_10 <- cc_rescale(mam_threat, factor = 10, mask = msk) %>% normalize()
+bird_threat_10 <- cc_rescale(bird_threat, factor = 10, mask = msk) %>% normalize()
+amp_threat_10 <- cc_rescale(amp_threat, factor = 10, mask = msk) %>% normalize()
+rep_threat_10 <- cc_rescale(rep_threat, factor = 10, mask = msk) %>% normalize()
+
+mam_threat_110 <- cc_rescale(mam_threat, factor = 110, mask = msk) %>% normalize()
+bird_threat_110 <- cc_rescale(bird_threat, factor = 110, mask = msk) %>% normalize()
+amp_threat_110 <- cc_rescale(amp_threat, factor = 110, mask = msk) %>% normalize()
+rep_threat_110 <- cc_rescale(rep_threat, factor = 110, mask = msk) %>% normalize()
+
+# small-ranged species richness ----------------------------------------------------------------------------
+mam_small <- vert_r$small_richness$mam %>% normalize() %>% normalize()
+bird_small <- vert_r$small_richness$bird %>% normalize() %>% normalize()
+amp_small <- vert_r$small_richness$amp %>% normalize() %>% normalize()
+rep_small <- vert_r$small_richness$rep %>% normalize() %>% normalize()
+
+mam_small_10 <- cc_rescale(mam_small, factor = 10, mask = msk) %>% normalize()
+bird_small_10 <- cc_rescale(bird_small, factor = 10, mask = msk) %>% normalize()
+amp_small_10 <- cc_rescale(amp_small, factor = 10, mask = msk) %>% normalize()
+rep_small_10 <- cc_rescale(rep_small, factor = 10, mask = msk) %>% normalize()
+
+mam_small_110 <- cc_rescale(mam_small, factor = 110, mask = msk) %>% normalize()
+bird_small_110 <- cc_rescale(bird_small, factor = 110, mask = msk) %>% normalize()
+amp_small_110 <- cc_rescale(amp_small, factor = 110, mask = msk) %>% normalize()
+rep_small_110 <- cc_rescale(rep_small, factor = 110, mask = msk) %>% normalize()
+
+
+
+
+
+# plants
+# --------------------------
+plants <- plants_zambia_r %>% normalize()
+plants_10 <- cc_rescale(plants, factor = 10, mask = msk) %>% normalize()
+plants_110 <- cc_rescale(plants, factor = 110, mask = msk) %>% normalize()
+
+
+```
+
+
+
+Model steps:
+1. Prep to one single bd raster (where math takes place)
+2. Write and reload
+3. load raster as a data.table
+4. assign name "cons.priorities"
+5. fwrite data.table as a csv, load back in as a csv.
+6. set production targets
+7. set input folder for specific run.
+
+
+
+
+--- Methods ---------------------------------------------------------------------------
+Methods model specifications – exploring different ways to combine the following two groups of two layers: 
+a) mammal + bird - threatened species richness (since they’re the two groups for which we have the best data, and there are relatively higher numbers of threatened species in Zambia) and 
+b) vertebrates + plants – all species (this could be a proxy for all species being considered equally valuable)
+c) all species richness combined with range area-weighted endemism richness (Soto-Navarro et al. 2020)
+
+Four methods:
+Arithmetic mean (i.e. equally weight average, Laurance et al. 2014, the majority of other papers)
+
+```{r methods}
+
+# weighted average ----------------------------------------------------------------------------
+average_mb <- 
+  overlay(
+    normalize(vert_r$threat_richness$mam), 
+    normalize(vert_r$threat_richness$bird), 
+    fun = function(x,y){0.5*x + 0.5*y}) %>% 
+  normalize()
+
+average_vp <- 
+  overlay(
+    vert_r$all_richness$norm_sum, # note that this is norm then sum, following Brancalion et al. 2019, not Laurance et al. 2014
+    plants, 
+    fun = function(x,y){0.5*x + 0.5*y}) %>% 
+  normalize()
+
+average_ae <- 
+  overlay(
+    vert_r$all_richness$norm_sum,
+    vert_r$endemism_richness$norm_sum, 
+    fun = function(x,y){0.5*x + 0.5*y}) %>% 
+  normalize()
+
+average_mb_10 <- cc_rescale(average_mb, factor = 10, mask = msk) %>% normalize()
+average_vp_10 <- cc_rescale(average_vp, factor = 10, mask = msk) %>% normalize()
+average_ae_10 <- cc_rescale(average_ae, factor = 10, mask = msk) %>% normalize()
+
+average_mb_110 <- cc_rescale(average_mb, factor = 110, mask = msk) %>% normalize()
+average_vp_110 <- cc_rescale(average_vp, factor = 110, mask = msk) %>% normalize()
+average_ae_110 <- cc_rescale(average_ae, factor = 110, mask = msk) %>% normalize()
+
+# Geometric Mean ----------------------------------------------------------------------------
+# (the Nth root of the product of N numbers - in the case of combining two layers x and y, a pixels value would be the square root of x*y)
+geometric_mb <-
+  overlay(
+    normalize(vert_r$threat_richness$mam), 
+    normalize(vert_r$threat_richness$bird),
+    fun = function(x, y){sqrt(x*y)}) %>%
+  normalize()
+
+geometric_vp <- 
+  overlay(
+    vert_r$all_richness$norm_sum,
+    plants, 
+    fun = function(x, y){sqrt(x*y)}) %>% 
+  normalize()
+
+geometric_ae <- 
+  overlay(
+    vert_r$all_richness$norm_sum,
+    vert_r$endemism_richness$norm_sum, 
+    fun = function(x,y){sqrt(x*y)}) %>% 
+  normalize()
+
+geometric_mb_10 <- cc_rescale(geometric_mb, factor = 10, mask = msk) %>% normalize()
+geometric_vp_10 <- cc_rescale(geometric_vp, factor = 10, mask = msk) %>% normalize()
+geometric_ae_10 <- cc_rescale(geometric_ae, factor = 10, mask = msk) %>% normalize()
+
+geometric_mb_110 <- cc_rescale(geometric_mb, factor = 110, mask = msk) %>% normalize()
+geometric_vp_110 <- cc_rescale(geometric_vp, factor = 110, mask = msk) %>% normalize()
+geometric_ae_110 <- cc_rescale(geometric_ae, factor = 110, mask = msk) %>% normalize()
+
+# Maximum ----------------------------------------------------------------------------
+# (Damania and Wheeler 2015)
+# should we put things in rank order before you take the max to reduce skew? I'm only going to do this for combining all richness and endemism richness, since it's so skewed. 
+
+# hist(vert_r$threat_richness$mam)
+# hist(vert_r$threat_richness$bird)
+max_mb <- 
+  overlay(
+    normalize(vert_r$threat_richness$mam), 
+    normalize(vert_r$threat_richness$bird), 
+    fun = max) %>% 
+  normalize()
+
+# hist(vert_r$all_richness$norm_sum)
+# hist(plants)
+max_vp <- 
+  overlay(
+    vert_r$all_richness$norm_sum, 
+    plants, 
+    fun = max) %>% 
+  normalize()
+
+# hist(vert_r$all_richness$norm_sum)
+# hist(vert_r$endemism_richness$norm_sum)
+max_ae <- 
+  overlay(
+    normalize(cc_percentilize(vert_r$all_richness$norm_sum)),
+    normalize(cc_percentilize(vert_r$endemism_richness$norm_sum)), 
+    fun = max) %>% 
+  normalize()
+
+max_mb_10 <- cc_rescale(max_mb, factor = 10, mask = msk) %>% normalize()
+max_vp_10 <- cc_rescale(max_vp, factor = 10, mask = msk) %>% normalize()
+max_ae_10 <- cc_rescale(max_ae, factor = 10, mask = msk) %>% normalize()
+
+max_mb_110 <- cc_rescale(max_mb, factor = 110, mask = msk) %>% normalize()
+max_vp_110 <- cc_rescale(max_vp, factor = 110, mask = msk) %>% normalize()
+max_ae_110 <- cc_rescale(max_ae, factor = 110, mask = msk) %>% normalize()
+
+# Maximum ----------------------------------------------------------------------------
+# Koh & Ghazoul et al. 2010
+multi_mb <- 
+  overlay(
+    normalize(vert_r$threat_richness$mam), 
+    normalize(vert_r$threat_richness$bird), 
+    fun = function(x,y){(x*y)}) %>% 
+  normalize()
+
+
+multi_vp <- 
+  overlay(
+    vert_r$all_richness$norm_sum, 
+    plants,
+    fun = function(x,y){(x*y)}) %>% 
+  normalize()
+
+multi_ae <- 
+  overlay(
+    vert_r$all_richness$norm_sum,
+    vert_r$endemism_richness$norm_sum, 
+    fun = function(x,y){(x*y)}) %>% 
+  normalize()
+
+multi_mb_10 <- cc_rescale(multi_mb, factor = 10, mask = msk) %>% normalize()
+multi_vp_10 <- cc_rescale(multi_vp, factor = 10, mask = msk) %>% normalize()
+multi_ae_10 <- cc_rescale(multi_ae, factor = 10, mask = msk) %>% normalize()
+
+multi_mb_110 <- cc_rescale(multi_mb, factor = 110, mask = msk) %>% normalize()
+multi_vp_110 <- cc_rescale(multi_vp, factor = 110, mask = msk) %>% normalize()
+multi_ae_110 <- cc_rescale(multi_ae, factor = 110, mask = msk) %>% normalize()
+
+
+```
+
+
+Lastly, I’ll explore the impact of changing the Resolution at which the rasters are created, run with all vertebrates richness.
+See above, in types of richness
+
+
+
+```{r composites, include=FALSE}
+# seven composites:
+# 1. Estes et al. 2016
+# 2. Laurance et al. 2014
+# 3. Damania & Wheeler 2015
+# 4. Habitats (from Laurance et al. 2014)
+# 5. Hypothetical bird composite
+# 6. Plants
+# 7. Endemism Richness
+
+# ---- Estes et al. 2016 ----------------------------------------------------------------------------
+# Index: vegetation only, index = ((rarity*threat) + intactness)/2
+estes <- cp_raster %>% normalize()
+
+
+# ---- Laurance et al. 2014 ----------------------------------------------------------------------------
+# Index = [ (threat_vert + plants)/2 + (hotspots + iba_eba + ecoregions + wilderness)/4 ] / 2
+# note, only for mammals, birds, and amphibians, since reptiles haven't been assessed comprehensively.
+
+laurance_bd <- overlay(
+  normalize(
+    vert_r$threat_richness$mam +
+      vert_r$threat_richness$bird +
+      vert_r$threat_richness$amp), # note that this is sum first, then normalize, following the Laurance et al. 2014 methods.
+  normalize(plants_zambia_r), 
+  fun = function(x,y){(0.5*x + 0.5*y)})
+
+laurance_habitats <- overlay(
+  hotspots_zambia_r,
+  iba_eba_zambia_r, 
+  ecoregions_zambia_r, 
+  wilderness_zambia_r,
+  fun = function(w,x,y,z){(0.25*w + 0.25*x + 0.25*y + 0.25*z)})
+
+laurance <- 
+  overlay(laurance_bd, 
+          laurance_habitats, 
+          fun = function(x,y){(0.5*x + 0.5*y)}) %>% 
+  normalize()
+
+
+# ---- habitats ----------------------------------------------------------------------------
+# Important habitats only (hotspots, ecoregions, IBAs/EBAs, wilderness)
+habitats <- overlay(
+  hotspots_zambia_r,
+  iba_eba_zambia_r, 
+  ecoregions_zambia_r, 
+  wilderness_zambia_r,
+  fun = function(w,x,y,z){(0.25*w + 0.25*x + 0.25*y + 0.25*z)}) %>%
+  normalize()
+
+
+
+# ---- birds composite ----------------------------------------------------------------------------
+# Threatened bird species richness plus important bird habitats (the rationale being that birds are the only group with both species richness data and taxon-specific habitat prioritizations)
+bird_composite <- 
+  overlay(
+    normalize(vert_r$threat_richness$bird),
+    iba_eba_zambia_r,
+    fun = function(x,y){(0.5*x + 0.5*y)}) %>%
+  normalize()
+
+
+# ---- Damania & Wheeler 2015 ----------------------------------------------------------------------------
+# first, combine the two biodiversity factors, weighted endemism richness and threat-weighted richness, across the four taxonomic groups.
+damania_bd <- 
+  overlay(
+    normalize(vert_r$endemism_richness$mam), 
+    normalize(vert_r$endemism_richness$bird), 
+    normalize(vert_r$endemism_richness$amp), 
+    normalize(vert_r$endemism_richness$rep), 
+    normalize(vert_r$threat_weighted_richness$mam),
+    normalize(vert_r$threat_weighted_richness$bird),
+    normalize(vert_r$threat_weighted_richness$amp),
+    normalize(vert_r$threat_weighted_richness$rep),
+    fun = max) %>% 
+  normalize()
+
+
+# then percentilize both the biodiversity piece and the ecoregions_weighted_rarity layer, and combine the two
+damania_bd_percentile <- normalize(cc_percentilize(damania_bd))
+
+ecoregions_weighted_rarity_percentile <- normalize(cc_percentilize(ecoregions_weighted_rarity))
+plot(damania_bd_percentile)
+plot(normalize(vert_r$threat_weighted_richness$bird))
+plot(ecoregions_weighted_rarity_percentile)
+
+damania <- 
+  overlay(damania_bd_percentile, 
+          ecoregions_weighted_rarity_percentile, 
+          fun = max) %>% 
+  normalize()
+plot(damania)
+plot(bd_inputs_brick$damania)
+plot(bd_inputs_brick$bird_composite)
+plot(normalize(vert_r$threat_richness$bird))
+
+
+# plants ----------------------------------------------------------------------------
+plants
+plants_10
+plants_110
+
+estes
+estes_10 <- cc_rescale(estes, factor = 10, mask = msk) %>% normalize()
+estes_110 <- cc_rescale(estes, factor = 110, mask = msk) %>% normalize()
+
+laurance
+laurance_10 <- cc_rescale(laurance, factor = 10, mask = msk) %>% normalize()
+laurance_110 <- cc_rescale(laurance, factor = 110, mask = msk) %>% normalize()
+
+damania
+damania_10 <- cc_rescale(damania, factor = 10, mask = msk) %>% normalize()
+damania_110 <- cc_rescale(damania, factor = 110, mask = msk) %>% normalize()
+
+# vert_endemism
+
+habitats
+habitats_10 <- cc_rescale(habitats, factor = 10, mask = msk) %>% normalize()
+habitats_110 <- cc_rescale(habitats, factor = 110, mask = msk) %>% normalize()
+
+bird_composite
+bird_composite_10 <- cc_rescale(bird_composite, factor = 10, mask = msk) %>% normalize()
+bird_composite_110 <- cc_rescale(bird_composite, factor = 110, mask = msk) %>% normalize()
+
+
+```
+
+
+
+Normalization
+
+On the one hand, summing first treats all threatened species as equally valuable. But, it ends up being biased towards some taxa. For example, birds (max sp. richness 15 species, 20 total species occurring in Zambia) and mammals (max richness 7 species, 11 total species occuring in Zambia) are overrepresented, compared to amphibians and reptiles, which each have a max richness of 1 in Zambia (amphibians have one threatened species occuring in Zambia, and reptiles have 3).
+
+If normalization takes place within a taxa, it tends to give that one threatened amphibian species the same weight as 15 threatened bird species. 
+```{r normalization_expl}
+vert_r$threat_richness$mam
+vert_r$threat_richness$bird
+vert_r$threat_richness$amp
+vert_r$threat_richness$rep
+levels(drop.levels(mam_list$filtered_threat$binomial)) 
+levels(drop.levels(bird_list$filtered_threat$binomial))
+levels(drop.levels(amp_list$filtered_threat$binomial))
+levels(drop.levels(rep_list$filtered_threat$binomial))
+
+# ---- vert_threat_sum_norm ----------------------------------------------------------------------------
+# following Laurance et al. 2014, compared to Brancalion et al. 2019 which normalizes within each taxa, before combining.
+vert_all_sum_norm <- vert_r$all_richness$sum_norm
+vert_endemism_sum_norm <- vert_r$endemism_richness$sum_norm
+# vert_threat_sum_norm <- vert_r$threat_richness$sum_norm
+vert_small_sum_norm <- vert_r$small_richness$sum_norm
+
+vert_all_sum_norm_10 <- cc_rescale(vert_all_sum_norm, factor = 10, mask = msk) %>% normalize()
+vert_endemism_sum_norm_10 <- cc_rescale(vert_endemism_sum_norm, factor = 10, mask = msk) %>% normalize()
+#vert_threat_sum_norm_10 <- cc_rescale(vert_threat_sum_norm, factor = 10, mask = msk) %>% normalize()
+vert_small_sum_norm_10 <- cc_rescale(vert_small_sum_norm, factor = 10, mask = msk) %>% normalize()
+
+vert_all_sum_norm_110 <- cc_rescale(vert_all_sum_norm, factor = 110, mask = msk) %>% normalize()
+vert_endemism_sum_norm_110 <- cc_rescale(vert_endemism_sum_norm, factor = 110, mask = msk) %>% normalize()
+#vert_threat_sum_norm_110 <- cc_rescale(vert_threat_sum_norm, factor = 110, mask = msk) %>% normalize()
+vert_small_sum_norm_110 <- cc_rescale(vert_small_sum_norm, factor = 110, mask = msk) %>% normalize()
+
+plot(vert_r$all_richness$sum_norm)
+
+dev.off()
+par(mfrow = c(2,4), omi = c(0,0,0,0), mar = c(0,0,0,0))
+hist(vert_threat)
+hist(vert_threat_sum_norm)
+plot(cc_percentilize(vert_threat))
+plot(cc_percentilize(vert_threat_sum_norm))
+
+plot(vert_all, axes = F, box = F)
+plot(vert_endemism, axes = F, box = F)
+plot(vert_threat, axes = F, box = F)
+plot(vert_small, axes = F, box = F)
+plot(vert_all_sum_norm, axes = F, box = F)
+plot(vert_endemism_sum_norm, axes = F, box = F)
+plot(vert_threat_sum_norm, axes = F, box = F)
+plot(vert_small_sum_norm, axes = F, box = F)
+
+plot(cc_percentilize(vert_all), axes = F, box = F)
+plot(cc_percentilize(vert_endemism), axes = F, box = F)
+plot(cc_percentilize(vert_threat), axes = F, box = F)
+plot(cc_percentilize(vert_small), axes = F, box = F)
+plot(cc_percentilize(vert_all_sum_norm), axes = F, box = F)
+plot(cc_percentilize(vert_endemism_sum_norm), axes = F, box = F)
+plot(cc_percentilize(vert_threat_sum_norm), axes = F, box = F)
+plot(cc_percentilize(vert_small_sum_norm), axes = F, box = F)
+
+
+```
+
+```{r Unused_normalization_method_tester}
+# ---- Laurance, but not normalized ----------------------------------------------------------------------------
+# supplementary analysis, comparing laurance and laurance_not_norm
+# Index = [ (threat_vert + plants)/2 + (hotspots + iba_eba + ecoregions + wilderness)/4 ] / 2
+
+laurance_not_norm <- 
+  overlay(laurance_bd, laurance_habitats, 
+          fun = function(x,y){(0.5*x + 0.5*y)})
+
+dev.off()
+par(mfrow = c(2,2))
+plot(laurance)
+plot(laurance_not_norm)
+
+plot(cc_percentilize(laurance))
+plot(cc_percentilize(laurance_not_norm))
+
+summary(
+  cc_percentilize(laurance) - 
+    cc_percentilize(laurance_not_norm)
+)
+#
+# this makes no difference - the ultimate outcome is the same. Don't include. 
+#
+
+# ---- normalization methods ----------------------------------------------------------------------------
+# Six normalization options:
+# 1. None.
+# 2. Regular normalization (Min-Max Feature scaling)
+# 3. Dividing by max value
+# 4. Z-score: value minus the mean, divided by the standard deviation. z=(x-μ)/σ,
+# 5. Percentiles
+# 6. log
+
+hist(vert_r$threat_richness$bird)
+plot(vert_r$threat_richness$bird)
+summary(vert_r$threat_richness$sum)
+
+# ---- normalization ----------------------------------------------------------------------------
+# tested on threatened bird richness
+bird_threat <- vert_r$threat_richness$bird
+
+bird_threat_norm_min_max <- normalize(vert_r$threat_richness$bird)
+
+bird_threat_norm_max <- vert_r$threat_richness$bird /
+  cellStats(vert_r$threat_richness$bird, stat = max)
+
+bird_threat_norm_z <- raster::scale(vert_r$threat_richness$bird, center = TRUE, scale = TRUE)
+# scaling is done by dividing the (centered) layers of x by their standard deviations if center is TRUE
+# this seems to work the same as Jeffrey Evans' spatialEco::raster.Zscore()
+
+bird_threat_norm_percentiles <- normalize(cc_percentilize(vert_r$threat_richness$bird))
+bird_threat_norm_log <- log(vert_r$threat_richness$bird)
+
+norm_brick <- brick(
+  bird_threat,
+  bird_threat_norm_min_max,
+  bird_threat_norm_max,
+  bird_threat_norm_z,
+  bird_threat_norm_percentiles,
+  bird_threat_norm_log
+)
+names(norm_brick) <- c(
+  "bird_threat",
+  "bird_threat_norm_min_max",
+  "bird_threat_norm_max",
+  "bird_threat_norm_z",
+  "bird_threat_norm_percentiles",
+  "bird_threat_norm_log")
+
+dev.off()
+par(mfrow = c(2,3))
+plot(cc_percentilize(norm_brick[[1]]))
+plot(cc_percentilize(norm_brick[[2]]))
+plot(cc_percentilize(norm_brick[[3]]))
+plot(cc_percentilize(norm_brick[[4]]))
+plot(cc_percentilize(norm_brick[[5]]))
+plot(cc_percentilize(norm_brick[[6]]))
+
+summary(cc_percentilize(norm_brick[[1]]) - (cc_percentilize(norm_brick[[2]])))
+summary(cc_percentilize(norm_brick[[1]]) - (cc_percentilize(norm_brick[[3]])))
+summary(cc_percentilize(norm_brick[[1]]) - (cc_percentilize(norm_brick[[4]])))
+summary(cc_percentilize(norm_brick[[1]]) - (cc_percentilize(norm_brick[[5]])))
+summary(cc_percentilize(norm_brick[[1]]) - (cc_percentilize(norm_brick[[6]])))
+# there is no effect of different normalization methods, unless you are combining two layers. 
+
+
+hist(norm_brick, maxpixels = 1400000)
+```
+```{r norm_test_toff}
+# testing the mechanism of whether it matters when or how things are normalized before they are combined with other constraints
+# this doesn't seem like it should matter, but it seems like it does. 
+tofftest <- tradeoff_mod(
+    prod_targ = prod_targ1, 
+    cbetas = cbetas_b, 
+    ybetas = list(1, 1),
+    currprodmod = 1, ybeta_update = 0,
+    exist_list = NULL, silent = FALSE, 
+    input_key = runs[[i]]) # using the list item name as the input key
+  
+
+tofftest$inputs$p_yield
+
+# the final efficiencies used by the model to prioritize.
+tofftest$inputs$y_std
+tofftest$inputs$carbon_p
+tofftest$inputs$cost_p
+tofftest$inputs$cons_p
+
+plot()
+tofftest$inputs$cons_p[, 1] 
+tofftest$inputs$p_yield %>%
+    cbind(msk_no_pas, .) %>%
+    dt_to_raster(., CRSobj) %T>% plot()
+
+# these are the same - so it's confirming the order of operations:
+# the conservation priority value = 
+# 1 - (bd_value / yield_maize)
+plot(1 - (dt_to_raster(cbind(msk_no_pas, tofftest$inputs$cons), CRSobj)/ yield_input_no_pas$maize))
+plot(1 - (bd_dt_r$vert_all / yield_input_no_pas$maize))
+
+mean_yield <- yield_input_no_pas$maize 
+mean_yield[!is.na(values(mean_yield))] <- cellStats(yield_input_no_pas$maize, mean)
+plot(mean_yield)
+
+carb <- tofftest$inputs$carbon_p[, 1] %>%
+    cbind(msk_no_pas, .) %>%
+    dt_to_raster(., CRSobj)
+plot(carb)
+
+
+
+
+# checking the normalization issue:
+plot(1 - (bd_dt_r$vert_all / mean_yield))
+plot(1 - bd_dt_r$vert_all)
+
+tr1 <- 1 - (bd_dt_r$vert_all / mean_yield)
+tr2 <- 1 - normalize(bd_dt_r$vert_all / mean_yield)
+# these two look exactly the same. The ordering is the same, regardless of whether you normalize.
+
+plot(tr1)
+plot(tr2)
+plot(carb)
+
+# However, it does matter when you combine the bd priority with another constraint, like carbon in this example
+plot(0.5*tr1 + 0.5*carb)
+plot(0.5*tr2 + 0.5*carb)
+
+# not only do they look different, they order differently as well. This is the important part. 
+plot(cc_percentilize(tr1 + carb))
+plot(cc_percentilize(tr2 + carb))
+
+
+# HOWEVER:
+# This is baked into the model, and so this issue won't affect the question I'm interested in: the degree to which the biodiversity inputs affect the results. 
+# drop this!!
+
+```
+
+
+
+# model prep
+```{r runs_and_names}
+# 54 layers
+vert_all
+vert_endemism
+vert_threat
+vert_small
+vert_threat_weighted
+vert_small_threat
+vert_small_zam
+vert_endemism_zam
+mam_all
+bird_all
+amp_all
+rep_all
+plants
+mam_endemism
+bird_endemism
+amp_endemism
+rep_endemism
+mam_threat
+bird_threat
+amp_threat
+rep_threat
+mam_small
+bird_small
+amp_small
+rep_small
+average_mb
+average_vp
+average_ae
+geometric_mb
+geometric_vp
+geometric_ae
+max_mb
+max_vp
+max_ae
+multi_mb
+multi_vp
+multi_ae
+vert_all_10
+vert_endemism_10
+vert_threat_10
+vert_small_10
+vert_all_110
+vert_endemism_110
+vert_threat_110
+vert_small_110
+estes
+laurance
+habitats
+bird_composite
+damania
+vert_all_sum_norm
+vert_endemism_sum_norm
+vert_threat_sum_norm
+vert_small_sum_norm
+
+# 54 layers. 
+runs <- c(
+  "vert_all",
+  "vert_endemism",
+  "vert_threat",
+  "vert_small",
+  "vert_threat_weighted",
+  "vert_small_threat",
+  "vert_small_zam",
+  "vert_endemism_zam",
+  "mam_all",
+  "bird_all",
+  "amp_all",
+  "rep_all",
+  "plants",
+  "mam_endemism",
+  "bird_endemism",
+  "amp_endemism",
+  "rep_endemism",
+  "mam_threat",
+  "bird_threat",
+  "amp_threat",
+  "rep_threat",
+  "mam_small",
+  "bird_small",
+  "amp_small",
+  "rep_small",
+  "average_mb",
+  "average_vp",
+  "average_ae",
+  "geometric_mb",
+  "geometric_vp",
+  "geometric_ae",
+  "max_mb",
+  "max_vp",
+  "max_ae",
+  "multi_mb",
+  "multi_vp",
+  "multi_ae",
+  "vert_all_10",
+  "vert_endemism_10",
+  "vert_threat_10",
+  "vert_small_10",
+  "vert_all_110",
+  "vert_endemism_110",
+  "vert_threat_110",
+  "vert_small_110",
+  "estes",
+  "laurance",
+  "habitats",
+  "bird_composite",
+  "damania",
+  "vert_all_sum_norm",
+  "vert_endemism_sum_norm",
+  "vert_threat_sum_norm",
+  "vert_small_sum_norm"
+)
+
+brick_mod_names <- c(runs, "reference_yct", "reference_y")
+runs_w_ref <- c(runs, "reference_yct", "reference_y")
+runs
+
+
+# save as an RData file:
+save(
+  vert_all,
+  vert_endemism,
+  vert_threat,
+  vert_small,
+  vert_threat_weighted,
+  vert_small_threat,
+  vert_small_zam,
+  vert_endemism_zam,
+  mam_all,
+  bird_all,
+  amp_all,
+  rep_all,
+  plants,
+  mam_endemism,
+  bird_endemism,
+  amp_endemism,
+  rep_endemism,
+  mam_threat,
+  bird_threat,
+  amp_threat,
+  rep_threat,
+  mam_small,
+  bird_small,
+  amp_small,
+  rep_small,
+  average_mb,
+  average_vp,
+  average_ae,
+  geometric_mb,
+  geometric_vp,
+  geometric_ae,
+  max_mb,
+  max_vp,
+  max_ae,
+  multi_mb,
+  multi_vp,
+  multi_ae,
+  vert_all_10,
+  vert_endemism_10, 
+  vert_threat_10,
+  vert_small_10,
+  vert_all_110,
+  vert_endemism_110,
+  vert_threat_110,
+  vert_small_110,
+  estes,
+  laurance,
+  habitats,
+  bird_composite,
+  damania,
+  vert_all_sum_norm,
+  vert_endemism_sum_norm,
+  vert_threat_sum_norm,
+  vert_small_sum_norm,
+  file = fp(p_mod_inputs,"bd_inputs.RData"))
+
+load(file = fp(p_mod_inputs,"bd_inputs.RData"), verbose = TRUE)
+
+```
+
+```{r new_runs}
+eval(runs[1])
+vert_all
+
+
+for(i in seq_along(runs)) {
+  print(runs[i]); print(object_size(eval(parse(text = runs[i]))))
+  print(i)
+}
+env_size(ls())
+
+save(
+  vert_all,
+  vert_endemism,
+  vert_threat,
+  vert_small,
+  mam_all,
+  bird_all,
+  amp_all,
+  rep_all,
+  plants,
+  mam_endemism,
+  bird_endemism,
+  amp_endemism,
+  rep_endemism,
+  mam_threat,
+  bird_threat,
+  amp_threat,
+  rep_threat,
+  mam_small,
+  bird_small,
+  amp_small,
+  rep_small,
+  average_mb,
+  average_vp,
+  average_ae,
+  geometric_mb,
+  geometric_vp,
+  geometric_ae,
+  max_mb,
+  max_vp,
+  max_ae,
+  multi_mb,
+  multi_vp,
+  multi_ae,
+  estes,
+  laurance,
+  habitats,
+  bird_composite,
+  damania,
+  file = fp(p_mod_inputs,"bd_inputs_1.RData"))
+
+save(
+  vert_all_10,
+  vert_endemism_10,
+  vert_threat_10,
+  vert_small_10,
+  mam_all_10,
+  bird_all_10,
+  amp_all_10,
+  rep_all_10,
+  plants_10,
+  mam_endemism_10,
+  bird_endemism_10,
+  amp_endemism_10,
+  rep_endemism_10,
+  mam_threat_10,
+  bird_threat_10,
+  amp_threat_10,
+  rep_threat_10,
+  mam_small_10,
+  bird_small_10,
+  amp_small_10,
+  rep_small_10,
+  average_mb_10,
+  average_vp_10,
+  average_ae_10,
+  geometric_mb_10,
+  geometric_vp_10,
+  geometric_ae_10,
+  max_mb_10,
+  max_vp_10,
+  max_ae_10,
+  multi_mb_10,
+  multi_vp_10,
+  multi_ae_10,
+  estes_10,
+  laurance_10,
+  habitats_10,
+  bird_composite_10,
+  damania_10,
+  file = fp(p_mod_inputs,"bd_inputs_10.RData"))
+
+save(
+  vert_all_110,
+  vert_endemism_110,
+  vert_threat_110,
+  vert_small_110,
+  mam_all_110,
+  bird_all_110,
+  amp_all_110,
+  rep_all_110,
+  plants_110,
+  mam_endemism_110,
+  bird_endemism_110,
+  amp_endemism_110,
+  rep_endemism_110,
+  mam_threat_110,
+  bird_threat_110,
+  amp_threat_110,
+  rep_threat_110,
+  mam_small_110,
+  bird_small_110,
+  amp_small_110,
+  rep_small_110,
+  average_mb_110,
+  average_vp_110,
+  average_ae_110,
+  geometric_mb_110,
+  geometric_vp_110,
+  geometric_ae_110,
+  max_mb_110,
+  max_vp_110,
+  max_ae_110,
+  multi_mb_110,
+  multi_vp_110,
+  multi_ae_110,
+  estes_110,
+  laurance_110,
+  habitats_110,
+  bird_composite_110,
+  damania_110,
+  file = fp(p_mod_inputs,"bd_inputs_110.RData"))
+
+
+# remove
+rm(
+  vert_all,
+  vert_endemism,
+  vert_threat,
+  vert_small,
+  mam_all,
+  bird_all,
+  amp_all,
+  rep_all,
+  plants,
+  mam_endemism,
+  bird_endemism,
+  amp_endemism,
+  rep_endemism,
+  mam_threat,
+  bird_threat,
+  amp_threat,
+  rep_threat,
+  mam_small,
+  bird_small,
+  amp_small,
+  rep_small,
+  average_mb,
+  average_vp,
+  average_ae,
+  geometric_mb,
+  geometric_vp,
+  geometric_ae,
+  max_mb,
+  max_vp,
+  max_ae,
+  multi_mb,
+  multi_vp,
+  multi_ae,
+  estes,
+  laurance,
+  habitats,
+  bird_composite,
+  damania,
+  vert_all_10,
+  vert_endemism_10,
+  vert_threat_10,
+  vert_small_10,
+  mam_all_10,
+  bird_all_10,
+  amp_all_10,
+  rep_all_10,
+  plants_10,
+  mam_endemism_10,
+  bird_endemism_10,
+  amp_endemism_10,
+  rep_endemism_10,
+  mam_threat_10,
+  bird_threat_10,
+  amp_threat_10,
+  rep_threat_10,
+  mam_small_10,
+  bird_small_10,
+  amp_small_10,
+  rep_small_10,
+  average_mb_10,
+  average_vp_10,
+  average_ae_10,
+  geometric_mb_10,
+  geometric_vp_10,
+  geometric_ae_10,
+  max_mb_10,
+  max_vp_10,
+  max_ae_10,
+  multi_mb_10,
+  multi_vp_10,
+  multi_ae_10,
+  estes_10,
+  laurance_10,
+  habitats_10,
+  bird_composite_10,
+  damania_10,
+  vert_all_110,
+  vert_endemism_110,
+  vert_threat_110,
+  vert_small_110,
+  mam_all_110,
+  bird_all_110,
+  amp_all_110,
+  rep_all_110,
+  plants_110,
+  mam_endemism_110,
+  bird_endemism_110,
+  amp_endemism_110,
+  rep_endemism_110,
+  mam_threat_110,
+  bird_threat_110,
+  amp_threat_110,
+  rep_threat_110,
+  mam_small_110,
+  bird_small_110,
+  amp_small_110,
+  rep_small_110,
+  average_mb_110,
+  average_vp_110,
+  average_ae_110,
+  geometric_mb_110,
+  geometric_vp_110,
+  geometric_ae_110,
+  max_mb_110,
+  max_vp_110,
+  max_ae_110,
+  multi_mb_110,
+  multi_vp_110,
+  multi_ae_110,
+  estes_110,
+  laurance_110,
+  habitats_110,
+  bird_composite_110,
+  damania_110)
+
+# load
+load(file = fp(p_mod_inputs,"bd_inputs_1.RData"))
+load(file = fp(p_mod_inputs,"bd_inputs_10.RData"))
+load(file = fp(p_mod_inputs,"bd_inputs_110.RData"))
+
+```
+
+
+Production targets:
+Estes et al. 2016 developed production targets as ratios of the projected 2050 production level compared to the average between 2009-2014. They estimated a 4x increase in maize, and a 10x increase in soya, based on the rate of crop production growth between 2000-2014, and estimated mean production trends for soya bean growth in Southern Africa from Gasparri et al. 2015. 
+
+The default production targets in the model example code were 4 and 2. I'm assuming the 2 should be changed to a 10. 
+```{r all-model-setup}
+prod_targ <- c("maize" = 4, "soy" = 2)  # production target list
+prod_targ1 <- c("maize" = 4, "soy" = 10)  # production target list
+prod_targ2 <- c("maize" = 6, "soy" = 15)  # production target list
+
+
+
+cbetas_byct <- c("Y" = 0.25, "C" = 0.25, "BD" = 0.25, "COST" = 0.25)
+cbetas_y <- c("Y" = 1, "C" = 0, "BD" = 0, "COST" = 0)
+cbetas_by <- c("Y" = 0.5, "C" = 0, "BD" = 0.5, "COST" = 0)
+cbetas_bc <- c("Y" = 0, "C" = 0.5, "BD" = 0.5, "COST" = 0)
+cbetas_bt <- c("Y" = 0, "C" = 0, "BD" = 0.5, "COST" = 0.5)
+
+cbetas_b <- c("Y" = 0, "C" = 0, "BD" = 1, "COST" = 0)
+cbetas_yct <- c("Y" = 0.33333, "C" = 0.33333, "BD" = 0, "COST" = 0.33333)
+
+
+```
+
+
+```{r save_input_layers}
+runs
+# save and reload all of the bd inputs:
+# using assign() to set the raster to essentially take the form of this
+# laurance <- cc_write_reload_raster(laurance, "laurance", p_mod_inputs)
+
+for (i in seq_along(runs)) {
+  assign(runs[i], 
+         cc_write_reload_raster(
+           eval(parse(text = runs[i])), 
+           runs[i], 
+           p_mod_inputs))
+  print(i)
+}
+
+# 
+runs[47]
+laurance
+# this throws an error if the files already exist. The filenames of source and target should be different. In order to run the code above, make sure to delete the old files. 
+  assign(runs[47], 
+         cc_write_reload_raster(
+           eval(parse(text = runs[47])), 
+           runs[47], 
+           p_mod_inputs))
+```
+
+```{r mean_yield}
+
+# calculate the mean yield, and replace the values in the data.table
+mean_yield_dt <- fread(fp(p_dat, "ZA/ZA-potential-yields.csv"))
+mean_yield_dt
+mean_yield_dt[, .(mean(maize), mean(soy))]
+
+mean_yield_dt[, maize := mean_yield_dt[, mean(maize)]][]
+mean_yield_dt[, soy := mean_yield_dt[, mean(soy)]][]
+
+
+# produce a new folder to store mean yield and associated model inputs
+for (x in "ZA_mean_yield") {
+  dir.create(fp(p_dat,x))
+  for (file in files) {
+    newname <- gsub("^ZA",x,file)
+    newname <- fp(x,newname)
+    file.copy(from = fp(p_ZA,file), to = fp(p_dat, newname), 
+              recursive=FALSE)
+  }
+}
+
+# write the new average yield data.table to a csv, to use with the model
+fwrite(mean_yield_dt, file = fp(p_ZA_mean_yield, "ZA_mean_yield-potential-yields.csv"))
+
+# fread(file = fp(p_ZA_mean_yield, "ZA_mean_yield-potential-yields.csv"))
+```
+
+
+# Run toff model
+first, create each bd raster. See above. 
+then, make a list or RasterBrick of these rasters. See below
+then, write these rasters as data.tables to the respective folder
+then, run the toff for loop.
+```{r bd_inputs_brick}
+# create brick of mod_bd_inputs
+
+# create blank brick
+bd_inputs_brick <- brick()
+for (i in seq_along(runs)) {
+  bd_inputs_brick <- addLayer(bd_inputs_brick, eval(parse(text = runs[i])))
+}
+
+object_size(bd_inputs_brick)
+names(bd_inputs_brick) <- runs
+
+bd_inputs_brick <- brick(bd_inputs_brick, filename = fp(p_mod_inputs,"bd_inputs_brick.tif"), overwrite = TRUE)
+names(bd_inputs_brick) <- runs
+
+env_size(ls())
+```
+
+```{r print_bd_inputs}
+save_bd_input_plots <- function(runs = runs_1, tag = "runs_1", fig_width = 12, fig_height = 13) {
+  png(paste0(p_plots, "/ms_v5/", "bd_input_maps_", tag, ".png"),    
+      width = fig_width, height = fig_height, units = "in", res = 300)
+  
+  par(mfrow=c(6,7), mar=c(1,1,2,1), oma = c(1, 1, 1, 1))
+  for (j in runs) {
+    plot(bd_inputs_brick[[j]], 
+         main = names(bd_inputs_brick[[j]]),
+         axes = FALSE, legend = FALSE, box = FALSE)
+    
+    #plot(pas, col = col_pas_all, border = "gray", add=TRUE)
+    #legend("bottomright", legend= c("GMA", "Nat'l Park"), fill=col_pas, cex = 1.1, bty = "n")
+    plot(msk_shp, add = TRUE)
+    
+    }
+  dev.off()
+  }
+
+save_bd_input_plots(runs = runs_1, tag = "runs_1")
+save_bd_input_plots(runs = runs_10, tag = "runs_10")
+save_bd_input_plots(runs = runs_110, tag = "runs_110")
+```
+
+```{r create-folders, include=FALSE, eval=FALSE}
+### Creating new folders of files: with dynamic yields
+files <- list.files(p_ZA) # ZA files
+
+for (x in runs) {
+  dir.create(fp(p_dat,x))
+  for (file in files) {
+    newname <- gsub("^ZA",x,file)
+    newname <- fp(x,newname)
+    file.copy(from = fp(p_ZA,file), to = fp(p_dat, newname), 
+              recursive=FALSE)
+  }
+}
+```
+
+```{r bd-to-dt-loop}
+# -----------------------------------------------------------------
+# run a for loop to write each of the bd input rasters as a data.table to the respective 
+for (i in 1:length(runs)) {
+  cc_write_bd_to_dt(bd_inputs_brick[[i]], input_key = runs[[i]]) 
+  # the function writes each biodiversity input raster as a data.table, then sets
+  # names(input) <- "cons.priorities", then 
+  # saves the data.table to the input_key folder
+}
+
+```
+
+```{r mean_yield_folders_bd_dt}
+# -----------------------------------------------------------------
+### Creating new folders of files: with constant, mean yield throughout all of Zambia (removing the influence of yield in the lrder of conservation priorities)
+
+p_ZA_mean_yield <- fp(p_dat, "ZA_mean_yield")
+files_mean_yield <- list.files(p_ZA_mean_yield) # ZA files
+runs_mean_yield <- paste0(runs, "_mean_yield")
+
+for (x in runs_mean_yield) {
+  dir.create(fp(p_dat,x))
+  for (file in files_mean_yield) {
+    newname <- gsub("^ZA_mean_yield",x,file)
+    newname <- fp(x,newname)
+    file.copy(from = fp(p_ZA_mean_yield,file), to = fp(p_dat, newname), 
+              recursive=FALSE)
+  }
+}
+
+# -----------------------------------------------------------------
+# # bd-to-dt-loop_mean_yield
+# -----------------------------------------------------------------
+# run a for loop to write each of the bd input rasters as a data.table to the respective 
+for (i in 1:length(runs_mean_yield)) {
+  cc_write_bd_to_dt(bd_inputs_brick[[i]], input_key = runs_mean_yield[[i]]) 
+  # the function writes each biodiversity input raster as a data.table, then sets
+  # names(input) <- "cons.priorities", then 
+  # saves the data.table to the input_key folder
+}
+```
+
+```{r toff_b_pure}
+tic()
+conv_b_pure_dt <- il$mask[, .(x, y)][valinds] # just x and y coordinates
+
+for (i in 1:length(runs_mean_yield)) {
+  toff_temp <- tradeoff_mod(
+    prod_targ = prod_targ1, cbetas = cbetas_b, 
+    ybetas = list(1, 1), currprodmod = 1, ybeta_update = 0, exist_list = NULL, silent = TRUE, 
+    
+    # runs_mean_yield
+    input_key = runs_mean_yield[[i]]) # using the list item name as the input key
+  
+  conv_b_pure_dt[, runs[i] := rowSums(toff_temp$conv[,3:4])]
+  print(i)
+}
+
+length(conv_b_pure_dt)
+names(conv_b_pure_dt)
+fwrite(conv_b_pure_dt, file = fp(p_mod_output, "conv_b_pure_dt.csv"))
+toc()
+
+
+# load back in
+# load(file = fp(p_mod_output, "toff_b_pure_list.RData"), verbose = T)
+```
+
+```{r toff_b}
+# toff_b <- vector("list", length = length(runs)) # must create an empty list first. Can also do this with simply list()
+# names(toff_b) <- runs
+tic()
+
+conv_b_dt <- il$mask[, .(x, y)][valinds] # just x and y coordinates
+
+for (i in 1:length(runs)) {
+  toff_temp <- tradeoff_mod(
+    prod_targ = prod_targ1, 
+    cbetas = cbetas_b, 
+    ybetas = list(1, 1),
+    currprodmod = 1, ybeta_update = 0,
+    exist_list = NULL, silent = TRUE, 
+    
+    input_key = runs[[i]]) # using the list item name as the input key
+  
+  conv_b_dt[, runs[i] := rowSums(toff_temp$conv[,3:4])]
+  print(i)
+  }
+
+fwrite(conv_b_dt, file = fp(p_mod_output, "conv_b_dt.csv"))
+toc()
+
+# # save toff_b
+# save(toff_b, file = fp(p_mod_output, "toff_b_list.RData"))
+# rm(toff_b)
+# 
+# # load back in
+# load(file = fp(p_mod_output, "toff_b_list.RData"), verbose = T)
+
+```
+
+```{r toff_by}
+# toff_by <- vector("list", length = length(runs)) # must create an empty list first. Can also do this with simply list()
+# names(toff_by) <- runs
+
+tic()
+conv_by_dt <- il$mask[, .(x, y)][valinds] # just x and y coordinates
+
+for (i in 1:length(runs)) {
+  toff_temp <- tradeoff_mod(
+    prod_targ = prod_targ1, 
+    cbetas = cbetas_by, 
+    ybetas = list(1, 1),
+    currprodmod = 1, ybeta_update = 0,
+    exist_list = NULL, silent = TRUE, 
+    input_key = runs[[i]]) # using the list item name as the input key
+  
+  conv_by_dt[, runs[i] := rowSums(toff_temp$conv[,3:4])]
+  print(i)
+}
+
+fwrite(conv_by_dt, file = fp(p_mod_output, "conv_by_dt.csv"))
+toc()
+# 
+# 
+# save(toff_by, file = fp(p_mod_output, "toff_by_list.RData"))
+# rm(toff_by)
+# load(file = fp(p_mod_output, "toff_by_list.RData"), verbose = T)
+
+```
+
+```{r toff_bc}
+# toff_bc <- vector("list", length = length(runs)) # must create an empty list first. Can also do this with simply list()
+# names(toff_bc) <- runs
+
+tic()
+conv_bc_dt <- il$mask[, .(x, y)][valinds] # just x and y coordinates
+
+for (i in 1:length(runs)) {
+  toff_temp <- tradeoff_mod(
+    prod_targ = prod_targ1, 
+    cbetas = cbetas_bc, 
+    ybetas = list(1, 1),
+    currprodmod = 1, ybeta_update = 0,
+    exist_list = NULL, silent = TRUE, 
+    
+    # runs_mean_yield
+    input_key = runs[[i]]) # using the list item name as the input key
+
+  conv_bc_dt[, runs[i] := rowSums(toff_temp$conv[,3:4])]
+  print(i)
+}
+
+fwrite(conv_bc_dt, file = fp(p_mod_output, "conv_bc_dt.csv"))
+toc()
+
+rm(conv_bc_dt)
+# # save toff_bc
+# save(toff_bc, file = fp(p_mod_output, "toff_bc_list.RData"))
+# 
+# rm(toff_bc)
+# 
+# # load back in
+# load(file = fp(p_mod_output, "toff_bc_list.RData"), verbose = T)
+```
+
+```{r toff_bt}
+# toff_bt <- vector("list", length = length(runs)) # must create an empty list first. Can also do this with simply list()
+# names(toff_bt) <- runs
+tic()
+conv_bt_dt <- il$mask[, .(x, y)][valinds] # just x and y coordinates
+
+for (i in 1:length(runs)) {
+  toff_temp <- tradeoff_mod(
+    prod_targ = prod_targ1, 
+    cbetas = cbetas_bt, 
+    ybetas = list(1, 1),
+    currprodmod = 1, ybeta_update = 0,
+    exist_list = NULL, silent = TRUE, 
+    
+    # runs_mean_yield
+    input_key = runs[[i]]) # using the list item name as the input key
+  
+  conv_bt_dt[, runs[i] := rowSums(toff_temp$conv[,3:4])]
+  print(i)
+}
+
+fwrite(conv_bt_dt, file = fp(p_mod_output, "conv_bt_dt.csv"))
+
+toc()
+rm(conv_bt_dt)
+
+# object_size(toff_bt)
+# # save toff_bt
+# save(toff_bt, file = fp(p_mod_output, "toff_bt_list.RData"))
+# rm(toff_bt)
+# # load back in
+# load(file = fp(p_mod_output, "toff_bt_list.RData"), verbose = T)
+```
+
+```{r toff_byct}
+# note that in order for the tradeoff_mod() function to work, the working directory needs to be set to agroEcoTradeoff. the input_key for where the model should get the data from also needs to be set in relation to agroEcoTradeoff/external/data/input_key. 
+# 
+# toff_byct <- vector("list", length = length(runs)) # must create an empty list first. Can also do this with simply list()
+# names(toff_byct) <- runs
+
+tic()
+conv_byct_dt <- il$mask[, .(x, y)][valinds] # just x and y coordinates
+
+
+for (i in 1:length(runs)) {
+  toff_temp <- tradeoff_mod(
+    prod_targ = prod_targ1, 
+    cbetas = cbetas_byct, 
+    ybetas = list(1, 1),
+    currprodmod = 1, ybeta_update = 0,
+    exist_list = NULL, silent = TRUE, 
+    input_key = runs[[i]]) # using the list item name as the input key
+  
+  conv_byct_dt[, runs[i] := rowSums(toff_temp$conv[,3:4])]
+  print(i)
+}
+
+fwrite(conv_byct_dt, file = fp(p_mod_output, "conv_byct_dt.csv"))
+toc()
+rm(conv_byct_dt)
+
+
+# # save the toff_byct file:
+# object_size(toff_byct)
+# names(toff_byct)
+# save(toff_byct, file = fp(p_mod_output, "toff_byct_list.RData"))
+# rm(toff_byct)
+# # to load toff_byct back in...use:
+# load(file = fp(p_mod_output, "toff_byct_list.RData"), verbose = T)
+```
+
+```{r 50%_prod_targ}
+# upping the production target to 50% of all of Zambia, at Tim's suggestion
+prod_targ50 <- c("maize" = 30, "soy" = 80) # this converts about 50% of the remaining convertible areas
+
+# toff_z50 <- vector("list", length = length(runs_mean_yield)) # must create an empty list first. Can also do this with simply list()
+# names(toff_z50) <- runs
+
+tic()
+conv_z50_dt <- il$mask[, .(x, y)][valinds] # just x and y coordinates
+
+for (i in 1:length(runs_mean_yield)) {
+  toff_temp <- tradeoff_mod(
+    prod_targ = prod_targ50, 
+    cbetas = cbetas_b, 
+    ybetas = list(1, 1),
+    currprodmod = 1, ybeta_update = 0,
+    exist_list = NULL, silent = TRUE, 
+    
+    # runs_mean_yield
+    input_key = runs_mean_yield[[i]]) # using the list item name as the input key
+  
+  conv_z50_dt[, runs[i] := rowSums(toff_temp$conv[,3:4])]
+  print(i)
+}
+
+fwrite(conv_z50_dt, file = fp(p_mod_output, "conv_z50_dt.csv"))
+toc()
+rm(conv_z50_dt)
+# # save toff_z50
+# save(toff_z50, file = fp(p_mod_output, "toff_z50_list.RData"))
+# rm(toff_z50)
+# # load back in
+# load(file = fp(p_mod_output, "toff_z50_list.RData"), verbose = T)
+```
+
+
+```{r extra-toff}
+# this includes 
+# 1) threatened species richness, including combined vertebrate species richness calculated for just three taxa (mammals, birds, and amphibians), so that the comparison across the four richness types is consistent.
+# 2) sum_norm vertebrate species richness layers, for all taxa (including reptiles) so therefore excluding threatened species richness.
+
+# make sure the model is run with average yields, 100% weight on biodiversity. 
+
+extra_runs <- c("vert_all_mba", "vert_endemism_mba", "vert_threat_mba", "vert_small_mba", "vert_all_mba_10", "vert_endemism_mba_10", "vert_threat_mba_10", "vert_small_mba_10", "vert_all_mba_110", "vert_endemism_mba_110", "vert_threat_mba_110", "vert_small_mba_110", "vert_all_sum_norm", "vert_endemism_sum_norm", "vert_small_sum_norm", "vert_all_sum_norm_10", "vert_endemism_sum_norm_10", "vert_small_sum_norm_10", "vert_all_sum_norm_110", "vert_endemism_sum_norm_110", "vert_small_sum_norm_110")
+
+vert_all_mba
+vert_endemism_mba
+vert_threat_mba
+vert_small_mba
+vert_all_mba_10
+vert_endemism_mba_10
+vert_threat_mba_10
+vert_small_mba_10
+vert_all_mba_110
+vert_endemism_mba_110
+vert_threat_mba_110
+vert_small_mba_110
+
+vert_all_sum_norm
+vert_endemism_sum_norm
+vert_small_sum_norm
+vert_all_sum_norm_10
+vert_endemism_sum_norm_10
+vert_small_sum_norm_10
+vert_all_sum_norm_110
+vert_endemism_sum_norm_110
+vert_small_sum_norm_110
+
+
+# ----------------------------------------------------------------------
+# create brick of mod_bd_inputs
+# ----------------------------------------------------------------------
+
+# create blank brick
+extra_bd_inputs_brick <- brick()
+for (i in seq_along(extra_runs)) {
+  extra_bd_inputs_brick <- addLayer(extra_bd_inputs_brick, eval(parse(text = extra_runs[i])))
+}
+names(extra_bd_inputs_brick) <- extra_runs
+
+plot(extra_bd_inputs_brick[[13:16]])
+# ----------------------------------------------------------------------
+### Creating new folders of files: with constant, mean yield throughout all of Zambia (removing the influence of yield in the lrder of conservation priorities)
+# ----------------------------------------------------------------------
+p_ZA_mean_yield <- fp(p_dat, "ZA_mean_yield")
+files_mean_yield <- list.files(p_ZA_mean_yield) # ZA files
+extra_runs_mean_yield <- paste0(extra_runs, "_mean_yield")
+
+for (x in extra_runs_mean_yield) {
+  dir.create(fp(p_dat,x))
+  for (file in files_mean_yield) {
+    newname <- gsub("^ZA_mean_yield",x,file)
+    newname <- fp(x,newname)
+    file.copy(from = fp(p_ZA_mean_yield,file), to = fp(p_dat, newname), 
+              recursive=FALSE)
+  }
+}
+
+# -----------------------------------------------------------------
+# # bd-to-dt-loop for mean_yield
+# -----------------------------------------------------------------
+# run a for loop to write each of the bd input rasters as a data.table to the respective 
+for (i in 1:length(extra_runs_mean_yield)) {
+  cc_write_bd_to_dt(extra_bd_inputs_brick[[i]], input_key = extra_runs_mean_yield[[i]]) 
+  # the function writes each biodiversity input raster as a data.table, then sets
+  # names(input) <- "cons.priorities", then 
+  # saves the data.table to the input_key folder
+}
+
+# ----------------------------------------------------------------------
+#
+# ----------------------------------------------------------------------
+tic()
+conv_extras_bp_dt <- il$mask[, .(x, y)][valinds] # just x and y coordinates
+
+for (i in 1:length(extra_runs_mean_yield)) {
+  toff_temp <- tradeoff_mod(
+    prod_targ = prod_targ1, cbetas = cbetas_b, 
+    ybetas = list(1, 1), currprodmod = 1, ybeta_update = 0, exist_list = NULL, silent = TRUE, 
+    
+    # runs_mean_yield
+    input_key = extra_runs_mean_yield[[i]]) # using the list item name as the input key
+  
+  conv_extras_bp_dt[, extra_runs[i] := rowSums(toff_temp$conv[,3:4])]
+  print(i)
+}
+
+length(conv_extras_bp_dt)
+names(conv_extras_bp_dt)
+fwrite(conv_extras_bp_dt, file = fp(p_mod_output, "conv_extras_bp_dt.csv"))
+toc()
+
+# ----------------------------------------------------------------------
+#
+# ----------------------------------------------------------------------
+
+
+# ----------------------------------------------------------------------
+#
+# ----------------------------------------------------------------------
+
+
+# ----------------------------------------------------------------------
+#
+# ----------------------------------------------------------------------
+
+
+# ----------------------------------------------------------------------
+#
+# ----------------------------------------------------------------------
+
+
+# ----------------------------------------------------------------------
+#
+# ----------------------------------------------------------------------
+
+
+
+
+```
+
+
+
+Note: this is calculated assuming no PAs.
+Steps:
+take the cons.priorities data.table
+set all cells larger than the 10% to 0, and all those below to 1 (these are the conv10p areas)
+
+```{r conv_10p_bd_dt}
+# this is the new data.table, with a column for each bd_input, with 1 for all cells below the 10th percentile in bd score, and 0s for all cells larger. These are the cells that get converted if the lowest 10% of cells get converted, assuming a consistent yield. 
+
+# names of each column: 
+# append runs with _bd_conv10p, for use creating the bd_dt
+conv_10p_bd_names <- runs # create vector to modify
+for (i in 1:length(runs)) {
+  conv_10p_bd_names[i] <- paste0(runs[i], "_conv_10p_bd")
+}
+
+v_names <- c(1:length(runs))
+for (i in 1:length(v_names)) {
+  v_names[i] <- paste0("v", v_names[i])
+}
+
+
+m_names <- c(1:14, "15_mb", "15_vp", "16_mb", "16_vp", "17_mb", "17_vp", 18.1, 18.2, 18.3, 18.4, 19.1, 19.2, 19.3, 19.4, 20:24)
+for (i in 1:length(m_names)) {
+  m_names[i] <- paste0("m", m_names[i])
+}
+m_names
+
+# ------------------------------------------------------------------------------------
+# create data.table of bd-inputs
+# ------------------------------------------------------------------------------------
+conv_10p_bd_dt <- toff_eq[[1]]$inputs$mask[, .(x, y)] # just x and y coordinates
+
+for (i in 1:length(runs)) {
+  conv_10p_bd_dt[, v_names[i] := toff_eq[[i]]$inputs$cons$cons.priorities]
+}
+
+conv_10p_bd_dt
+
+
+# -------------------------------------------------
+# work flow: 10th percentile
+# -------------------------------------------------
+# 1. set a key with the original number of rows. dt[, key := 1:.N]
+# 2. change order of the data.table, "permanently," using setorder()
+# 3. Add new column with the new order. dt[, order_update := 1:.N]
+# 4. replace values for rows matching the condition in i. dt[i, j, by, ...].  First, for all rows where order_new is less than or equal to the number of rows (.N) divided by 10, set column X to 1. Then, for all rows where order_new is greater than the number of rows divided by 10, set column X to 0. 
+# 5. repeat for other column headers, replacing the column name at the three places it requires 
+
+# dt <- copy(conv_10p_bd_dt)
+
+conv_10p_bd_dt[, key := 1:.N] # .N is the number of rows in the data.table # set a key with the original row order
+conv_10p_bd_dt
+# -------------------------------------------------
+# change the order of the data.table, permanently.
+# -------------------------------------------------
+.N*0.10
+ten_p_nrow <- .N*0.10
+five_p_nrow <- .N*0.05
+
+setorder(conv_10p_bd_dt, v1) # change the order of the data.table, permanently. Use setorder(conv_10p_bd_dt, key) # to change it back
+conv_10p_bd_dt[, order_update := 1:.N] # add a new column, with the surrogate key, just the order of the rows as reordered by setorder. 
+# replace values for rows matching the condition in i. dt[i, j, by, ...].  First, for all rows where order_new is less than or equal to the number of rows (.N) divided by 10, set column X to 1. Then, for all rows where order_new is greater than the number of rows divided by 10, set column X to 0. 
+conv_10p_bd_dt[order_update <= ten_p_nrow, v1 := 1] # these cells are the lowest 10% of biodiversity values, and they get converted. Change the factor "0.10" to "0.05" for the lowest 5%
+conv_10p_bd_dt[order_update > ten_p_nrow,  v1 := 0] # these cells don't get converted.
+# note that messing with .N, like dividing, etc., messes with the values in order_new. Not sure how to fix this, so I just set ten_p_nrow and five_p_nrow
+
+
+# repeat for v2 through end (length(runs))
+setorder(conv_10p_bd_dt, key)
+setorder(conv_10p_bd_dt, v2); conv_10p_bd_dt[, order_update := 1:.N]
+conv_10p_bd_dt[order_update <= ten_p_nrow, v2 := 1]; conv_10p_bd_dt[order_update > ten_p_nrow,  v2 := 0]
+
+setorder(conv_10p_bd_dt, key)
+setorder(conv_10p_bd_dt, v3); conv_10p_bd_dt[, order_update := 1:.N]
+conv_10p_bd_dt[order_update <= ten_p_nrow, v3 := 1]; conv_10p_bd_dt[order_update > ten_p_nrow,  v3 := 0]
+
+setorder(conv_10p_bd_dt, key)
+setorder(conv_10p_bd_dt, v4); conv_10p_bd_dt[, order_update := 1:.N]
+conv_10p_bd_dt[order_update <= ten_p_nrow, v4 := 1]; conv_10p_bd_dt[order_update > ten_p_nrow,  v4 := 0]
+
+setorder(conv_10p_bd_dt, key)
+setorder(conv_10p_bd_dt, v5); conv_10p_bd_dt[, order_update := 1:.N]
+conv_10p_bd_dt[order_update <= ten_p_nrow, v5 := 1]; conv_10p_bd_dt[order_update > ten_p_nrow,  v5 := 0]
+
+setorder(conv_10p_bd_dt, key)
+setorder(conv_10p_bd_dt, v6); conv_10p_bd_dt[, order_update := 1:.N]
+conv_10p_bd_dt[order_update <= ten_p_nrow, v6 := 1]; conv_10p_bd_dt[order_update > ten_p_nrow,  v6 := 0]
+
+setorder(conv_10p_bd_dt, key)
+setorder(conv_10p_bd_dt, v7); conv_10p_bd_dt[, order_update := 1:.N]
+conv_10p_bd_dt[order_update <= ten_p_nrow, v7 := 1]; conv_10p_bd_dt[order_update > ten_p_nrow,  v7 := 0]
+
+setorder(conv_10p_bd_dt, key)
+setorder(conv_10p_bd_dt, v8); conv_10p_bd_dt[, order_update := 1:.N]
+conv_10p_bd_dt[order_update <= ten_p_nrow, v8 := 1]; conv_10p_bd_dt[order_update > ten_p_nrow,  v8 := 0]
+
+setorder(conv_10p_bd_dt, key)
+setorder(conv_10p_bd_dt, v9); conv_10p_bd_dt[, order_update := 1:.N]
+conv_10p_bd_dt[order_update <= ten_p_nrow, v9 := 1]; conv_10p_bd_dt[order_update > ten_p_nrow,  v9 := 0]
+
+setorder(conv_10p_bd_dt, key)
+setorder(conv_10p_bd_dt, v10); conv_10p_bd_dt[, order_update := 1:.N]
+conv_10p_bd_dt[order_update <= ten_p_nrow, v10 := 1]; conv_10p_bd_dt[order_update > ten_p_nrow,  v10 := 0]
+
+setorder(conv_10p_bd_dt, key)
+setorder(conv_10p_bd_dt, v11); conv_10p_bd_dt[, order_update := 1:.N]
+conv_10p_bd_dt[order_update <= ten_p_nrow, v11 := 1]; conv_10p_bd_dt[order_update > ten_p_nrow,  v11 := 0]
+
+setorder(conv_10p_bd_dt, key)
+setorder(conv_10p_bd_dt, v12); conv_10p_bd_dt[, order_update := 1:.N]
+conv_10p_bd_dt[order_update <= ten_p_nrow, v12 := 1]; conv_10p_bd_dt[order_update > ten_p_nrow,  v12 := 0]
+
+setorder(conv_10p_bd_dt, key)
+setorder(conv_10p_bd_dt, v13); conv_10p_bd_dt[, order_update := 1:.N]
+conv_10p_bd_dt[order_update <= ten_p_nrow, v13 := 1]; conv_10p_bd_dt[order_update > ten_p_nrow,  v13 := 0]
+
+setorder(conv_10p_bd_dt, key)
+setorder(conv_10p_bd_dt, v14); conv_10p_bd_dt[, order_update := 1:.N]
+conv_10p_bd_dt[order_update <= ten_p_nrow, v14 := 1]; conv_10p_bd_dt[order_update > ten_p_nrow,  v14 := 0]
+
+setorder(conv_10p_bd_dt, key)
+setorder(conv_10p_bd_dt, v15); conv_10p_bd_dt[, order_update := 1:.N]
+conv_10p_bd_dt[order_update <= ten_p_nrow, v15 := 1]; conv_10p_bd_dt[order_update > ten_p_nrow,  v15 := 0]
+
+setorder(conv_10p_bd_dt, key)
+setorder(conv_10p_bd_dt, v16); conv_10p_bd_dt[, order_update := 1:.N]
+conv_10p_bd_dt[order_update <= ten_p_nrow, v16 := 1]; conv_10p_bd_dt[order_update > ten_p_nrow,  v16 := 0]
+
+setorder(conv_10p_bd_dt, key)
+setorder(conv_10p_bd_dt, v17); conv_10p_bd_dt[, order_update := 1:.N]
+conv_10p_bd_dt[order_update <= ten_p_nrow, v17 := 1]; conv_10p_bd_dt[order_update > ten_p_nrow,  v17 := 0]
+
+setorder(conv_10p_bd_dt, key)
+setorder(conv_10p_bd_dt, v18); conv_10p_bd_dt[, order_update := 1:.N]
+conv_10p_bd_dt[order_update <= ten_p_nrow, v18 := 1]; conv_10p_bd_dt[order_update > ten_p_nrow,  v18 := 0]
+
+setorder(conv_10p_bd_dt, key)
+setorder(conv_10p_bd_dt, v19); conv_10p_bd_dt[, order_update := 1:.N]
+conv_10p_bd_dt[order_update <= ten_p_nrow, v19 := 1]; conv_10p_bd_dt[order_update > ten_p_nrow,  v19 := 0]
+
+setorder(conv_10p_bd_dt, key)
+setorder(conv_10p_bd_dt, v20); conv_10p_bd_dt[, order_update := 1:.N]
+conv_10p_bd_dt[order_update <= ten_p_nrow, v20 := 1]; conv_10p_bd_dt[order_update > ten_p_nrow,  v20 := 0]
+
+setorder(conv_10p_bd_dt, key)
+setorder(conv_10p_bd_dt, v21); conv_10p_bd_dt[, order_update := 1:.N]
+conv_10p_bd_dt[order_update <= ten_p_nrow, v21 := 1]; conv_10p_bd_dt[order_update > ten_p_nrow,  v21 := 0]
+
+setorder(conv_10p_bd_dt, key)
+setorder(conv_10p_bd_dt, v22); conv_10p_bd_dt[, order_update := 1:.N]
+conv_10p_bd_dt[order_update <= ten_p_nrow, v22 := 1]; conv_10p_bd_dt[order_update > ten_p_nrow,  v22 := 0]
+
+setorder(conv_10p_bd_dt, key)
+setorder(conv_10p_bd_dt, v23); conv_10p_bd_dt[, order_update := 1:.N]
+conv_10p_bd_dt[order_update <= ten_p_nrow, v23 := 1]; conv_10p_bd_dt[order_update > ten_p_nrow,  v23 := 0]
+
+setorder(conv_10p_bd_dt, key)
+setorder(conv_10p_bd_dt, v24); conv_10p_bd_dt[, order_update := 1:.N]
+conv_10p_bd_dt[order_update <= ten_p_nrow, v24 := 1]; conv_10p_bd_dt[order_update > ten_p_nrow,  v24 := 0]
+
+setorder(conv_10p_bd_dt, key)
+setorder(conv_10p_bd_dt, v25); conv_10p_bd_dt[, order_update := 1:.N]
+conv_10p_bd_dt[order_update <= ten_p_nrow, v25 := 1]; conv_10p_bd_dt[order_update > ten_p_nrow,  v25 := 0]
+
+setorder(conv_10p_bd_dt, key)
+setorder(conv_10p_bd_dt, v26); conv_10p_bd_dt[, order_update := 1:.N]
+conv_10p_bd_dt[order_update <= ten_p_nrow, v26 := 1]; conv_10p_bd_dt[order_update > ten_p_nrow,  v26 := 0]
+
+setorder(conv_10p_bd_dt, key)
+setorder(conv_10p_bd_dt, v27); conv_10p_bd_dt[, order_update := 1:.N]
+conv_10p_bd_dt[order_update <= ten_p_nrow, v27 := 1]; conv_10p_bd_dt[order_update > ten_p_nrow,  v27 := 0]
+
+setorder(conv_10p_bd_dt, key)
+setorder(conv_10p_bd_dt, v28); conv_10p_bd_dt[, order_update := 1:.N]
+conv_10p_bd_dt[order_update <= ten_p_nrow, v28 := 1]; conv_10p_bd_dt[order_update > ten_p_nrow,  v28 := 0]
+
+setorder(conv_10p_bd_dt, key)
+setorder(conv_10p_bd_dt, v29); conv_10p_bd_dt[, order_update := 1:.N]
+conv_10p_bd_dt[order_update <= ten_p_nrow, v29 := 1]; conv_10p_bd_dt[order_update > ten_p_nrow,  v29 := 0]
+
+setorder(conv_10p_bd_dt, key)
+setorder(conv_10p_bd_dt, v30); conv_10p_bd_dt[, order_update := 1:.N]
+conv_10p_bd_dt[order_update <= ten_p_nrow, v30 := 1]; conv_10p_bd_dt[order_update > ten_p_nrow,  v30 := 0]
+
+setorder(conv_10p_bd_dt, key)
+setorder(conv_10p_bd_dt, v31); conv_10p_bd_dt[, order_update := 1:.N]
+conv_10p_bd_dt[order_update <= ten_p_nrow, v31 := 1]; conv_10p_bd_dt[order_update > ten_p_nrow,  v31 := 0]
+
+setorder(conv_10p_bd_dt, key)
+setorder(conv_10p_bd_dt, v32); conv_10p_bd_dt[, order_update := 1:.N]
+conv_10p_bd_dt[order_update <= ten_p_nrow, v32 := 1]; conv_10p_bd_dt[order_update > ten_p_nrow,  v32 := 0]
+
+setorder(conv_10p_bd_dt, key)
+setorder(conv_10p_bd_dt, v33); conv_10p_bd_dt[, order_update := 1:.N]
+conv_10p_bd_dt[order_update <= ten_p_nrow, v33 := 1]; conv_10p_bd_dt[order_update > ten_p_nrow,  v33 := 0]
+
+# note: because of the way the reordering is done, cells that have the same value (i.e. 0) retain the legacy of the previous order. So, for example, the threatened amphibians and reptiles retained the order from the threatened birds, because they have mostly 0s that don't order in the same way each time. So, the solution should be to add the following line of code to set it back to the key order each time, before reordering. So that 0s order in the same way for each biodiversity layer. This will expose the error caused by using biodiversity inputs that don't have enough variation in them. To run this code the same way as before, just delete the line: setorder(conv_10p_bd_dt, key)
+
+
+# reorder to the original order:
+setorder(conv_10p_bd_dt, key)
+conv_10p_bd_dt
+
+colSums(conv_10p_bd_dt) # a check to make sure I have exactly 10% of the cells converted.
+
+
+# update names
+names(conv_10p_bd_dt)[3:35] <- conv_10p_bd_names
+
+
+# convert dt to rasters:
+
+conv_10p_bd_dt_r <- dt_to_raster(conv_10p_bd_dt, CRSobj)
+class(conv_10p_bd_dt_r)
+plot(conv_10p_bd_dt_r, 1:10)
+
+cellStats(conv_10p_bd_dt_r[[3]], stat = "sum") # other check
+
+round(.N/10, digits = 0)
+unique(conv_10p_bd_dt[, "v1"])
+unique(conv_10p_bd_dt[, 3])
+
+
+
+# save files
+fwrite(conv_10p_bd_dt, file = fp(p_mod_output, "conv_10p_bd_dt.csv")) # updated January 2nd, and again on the 8th (no change from the 2nd)
+
+
+```
+
+
+```{r conv_5p_bd_dt}
+# names of each column: 
+# append runs with _bd_conv10p, for use creating the bd_dt
+conv_5p_bd_names <- runs # create vector to modify
+for (i in 1:length(runs)) {
+  conv_5p_bd_names[i] <- paste0(runs[i], "_conv_5p_bd")
+}
+
+v_names <- c(1:length(runs))
+for (i in 1:length(v_names)) {
+  v_names[i] <- paste0("v", v_names[i])
+}
+
+
+m_names <- c(1:14, "15_mb", "15_vp", "16_mb", "16_vp", "17_mb", "17_vp", 18.1, 18.2, 18.3, 18.4, 19.1, 19.2, 19.3, 19.4, 20:24)
+for (i in 1:length(m_names)) {
+  m_names[i] <- paste0("m", m_names[i])
+}
+m_names
+
+# ------------------------------------------------------------------------------------
+# create data.table of bd-inputs
+# ------------------------------------------------------------------------------------
+conv_5p_bd_dt <- toff_eq[[1]]$inputs$mask[, .(x, y)] # just x and y coordinates
+
+for (i in 1:length(runs)) {
+  conv_5p_bd_dt[, v_names[i] := toff_eq[[i]]$inputs$cons$cons.priorities]
+}
+
+conv_5p_bd_dt
+
+
+
+# -------------------------------------------------
+# work flow: 10th percentile
+# -------------------------------------------------
+# 1. set a key with the original number of rows. dt[, key := 1:.N]
+# 2. change order of the data.table, "permanently," using setorder()
+# 3. Add new column with the new order. dt[, order_update := 1:.N]
+# 4. replace values for rows matching the condition in i. dt[i, j, by, ...].  First, for all rows where order_new is less than or equal to the number of rows (.N) divided by 10, set column X to 1. Then, for all rows where order_new is greater than the number of rows divided by 10, set column X to 0. 
+# 5. repeat for other column headers, replacing the column name at the three places it requires 
+
+# dt <- copy(conv_5p_bd_dt)
+
+conv_5p_bd_dt[, key := 1:.N] # .N is the number of rows in the data.table # set a key with the original row order
+conv_5p_bd_dt
+# -------------------------------------------------
+# change the order of the data.table, permanently.
+# -------------------------------------------------
+.N*0.10
+ten_p_nrow <- .N*0.10
+five_p_nrow <- .N*0.05
+
+setorder(conv_5p_bd_dt, v1) # change the order of the data.table, permanently. Use setorder(conv_5p_bd_dt, key) # to change it back
+conv_5p_bd_dt[, order_update := 1:.N] # add a new column, with the surrogate key, just the order of the rows as reordered by setorder. 
+# replace values for rows matching the condition in i. dt[i, j, by, ...].  First, for all rows where order_new is less than or equal to the number of rows (.N) divided by 10, set column X to 1. Then, for all rows where order_new is greater than the number of rows divided by 10, set column X to 0. 
+conv_5p_bd_dt[order_update <= five_p_nrow, v1 := 1] # these cells are the lowest 10% of biodiversity values, and they get converted. Change the factor "0.10" to "0.05" for the lowest 5%
+conv_5p_bd_dt[order_update > five_p_nrow,  v1 := 0] # these cells don't get converted.
+# note that messing with .N, like dividing, etc., messes with the values in order_new. Not sure how to fix this, so I just set five_p_nrow and five_p_nrow
+
+
+# repeat for v2 through v33
+setorder(conv_5p_bd_dt, v2); conv_5p_bd_dt[, order_update := 1:.N]
+conv_5p_bd_dt[order_update <= five_p_nrow, v2 := 1]; conv_5p_bd_dt[order_update > five_p_nrow,  v2 := 0]
+
+setorder(conv_5p_bd_dt, v3); conv_5p_bd_dt[, order_update := 1:.N]
+conv_5p_bd_dt[order_update <= five_p_nrow, v3 := 1]; conv_5p_bd_dt[order_update > five_p_nrow,  v3 := 0]
+
+setorder(conv_5p_bd_dt, v4); conv_5p_bd_dt[, order_update := 1:.N]
+conv_5p_bd_dt[order_update <= five_p_nrow, v4 := 1]; conv_5p_bd_dt[order_update > five_p_nrow,  v4 := 0]
+
+setorder(conv_5p_bd_dt, v5); conv_5p_bd_dt[, order_update := 1:.N]
+conv_5p_bd_dt[order_update <= five_p_nrow, v5 := 1]; conv_5p_bd_dt[order_update > five_p_nrow,  v5 := 0]
+
+setorder(conv_5p_bd_dt, v6); conv_5p_bd_dt[, order_update := 1:.N]
+conv_5p_bd_dt[order_update <= five_p_nrow, v6 := 1]; conv_5p_bd_dt[order_update > five_p_nrow,  v6 := 0]
+
+setorder(conv_5p_bd_dt, v7); conv_5p_bd_dt[, order_update := 1:.N]
+conv_5p_bd_dt[order_update <= five_p_nrow, v7 := 1]; conv_5p_bd_dt[order_update > five_p_nrow,  v7 := 0]
+
+setorder(conv_5p_bd_dt, v8); conv_5p_bd_dt[, order_update := 1:.N]
+conv_5p_bd_dt[order_update <= five_p_nrow, v8 := 1]; conv_5p_bd_dt[order_update > five_p_nrow,  v8 := 0]
+
+setorder(conv_5p_bd_dt, v9); conv_5p_bd_dt[, order_update := 1:.N]
+conv_5p_bd_dt[order_update <= five_p_nrow, v9 := 1]; conv_5p_bd_dt[order_update > five_p_nrow,  v9 := 0]
+
+setorder(conv_5p_bd_dt, v10); conv_5p_bd_dt[, order_update := 1:.N]
+conv_5p_bd_dt[order_update <= five_p_nrow, v10 := 1]; conv_5p_bd_dt[order_update > five_p_nrow,  v10 := 0]
+
+setorder(conv_5p_bd_dt, v11); conv_5p_bd_dt[, order_update := 1:.N]
+conv_5p_bd_dt[order_update <= five_p_nrow, v11 := 1]; conv_5p_bd_dt[order_update > five_p_nrow,  v11 := 0]
+
+setorder(conv_5p_bd_dt, v12); conv_5p_bd_dt[, order_update := 1:.N]
+conv_5p_bd_dt[order_update <= five_p_nrow, v12 := 1]; conv_5p_bd_dt[order_update > five_p_nrow,  v12 := 0]
+
+setorder(conv_5p_bd_dt, v13); conv_5p_bd_dt[, order_update := 1:.N]
+conv_5p_bd_dt[order_update <= five_p_nrow, v13 := 1]; conv_5p_bd_dt[order_update > five_p_nrow,  v13 := 0]
+
+setorder(conv_5p_bd_dt, v14); conv_5p_bd_dt[, order_update := 1:.N]
+conv_5p_bd_dt[order_update <= five_p_nrow, v14 := 1]; conv_5p_bd_dt[order_update > five_p_nrow,  v14 := 0]
+
+setorder(conv_5p_bd_dt, v15); conv_5p_bd_dt[, order_update := 1:.N]
+conv_5p_bd_dt[order_update <= five_p_nrow, v15 := 1]; conv_5p_bd_dt[order_update > five_p_nrow,  v15 := 0]
+
+setorder(conv_5p_bd_dt, v16); conv_5p_bd_dt[, order_update := 1:.N]
+conv_5p_bd_dt[order_update <= five_p_nrow, v16 := 1]; conv_5p_bd_dt[order_update > five_p_nrow,  v16 := 0]
+
+setorder(conv_5p_bd_dt, v17); conv_5p_bd_dt[, order_update := 1:.N]
+conv_5p_bd_dt[order_update <= five_p_nrow, v17 := 1]; conv_5p_bd_dt[order_update > five_p_nrow,  v17 := 0]
+
+setorder(conv_5p_bd_dt, v18); conv_5p_bd_dt[, order_update := 1:.N]
+conv_5p_bd_dt[order_update <= five_p_nrow, v18 := 1]; conv_5p_bd_dt[order_update > five_p_nrow,  v18 := 0]
+
+setorder(conv_5p_bd_dt, v19); conv_5p_bd_dt[, order_update := 1:.N]
+conv_5p_bd_dt[order_update <= five_p_nrow, v19 := 1]; conv_5p_bd_dt[order_update > five_p_nrow,  v19 := 0]
+
+setorder(conv_5p_bd_dt, v20); conv_5p_bd_dt[, order_update := 1:.N]
+conv_5p_bd_dt[order_update <= five_p_nrow, v20 := 1]; conv_5p_bd_dt[order_update > five_p_nrow,  v20 := 0]
+
+setorder(conv_5p_bd_dt, v21); conv_5p_bd_dt[, order_update := 1:.N]
+conv_5p_bd_dt[order_update <= five_p_nrow, v21 := 1]; conv_5p_bd_dt[order_update > five_p_nrow,  v21 := 0]
+
+setorder(conv_5p_bd_dt, v22); conv_5p_bd_dt[, order_update := 1:.N]
+conv_5p_bd_dt[order_update <= five_p_nrow, v22 := 1]; conv_5p_bd_dt[order_update > five_p_nrow,  v22 := 0]
+
+setorder(conv_5p_bd_dt, v23); conv_5p_bd_dt[, order_update := 1:.N]
+conv_5p_bd_dt[order_update <= five_p_nrow, v23 := 1]; conv_5p_bd_dt[order_update > five_p_nrow,  v23 := 0]
+
+setorder(conv_5p_bd_dt, v24); conv_5p_bd_dt[, order_update := 1:.N]
+conv_5p_bd_dt[order_update <= five_p_nrow, v24 := 1]; conv_5p_bd_dt[order_update > five_p_nrow,  v24 := 0]
+
+setorder(conv_5p_bd_dt, v25); conv_5p_bd_dt[, order_update := 1:.N]
+conv_5p_bd_dt[order_update <= five_p_nrow, v25 := 1]; conv_5p_bd_dt[order_update > five_p_nrow,  v25 := 0]
+
+setorder(conv_5p_bd_dt, v26); conv_5p_bd_dt[, order_update := 1:.N]
+conv_5p_bd_dt[order_update <= five_p_nrow, v26 := 1]; conv_5p_bd_dt[order_update > five_p_nrow,  v26 := 0]
+
+setorder(conv_5p_bd_dt, v27); conv_5p_bd_dt[, order_update := 1:.N]
+conv_5p_bd_dt[order_update <= five_p_nrow, v27 := 1]; conv_5p_bd_dt[order_update > five_p_nrow,  v27 := 0]
+
+setorder(conv_5p_bd_dt, v28); conv_5p_bd_dt[, order_update := 1:.N]
+conv_5p_bd_dt[order_update <= five_p_nrow, v28 := 1]; conv_5p_bd_dt[order_update > five_p_nrow,  v28 := 0]
+
+setorder(conv_5p_bd_dt, v29); conv_5p_bd_dt[, order_update := 1:.N]
+conv_5p_bd_dt[order_update <= five_p_nrow, v29 := 1]; conv_5p_bd_dt[order_update > five_p_nrow,  v29 := 0]
+
+setorder(conv_5p_bd_dt, v30); conv_5p_bd_dt[, order_update := 1:.N]
+conv_5p_bd_dt[order_update <= five_p_nrow, v30 := 1]; conv_5p_bd_dt[order_update > five_p_nrow,  v30 := 0]
+
+setorder(conv_5p_bd_dt, v31); conv_5p_bd_dt[, order_update := 1:.N]
+conv_5p_bd_dt[order_update <= five_p_nrow, v31 := 1]; conv_5p_bd_dt[order_update > five_p_nrow,  v31 := 0]
+
+setorder(conv_5p_bd_dt, v32); conv_5p_bd_dt[, order_update := 1:.N]
+conv_5p_bd_dt[order_update <= five_p_nrow, v32 := 1]; conv_5p_bd_dt[order_update > five_p_nrow,  v32 := 0]
+
+setorder(conv_5p_bd_dt, v33); conv_5p_bd_dt[, order_update := 1:.N]
+conv_5p_bd_dt[order_update <= five_p_nrow, v33 := 1]; conv_5p_bd_dt[order_update > five_p_nrow,  v33 := 0]
+
+
+# reorder to the original order:
+setorder(conv_5p_bd_dt, key)
+conv_5p_bd_dt
+
+colSums(conv_5p_bd_dt) # a check to make sure I have exactly 10% of the cells converted.
+
+
+# update names
+names(conv_5p_bd_dt)[3:35] <- conv_5p_bd_names
+
+
+# convert dt to rasters:
+
+conv_5p_bd_dt_r <- dt_to_raster(conv_5p_bd_dt, CRSobj)
+class(conv_5p_bd_dt_r)
+plot(conv_5p_bd_dt_r, 1:10)
+
+cellStats(conv_5p_bd_dt_r[[3]], stat = "sum") # other check
+
+```
+
+```{r unused-10th-p}
+# unused things:
+# ------------------------------------------------------------------------------------
+# create list of tenth percentiles
+# ------------------------------------------------------------------------------------
+tenth_percentile <- vector("list", length = length(runs))
+for (i in 1:length(runs)) {
+  tenth_percentile[[i]] <- quantile(toff_eq[[i]]$inputs$cons$cons.priorities, 0.10)
+}
+tenth_percentile
+length(tenth_percentile)
+names(tenth_percentile) <- m_names
+# three bd-input rasters have a tenth percentile value of 0: and 7, 8, and 30. They are:
+runs[c(7, 8, 30)]
+plot(bd_inputs_brick[[c(7, 8, 30)]])
+
+
+# ------------------------------------------------------------------------------------
+# create list of fifth percentiles
+# ------------------------------------------------------------------------------------
+fifth_percentile <- vector("list", length = length(runs))
+for (i in 1:length(runs)) {
+  fifth_percentile[[i]] <- quantile(toff_eq[[i]]$inputs$cons$cons.priorities, 0.05)
+}
+fifth_percentile
+# three bd-input rasters have a tenth percentile value of 0: and 7, 8, and 30. They are:
+runs[c(3, 7, 8, 23, 30)]
+plot(bd_inputs_brick[[c(7, 8, 30)]])
+plot(toff_eq_outputs$m7_amp_threat$conv_r_all)
+plot(toff_eq_outputs$m8_rep_threat$conv_r_all)
+plot(toff_eq_outputs$m21_habitats$conv_r_all)
+
+
+names(conv_10p_bd_dt) <- 
+conv_10p_bd_dt[v5 >= tenth_percentile$v5, v5 := 0]
+
+conv_10p_bd_dt[v5 >= tenth_percentile$v5, v5 := 0]
+conv_10p_bd_dt[v5 > 0, v5 := 1]
+
+
+conv_10p_bd_dt[v5 >= tenth_percentile$v5, v5 := 0]; conv_10p_bd_dt[v5 > 0, v5 := 1]
+
+# # order the cells from lowest to highest, and set the first 51033 to 1, and the rest to 0. 
+tenth_percentile$v1
+conv_10p_bd_dt[order(v1)][c(1:(510340*0.1))][, "v1"]
+conv_10p_bd_dt[, "v1"]
+conv_10p_bd_dt[order(v1)][, "v1"]
+conv_10p_bd_dt[order(v1)][1:51033, v1 := 0]
+conv_10p_bd_dt[, v1_order := 1:510328]
+
+conv_10p_bd_dt
+
+
+
+
+
+# potentially useful things: 
+dt[order(v1)][, v1_order_new := 1:.N] # this doesn't work.
+dt
+dt[, v1] # gives a vector
+dt[, "v1"] # returns as a data.table
+
+dt[, v_names[1], with = F] # to have the data.table return based on a vector of column names.
+dt
+
+
+```
+
+
+
+
+```{r}
+# create a new raster with only the values and cells lower than the 10th percentile
+tenth_p_bd <- brick(toff_eq_outputs[[1]]$bd_input_no_pas, nl = length(runs), values = TRUE)
+
+for (i in 1:length(runs)) {
+  tenth_p_bd[[i]] <- (toff_eq_outputs[[i]]$bd_input_no_pas <= quantile(toff_eq_outputs[[i]]$bd_input_no_pas, 0.10))
+}
+
+runs[[5]]
+plot(tenth_p_bd[[2]])
+
+plot(bd_dt_r[[5]])
+plot(toff_eq_outputs[[5]]$bd_input_no_pas)
+tenth_percentile$v5
+quantile(toff_eq_outputs[[5]]$bd_input_no_pas, 0.10)
+
+# ok, next steps:
+# figure out how to set just 51033 cells to 1, and all others to 0.
+# convert to data.tables
+cellStats(test_r1, stat = "sum")
+
+
+
+quantile(toff_eq[[1]]$inputs$cons$cons.priorities, 0.10)
+quantile(toff_eq$m1_vert_all$inputs$cons$cons.priorities, 0.10)
+
+conv_10p_bd_dt[1 <= 0.1, ]
+conv_10p_bd_dt[m1_vert_all_conv_10p_bd <= 0.1, m1_vert_all_conv_10p_bd := 0]
+conv_10p_bd_dt[eval(parse(text = conv_10p_bd_names[1])) < tenth_percentile[[1]], ]
+conv_10p_bd_dt[conv_10p_bd_names[1] < 0.1, ]
+conv_10p_bd_dt[m1_vert_all_conv_10p_bd < 0.1, ]
+
+# ok - finish this by having it 
+
+# starting data.table:
+names(toff_eq)
+toff_eq[[1]]$inputs$cons
+
+dt_m1 <- toff_eq[[1]]$inputs$cons
+
+toff_eq[[1]]$inputs$cons
+tic()
+quantile(toff_eq$m1_vert_all$inputs$cons$cons.priorities, 0.10)
+toc()
+
+tic()
+quantile(toff_eq_outputs$m1_vert_all$bd_input_no_pas, 0.10)
+toc()
+
+
+test_r <- toff_eq[[1]]$inputs$cons$cons.priorities %>%
+  cbind(toff_eq[[1]]$inputs$mask[, .(x, y)], .) %>%
+  dt_to_raster(., toff_eq[[1]]$inputs$sp$crs)
+
+plot(test_r)
+
+test_dt <- toff_eq[[1]]$inputs$cons
+test_dt[,"cons.priorities"]
+summary(test_dt)
+
+test_dt[, conv := cons.priorities]
+test_dt
+test_dt[conv < 0.90, conv := 0] # replace values for rows matching condition
+test_dt[conv > 0.90, conv := 1]
+
+colSums(test_dt)
+test_dt[cons.priorities > 0.90]
+
+test_dt[cons.priorities > 0.9] <- 100
+test_dt
+
+test_dt[, sum(cons.priorities)]
+colSums(test_dt)
+summary(test_dt)
+
+
+# develop data.table for bottom 10% of cells
+quantile(m1_vert_all, 0.10) # the 10th percentile
+
+
+# fill 0s with 1s, the value of the closest adjancent ecoregion, and then mask by msk
+test_r <- toff_eq_outputs$m1_vert_all$bd_input_no_pas
+plot(test_r)
+quantile(test_r, 0.10)
+
+
+plot(toff_eq_outputs[[3]]$bd_input_no_pas <
+       quantile(toff_eq_outputs[[3]]$bd_input_no_pas, 0.10))
+cellStats(toff_eq_outputs[[3]]$bd_input_no_pas <
+            quantile(toff_eq_outputs[[3]]$bd_input_no_pas, 0.10), 
+          stat = "sum")
+
+
+
+test_r[test_r >= quantile(toff_eq_outputs$m1_vert_all$bd_input_no_pas, 0.10)] <- 0 # set anything at or above the 10th percentile to 0
+test_r[test_r > 0] <- 1 # set all the cells still above 0 (i.e. those below the 10th percentile) to 1
+plot(test_r)
+plot(m1_vert_all)
+cellStats(test_r, stat = "sum")
+
+
+ecoregions_zambia_r <- raster::mask(ecoregions_zambia_r, msk)
+
+# do I have to go from the bd raster to data.table, or should I just use the data.table that has been written?
+
+test_dt <- fread(paste0(p_dat, .Platform$file.sep,
+                     runs[1], .Platform$file.sep,
+                     runs[1], "-cons-priorities.csv"))
+test_dt
+toff_eq$m1_vert_all$inputs
+
+#no pas
+zambia_no_pas <- toff_eq$m1_vert_all$inputs$mask[, .(x, y)] # just x and y coordinates
+CRS_obj <- toff_eq$m1_vert_all$inputs$sp$crs
+
+mod_toff$inputs$cons$cons.priorities %>%
+    cbind(zambia_no_pas, .) %>%
+    dt_to_raster(., CRSobj)
+
+toff_eq$m1_vert_all$inputs$cons$cons.priorities %>%
+  cbind(toff_eq$m1_vert_all$inputs$mask[, .(x, y)], .) %>%
+  dt_to_raster(., toff_eq$m1_vert_all$inputs$sp$crs) %T>%
+  plot()
+plot(m1_vert_all)
+
+toff_eq$m7_amp_threat$inputs$cons$cons.priorities %>%
+  cbind(toff_eq$m7_amp_threat$inputs$mask[, .(x, y)], .) %>%
+  dt_to_raster(., toff_eq$m7_amp_threat$inputs$sp$crs) %T>%
+  plot()
+plot(m7_amp_threat)
+```
+
+## other model runs
+0.1 100% on yield
+0.2 1/3 1/3 1/3 on each yield, carbon, and travel cost. 
+
+Note: it does not matter what input key is used, because the biodiversity layer is simply not taken into account in the model when given a 0 weight. 
+```{r reference_worst-case-mod-runs}
+reference_y_toff <- tradeoff_mod(prod_targ = prod_targ1, 
+                     cbetas = cbetas_y, ybetas = list(1, 1),
+                     currprodmod = 1, ybeta_update = 0,
+                     exist_list = NULL, silent = FALSE, 
+                     input_key = runs[1])
+
+reference_y_toff_outputs <- cc_tradeoff_mod_outputs(reference_y_toff, input_key = runs[1], cbetas = cbetas_y)
+
+plot(reference_y_toff_outputs$conv_r_all)
+cellStats(reference_y_toff_outputs$conv_r_all,  stat = "sum") # 21697 km2, vs 44358 for equal weights.
+
+
+reference_yct_toff <- tradeoff_mod(prod_targ = prod_targ1, 
+                     cbetas = cbetas_yct, ybetas = list(1, 1),
+                     currprodmod = 1, ybeta_update = 0,
+                     exist_list = NULL, silent = FALSE, 
+                     input_key = runs[1])
+
+reference_yct_toff_outputs <- cc_tradeoff_mod_outputs(reference_yct_toff, input_key = runs[1], cbetas = cbetas_yct)
+
+plot(reference_yct_toff_outputs$conv_r_all)
+cellStats(reference_yct_toff_outputs$conv_r_all,  stat = "sum") # 39336 km2, compared to 21697 km2 for all yield, vs 44358 for equal weights.
+
+
+reference_y <- reference_y_toff_outputs$conv_r_all
+reference_yct <- reference_yct_toff_outputs$conv_r_all
+names(reference_y) <- "reference_y"
+names(reference_yct) <- "reference_yct"
+
+
+
+```
+
+```{r save-reference-files}
+save(
+  reference_y_toff,
+  reference_y_toff_outputs,
+  reference_yct_toff,
+  reference_yct_toff_outputs,
+  reference_y,
+  reference_yct,
+  file = fp(p_mod_output, "reference_files.RData")
+  )
+
+load(file = fp(p_mod_output, "reference_files.RData"), verbose = TRUE) # contains: reference_y_toff, reference_y_toff_outputs, reference_yct_toff, reference_yct_toff_outputs, reference_y, reference_yct,
+```
+
+```{r other_constraint_inputs}
+yield_dt <- toff_eq$reference_y$inputs$p_yield # this is without PAs
+fwrite(yield_dt, file = fp(p_mod_output, "yield_dt.csv"))
+
+
+
+# carbon, travel cost, and yield input layers
+estes_bd_input_dt <- fread(paste0(p_dat, .Platform$file.sep,
+                     "m14_estes", .Platform$file.sep,
+                     "m14_estes", "-cons-priorities.csv"))
+yield_input_dt <- fread(paste0(p_dat, .Platform$file.sep,
+                              "m14_estes", .Platform$file.sep,
+                              "m14_estes", "-potential-yields.csv"))
+carbon_input_dt <- fread(paste0(p_dat, .Platform$file.sep,
+                            "m14_estes", .Platform$file.sep,
+                            "m14_estes", "-carbon.csv"))
+travel_input_dt <- fread(paste0(p_dat, .Platform$file.sep,
+                            "m14_estes", .Platform$file.sep,
+                            "m14_estes", "-cost.csv"))
+
+msk_csv <- fread(paste0(p_dat, .Platform$file.sep,
+                        "m14_estes", .Platform$file.sep,
+                        "m14_estes", "-mask.csv"))
+msk_csv <- msk_csv[,-"ind"]
+
+estes_bd_input <- estes_bd_input_dt %>%
+  cbind(msk_csv, .) %>%
+  dt_to_raster(., CRSobj)# %>%
+  #dropLayer(., c(1))
+
+
+yield_input <- yield_input_dt %>%
+  cbind(msk_csv, .) %>%
+  dt_to_raster(., CRSobj)# %>%
+  #dropLayer(., c(1))
+raster::plot(yield_input)
+
+carbon_input <- carbon_input_dt %>%
+  cbind(msk_csv, .) %>%
+  dt_to_raster(., CRSobj) #%>%
+  #dropLayer(., c(1))
+
+carbon_input <- carbon_input$veg + 0.25*carbon_input$soil
+
+travel_input <- travel_input_dt %>%
+  cbind(msk_csv, .) %>%
+  dt_to_raster(., CRSobj) #%>%
+  #dropLayer(., c(1))
+
+msk_no_pas <- m14_estes_toff$inputs$mask[, .(x, y)]
+
+yield_input_no_pas <- m14_estes_toff$inputs$p_yield %>%
+    cbind(msk_no_pas, .) %>%
+    dt_to_raster(., CRSobj)
+  
+reference_y_toff$inputs$carbon %T>% plot()
+
+carbon_input_no_pas <- m14_estes_toff$inputs$carbon %>%
+    cbind(msk_no_pas, .) %>%
+    dt_to_raster(., CRSobj)  
+  
+travel_input_no_pas <- m14_estes_toff$inputs$cost %>%
+    cbind(msk_no_pas, .) %>%
+    dt_to_raster(., CRSobj)
+
+save(
+  estes_bd_input_dt,
+  yield_input_dt,
+  carbon_input_dt,
+  travel_input_dt,
+  msk_csv, # just the x and y coordinates of the Zambia msk
+  estes_bd_input,
+  yield_input,
+  carbon_input,
+  travel_input,
+  msk_no_pas, # just the x and y coordinates of the Zambia msk, without PAs
+  yield_input_no_pas, 
+  carbon_input_no_pas,
+  travel_input_no_pas,
+  file = fp(p_mod_inputs, "yct_constraint_inputs.Rdata")
+)
+```
+
+

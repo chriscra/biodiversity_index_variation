@@ -1,0 +1,819 @@
+---
+title: "cc_Parallel"
+author: "Christopher Crawford"
+date: "8/28/2019"
+output: html_document
+---
+This document outlines code for running computationally expensive functions in parallel, most importantly, `st_make_valid`.
+
+Workflow for parallel:
+add libraries
+check the number of clusters
+set up the cluster with the particular number of cores
+export the libraries each core needs to run the analysis (basically, parallel or snowfall, sf, lwgeom)
+load the file, add a surrogate key to re order stuff if it comes in at a different time.
+
+dummy function to apply st_make_valid to elements of a list, return that element, and automatically start on the next one. I think each element will be put into a list, which could then be re collected using the function collect()
+
+
+```{r utilities, eval=TRUE}
+## libraries
+source("R/cc_libraries.R")
+source("R/cc_functions.R")
+
+library(parallel)
+install.packages("snowfall")
+library(snowfall)
+library(purrr)
+
+```
+
+```{r pathnames}
+## Pathnames
+# Zambia specific file path names
+p_proj <- "/Users/christophercrawford/Google Drive/_Projects/Zambia/agroEcoTradeoff"
+p_dat <-     fp(p_proj,"external/data") # this has the "input_key" folders: ZA
+p_ZA <-      fp(p_dat,"ZA")
+p_datnew <-  fp(p_proj,"external/data_new")
+
+p_basedat <- fp(p_proj,"external/base_data")
+
+# for General data sources
+p_dat_main <- "/Users/christophercrawford/Google Drive/_Projects/data"
+p_dat_bd <-  fp(p_dat_main,"Bd")
+p_mam <-  fp(p_dat_bd,"IUCN_RedList/MAMMALS")
+p_rep <-  fp(p_dat_bd,"IUCN_RedList/REPTILES")
+p_amp <-  fp(p_dat_bd,"IUCN_RedList/AMPHIBIANS")
+p_bird <- fp(p_dat_bd,"IUCN_RedList/Birds")
+
+p_basemaps <- fp(p_datnew,"basemaps")
+
+
+p_temp <- fp(p_datnew, "temp")
+```
+
+```{r load-files}
+st_layers(fp(p_amp,"AMPHIBIANS.shp")) # what layers are there in the BOTW file geodatabase? 
+amp_sf <- st_read(dsn = fp(p_amp,"AMPHIBIANS.shp"))
+
+load(fp(p_iucn_dev,"amphibian_valid_files.RData"), verbose = TRUE) # amp_sf_valid
+
+# basemaps ------------------------------------------------------------------------------------
+load(fp(p_basemaps,"basemaps.RData"), verbose = TRUE)
+```
+
+
+```{r data}
+# Create dataset --------------------------------------------------------------------------
+amp_sf_valid_invalid <- amp_sf_valid %>%
+  filter(is_valid_reason != "Valid Geometry") # create a dataset of just the invalid polygons, based on the fixed sf object. 
+
+invalid_dat <- amp_sf %>%
+  filter(id_no %in% amp_sf_valid_invalid$id_no) # filter the original, unfixed sf object, to just the invalid polygons
+
+add_dat <- amp_sf[1:200,] # just the first 200 rows, to make the file bigger for testing. 
+small_dat <- amp_sf[1:50,]
+eighty_dat <- amp_sf[1:80,] %>%
+  mutate(key = row_number()) %>%
+  select(key, everything()) # rearrange to have the key as the first column
+dat <- rbind(invalid_dat, add_dat) # combine the datasets. 
+
+```
+
+```{r benchmarks}
+# Benchmarks --------------------------------------------------------------------------
+system.time(test_valid <- cc_make_valid(invalid_dat)) # 8.3 sec
+system.time(dat_valid <- cc_make_valid(dat)) # much longer, 43 seconds
+system.time(small_dat_valid <- cc_make_valid(small_dat)) # much longer, 8.5 seconds
+
+system.time(eighty_dat_valid_bench <- cc_make_valid(eighty_dat)) # 19.2 seconds
+
+
+# amp_sf_valid <- st_make_valid(amp_sf) 
+# note: st_make_valid took about 5 minutes total on the entire amp_sf file.
+
+
+
+```
+
+```{r split-list}
+# add row number as a surrogate key, before making into a list ------------------------
+head(dat)
+dat <- dat %>%
+  mutate(key = row_number()) %>%
+  select(key, everything()) # rearrange to have the key as the first column
+
+
+# split each row into an element in the list -------------------------------------------
+dat_list <- split(dat, f = seq(nrow(dat))) # also works with seq_along(list)
+dat_list[[1]]
+length(dat_list)
+
+invalid_dat_list <- split(invalid_dat, f = seq(nrow(invalid_dat)))
+small_dat_list <- split(small_dat, f = seq(nrow(small_dat)))
+
+
+eighty_dat <- eighty_dat %>%
+  mutate(key = row_number()) %>%
+  select(key, everything())
+eighty_dat_list <- split(eighty_dat, f = seq(8))
+
+
+```
+
+```{r lapply}
+# apply function to elements in list -------------------------------------------
+# first way
+results_lapply1 <- lapply(invalid_dat_list, function(x) cc_make_valid(x)) # in this case, I have my data as a list, which is then put through the function I define in the FUN argument. This seems to work fine.
+
+# second way
+mylist <- seq_along(small_dat_list) # or seq(length(df))
+myfun <- function(i, list){ # a function that takes an input i, then apply st_make_valid to the ith element in list
+  cc_make_valid(list[[i]])
+}
+results_lapply2 <- lapply(mylist, myfun, list = small_dat_list) # the last input specifies a parameter for myfun.
+
+
+# third way
+system.time(
+results_lapply3 <- lapply(seq_along(invalid_dat_list), function(i) cc_make_valid(invalid_dat_list[[i]])) # these two are identical.
+) # took 8.48 seconds.
+
+
+# fourth way:
+system.time(
+results_lapply4 <- lapply(seq(nrow(smaller_dat)), function(i) cc_make_valid(smaller_dat[i, ])) # 
+) # took 162 seconds. this worked, but it split the dataset by column, making a list with 28 elements, each with the one column. It then ran the function on each element of the list. seemed to have really pushed the computer though. not efficient. but, I think it did work correctly, in that it ran the function on each list element. I guess it was because I was doing it without a comma!
+
+results_lapply4[[2]]
+
+# fifth way: this is to test how lapply works with a list with only 8 elements, each with 10 rows. The idea is that I'm curious if the function runs on each list element correctly. This would allow me to send larger list pieces to each core, rather than just sending a bunch of single row list elements. 
+
+eighty_dat_list <- split(eighty_dat, f = seq(8))
+eighty_dat_list[[1]]
+length(eighty_dat_list)
+system.time(
+results_lapply5 <- lapply(seq_along(eighty_dat_list), function(i) cc_make_valid(eighty_dat_list[[i]])) # 
+) # took 16.62 seconds.
+results_lapply5[[1]]
+results_lapply5
+final_results5 <- do.call("rbind", results_lapply5)
+
+
+# sixth way, map from purrr
+results_map <- purrr::map(.x = invalid_dat_list, .f = function(x) cc_make_valid(x))
+results_map[[1]]
+results_map
+identical(results_map, results_lapply3) # false
+
+```
+
+```{r parallel}
+# Parallel, with parallel::mclapply() ---------------------------------------------------------------
+ncores <- parallel::detectCores()
+ncores # I have 8 on my macbook pro
+
+system.time(
+results_par_small <- mclapply(seq_along(invalid_dat_list), function(i) cc_make_valid(invalid_dat_list[[i]]), mc.cores = ncores-1)
+) # took 3.9 seconds, vs. 8.5 normal.
+8.5/3.9
+
+
+
+system.time(
+results_par_dat <- mclapply(seq_along(dat_list), function(i) cc_make_valid(dat_list[[i]]), mc.cores = ncores)
+) # took 23 seconds (7 cores), vs. 43 seconds normal. 21.9 seconds with all 8 cores.
+final_results_par <- do.call("rbind", results_par)
+final_results_par$pre_fix_reasons
+st_is_valid(final_results_par, reason = TRUE)
+plot(final_results_par[5,]$geometry)
+
+# parallel using future.lapply ------------------------------------------------------------
+install.packages("future.apply")
+library(future.apply)
+plan(multiprocess, workers = 7)
+
+system.time(
+  results_par_future <- future_lapply(seq_along(dat_list), 
+                           function(i) cc_make_valid(dat_list[[i]])
+                           )
+) # 26.549 seconds. vs. 43 seconds normal.
+final_results_par_future <- do.call("rbind", results_par_future)
+final_results_par_future$pre_fix_reasons
+final_results_par_future$post_fix_reasons
+st_is_valid(final_results_par_future, reason = TRUE)
+plot(final_results_par_future[2,]$geometry)
+
+
+```
+
+```{r snow}
+# parallel using snow ------------------------------------------------------------
+library(snow)
+ncores <- parallel::detectCores()
+cl <- parallel::makeCluster(ncores-1)
+
+clusterEvalQ(library(sf)) # load libraries
+amp_sf <- st_read(dsn = fp(p_amp,"AMPHIBIANS.shp"))
+small_dat <- amp_sf[1:50,]
+small_dat_list <- split(small_dat, f = seq(nrow(small_dat)))
+
+source("R/cc_functions.R") # load functions
+
+custerExport(cl, ls()) # export the cluster and the workspace, which includes objects, functions, data, etc.
+
+results_snow <- parLapply(cl, 
+                          seq_along(dat_list), 
+                          function(i) cc_make_valid(dat_list[[i]])
+                          )
+final_results_snow
+
+## snow method
+library(snow)
+cluster <- makeCluster(16, type="MPI")
+clusterEvalQ(cluster, library(utils)) # load a library
+clusterExport(cluster, ls()) # export everything
+out <- parSapply(cluster, 1:16, function(x) print(paste("snow hello from ", x)))
+print(out)
+stopCluster(cluster)
+ 
+## SNOWFALL method
+library(snowfall)
+# default
+sfInit( parallel=TRUE, cpus=16)
+sfExportAll()
+sfLibrary(utils)
+out <- sfSapply(1:16, function(x) print(paste("snow hello from ", x)))
+print(out)
+sfStop()
+
+```
+
+```{r doParallel}
+library(foreach)
+library(doParallel)
+ncores <- parallel::detectCores()
+cl <- parallel::makeCluster(ncores-4)
+registerDoParallel(cl)
+
+# dataset ----------------------------------------------------------------------
+dat <- bird_sf[1:100,] # however you want to define the dataset
+dat <- dat %>%
+  mutate(key = row_number()) %>%
+  select(key, everything())
+
+# split dataset into a list for the function to run on ------------------------
+dat_list <- split(dat, f = seq(nrow(dat)))
+# alternatively, just 8 list elements: #dat_list <- split(dat, f = seq(8))
+
+# define the list to iterate over through my function
+iterate_list <- seq_along(dat_list) # or seq(length(dat_list))
+
+# define my function ----------------------------------------------------------
+# This function takes an input i, then applies cc_make_valid to the ith element in list of data
+cc_make_valid_par <- function(i, list){
+  cc_make_valid(list[[i]])
+}
+
+# run in parallel with doParallel -------------------------------------------------------------
+system.time(
+  results_dopar <- foreach(i = seq_along(iterate_list), .combine = rbind, .packages = c('dplyr','sf', 'lwgeom')) %dopar% {
+    cc_make_valid_par(i, dat_list)
+    }
+) 
+# 79.376 seconds with 8 cores
+# 78.015 seconds with 7 cores
+# 76.577 seconds with 4 cores
+
+# compare to mclapply: # 86.438 seconds. 
+system.time(
+  results_par <- mclapply(iterate_list,
+                          cc_make_valid_par, 
+                          list = dat_list,
+                          mc.cores = parallel::detectCores()
+                          ) # the last input specifies a parameter for myfun.
+  ) 
+
+# compare to serial: 172.881 seconds
+system.time(dat_valid_bench <- cc_make_valid(dat))
+
+
+# recombine, not sure if I need -------------------------------------------------------------------
+final_par <- do.call("rbind", results_par)
+
+
+
+
+# Stop the cluster ------------------------------------------------------------
+parallel::stopCluster(cl)
+stopImplicitCluster()
+
+```
+
+
+```{r recombine}
+# put it back together -------------------------------------------------------------------------------------
+
+final_results <- do.call("rbind", dat_list)
+final_results1 <- do.call("rbind", results_lapply1)
+final_results2 <- do.call("rbind", results_lapply2)
+final_results3 <- do.call("rbind", results_lapply3)
+final_map <- do.call("rbind", results_map)
+final_results_par <- do.call("rbind", results_par)
+st_is_valid(final_results_par, reason = TRUE)
+
+st_is_valid(final_results1, reason = TRUE)
+st_is_valid(final_results3, reason = TRUE)
+st_is_valid(final_map, reason = TRUE)
+
+
+all.equal(final_results1, final_results2)
+names(final_results1)
+names(final_results2)
+
+test1 <- st_is_valid(invalid_dat, reason = TRUE)
+test <- st_is_valid(final_results, reason = TRUE)
+length(results_lapply)
+
+
+```
+
+```{r tester}
+# fifth way: this is to test how lapply works with a list with only 8 elements, each with 10 rows. The idea is that I'm curious if the function runs on each list element correctly. This would allow me to send larger list pieces to each core, rather than just sending a bunch of single row list elements. 
+
+eighty_dat_list <- split(eighty_dat, f = seq(8))
+eighty_dat_list[[1]]
+length(eighty_dat_list)
+system.time(
+results_lapply5 <- lapply(seq_along(eighty_dat_list), function(i) cc_make_valid(eighty_dat_list[[i]])) # 
+) # took 16.62 seconds.
+
+
+dat <- bird_sf[1:500,]
+
+system.time(dat_valid_bench <- cc_make_valid(dat)) #  sec
+
+
+dat <- dat %>%
+  mutate(key = row_number()) %>%
+  select(key, everything())
+
+dat_list <- split(dat, f = seq(nrow(dat)))
+# alternatively, just 8 list elements:
+dat_list <- split(dat, f = seq(8))
+
+# parallel
+system.time(
+  results_par <- mclapply(seq_along(dat_list), function(i) cc_make_valid(dat_list[[i]]), mc.cores = ncores)
+  ) # took 23 seconds (7 cores), vs. 43 seconds normal. 21.9 seconds with all 8 cores.
+
+final <- do.call("rbind", results)
+
+
+
+```
+
+
+```{r workflow}
+# workflow 1 -------------------------------------------------------------------------------------------
+dat <- amp_sf[1:400,] # however you want to define the dataset
+
+system.time(dat_valid_bench <- cc_make_valid(dat)) 
+# 80 rows: 15.572 sec
+# 400 rows: 137.531 sec
+# 137.531/15.572
+
+dat <- dat %>%
+  mutate(key = row_number()) %>%
+  select(key, everything())
+
+dat_list <- split(dat, f = seq(nrow(dat)))
+# alternatively, just 8 list elements:
+#dat_list <- split(dat, f = seq(8))
+
+iterate_list <- seq_along(dat_list) # or seq(length(df))
+cc_make_valid_par <- function(i, list){ # a function that takes an input i, then apply st_make_valid to the ith element in list
+  cc_make_valid(list[[i]])
+}
+
+system.time(
+  results_par <- mclapply(iterate_list,
+                          cc_make_valid_par, 
+                          list = dat_list,
+                          mc.cores = parallel::detectCores()
+                          ) # the last input specifies a parameter for myfun.
+  )
+
+# serial 
+system.time(
+  results_ser <- lapply(seq_along(dat_list), function(i) cc_make_valid(dat_list[[i]])) # 
+  ) 
+# 80 rows: took 16.54 seconds, with each row as a list element. With 8 list elements, took 16.366
+# 400 rows: 142.63 sec with single row list, sec with 8 element list
+
+# direct parallization, without defining the function, list, etc
+# parallel
+system.time(
+  results_par2 <- mclapply(seq_along(dat_list), function(i) cc_make_valid(dat_list[[i]]), mc.cores = parallel::detectCores())
+  ) 
+# 80 rows: took 7.89 seconds (about 2x speedup) with each row as a list element. With 8 list elements, took 7.751
+# 400 rows: 104.765 sec with single row list, 109.979 sec with 8 element list
+
+
+final_ser <- do.call("rbind", results_ser)
+final_par <- do.call("rbind", results_par)
+
+
+# workflow 2 -------------------------------------------------------------------------------------------
+amp_sf <- st_read(dsn = fp(p_amp,"AMPHIBIANS.shp"))
+
+dat <- amp_sf[1:100,] # however you want to define the dataset
+# dat <- invalid_dat
+dat <- dat %>%
+  mutate(key = row_number()) %>%
+  select(key, everything())
+
+system.time(
+  results_par <- mclapply(seq(nrow(dat)), function(i) cc_make_valid(dat[i, ]), mc.cores = parallel::detectCores())
+)
+
+# recombine ---------------------------------------------------------------
+final_par <- do.call("rbind", results_par)
+
+
+# split dataset into a list for the function to run on - actually, this isn't required... I can just run it directly on the dataframe
+# dat_list <- split(dat, f = seq(nrow(dat)))
+# alternatively, just 8 list elements: #dat_list <- split(dat, f = seq(8))
+
+# a more general case -----------------------------------------------------
+
+# define the list to iterate over through my function - or just include this directly in the function call. 
+iterations <- seq(nrow(dat)) 
+# if it's a list, seq_along(dat) would work, or seq(length(dat)). But, otherwise, length of a data.frame gives you the number of columns... so you need to use seq(nrow(dat))
+
+# define my function -----------------------------------------------------
+# This function takes an input i, then applies cc_make_valid to the ith element in list of data
+cc_make_valid_par <- function(i, data){
+  cc_make_valid(dat[i, ])
+}
+
+# run in parallel --------------------------------------------------------
+system.time(
+  results_par1 <- mclapply(iterations,
+                          cc_make_valid_par,
+                          data = dat,
+                          mc.cores = parallel::detectCores()
+                          ) # the last input specifies a parameter for myfun.
+  )
+# results_par <- mclapply(seq_along(dat_list), function(i) cc_make_valid(dat_list[[i]]), mc.cores = parallel::detectCores()) # if you needed to run it on a list.
+
+# recombine ---------------------------------------------------------------
+final_par <- do.call("rbind", results_par)
+
+
+
+# serial, for comparison ------------------------------------------------
+system.time(dat_valid_bench <- cc_make_valid(dat)) 
+system.time(
+  results_ser <- lapply(iterate_list,
+                        cc_make_valid_par,
+                        list = dat_list
+                        ) # the last input specifies a parameter for my function
+  )
+
+```
+
+```{r bare-workflow}
+# define data ----------------
+amp_sf <- st_read(dsn = "/Users/christophercrawford/Google Drive/_Projects/data/Bd/IUCN_RedList/AMPHIBIANS/AMPHIBIANS.shp")
+
+dat <- amp_sf[1:100,] # however you want to define the dataset
+dat <- dat %>%
+  mutate(key = row_number()) %>%
+  select(key, everything())
+
+# run in parallel ------------
+tic()
+dat_par <- mclapply(seq(nrow(dat)), function(i) cc_make_valid(dat[i, ]), mc.cores = parallel::detectCores())
+toc()
+
+
+# recombine ------------------
+dat_valid <- do.call("rbind", dat_par)
+
+
+# run in serial  ------------
+tic()
+results_par <- lapply(seq(nrow(dat)), function(i) cc_make_valid(dat[i, ]))
+toc()
+```
+
+```{r optimizing-function}
+cc_make_valid <- function (sf, add_reasons = TRUE) {
+  if (class(sf)[1] != "sf") {stop("The function requires the input to be an sf object.")}# 0. Check to make sure input is an sf object.
+  if (add_reasons == FALSE) {
+    sf <- st_make_valid(sf) # 2a. run st_make_valid to make the geometries valid. This usually takes a long time.
+    return(sf)
+  } else {
+    sf <- mutate(sf, pre_fix_reasons = st_is_valid(sf, reason = TRUE)) 
+    # 1. Add new column listing whether each geometry is valid or not (along with reasons why not; NA means corrupt geometry)
+      
+    sf <- st_make_valid(sf) 
+    # 2a. run st_make_valid to make the geometries valid. This usually takes a long time.
+    
+    sf <- mutate(sf, post_fix_reasons = st_is_valid(sf, reason = TRUE)) 
+    # 3. Check geometries again, and add another column to reasons_df
+    
+    return(sf)
+  }
+}
+
+dat <- amp_sf[1:100,]
+
+
+
+tic("og function time")
+dat_test <- cc_make_valid(dat)
+toc() # 14.845 sec
+
+tic("new function time")
+dat_test2 <- cc_make_valid_test(dat)
+toc() # 14.382 sec
+
+
+tic("new function time")
+dat_test2 <- cc_make_valid_test(dat)
+toc() # 14.382 sec
+
+
+tic("new function time, no reasons")
+dat_test3 <- cc_make_valid_test(dat, add_reasons = FALSE)
+toc() # 3 sec
+
+
+
+dat
+```
+
+
+```{r 10-row-par}
+# define data ----------------
+amp_sf <- st_read(dsn = "/Users/christophercrawford/Google Drive/_Projects/data/Bd/IUCN_RedList/AMPHIBIANS/AMPHIBIANS.shp")
+
+dat <- amp_sf[1:337,] # however you want to define the dataset
+dat <- dat %>%
+  mutate(key = row_number()) %>%
+  select(key, everything())
+
+# run in parallel, one row ------------
+tic("parallel by one row")
+dat_par <- mclapply(seq(nrow(dat)), function(i) cc_make_valid(dat[i, ]), mc.cores = parallel::detectCores())
+toc() # 103.547; 99.42 sec
+object_size(dat) #50 mb
+object_size(dat_par) #72 mb
+length(dat_par2)
+
+tic("parallel by 10 rows")
+dat_par2 <- mclapply(seq(1, nrow(dat), by = 10), function(i) cc_make_valid(dat[i:(i+9), ]), mc.cores = parallel::detectCores())
+toc() # 97.46
+object_size(dat_par2) #52 mb
+length(dat_par2)
+dat_par2[[34]]
+
+# recombine ------------------
+dat_valid <- do.call("rbind", dat_par2)
+tail(dat_valid)
+
+dat_valid <- filter(dat_valid, !is.na(id_no))
+# run in serial  ------------
+tic()
+results_par <- lapply(seq(nrow(dat)), function(i) cc_make_valid(dat[i, ]))
+toc()
+```
+
+```{r extras}
+# Extras ---------------------------------------------------------------------------------------
+# this one supposedly is a faster way to recombine the list, but I'm not sure how to get it to work.
+final_results <- bind_rows(dat_list)#, .id = "column_label") # could use data.table::rbindlist(list), or do.call("rbind", dat_list)
+final_results <- unsplit(results_lapply, f = seq(length(results_lapply))) # this is a way to recombine something that was split using split()
+
+
+
+# Rebecca's code, using doParallel
+mylist <- replicate(100, as.matrix(dat), simplify=FALSE)
+
+
+# parallel using doParallel ------------------------------------------------------------
+cl <- parallel::makeCluster(ncores)
+doParallel::registerDoParallel(cl)
+
+# Loop over each row in the occurrence table
+valid <- foreach(i = 1:length(mylist), .combine = 'rbind', .packages = c('geometry','sf')) %dopar% {
+    myfun(mylist[[i]])
+}
+
+# Stop the cluster
+parallel::stopCluster(cl)
+```
+
+
+
+
+
+```{r}
+#!/usr/bin/env Rscript
+install.packages("tictoc")
+library(tictoc)
+
+print("testing...it works!(?)")
+
+```
+
+
+# cluster shell script
+The first part, `#!/bin/bash` tells teh shell what program to use to interpret the text, in this case, /bin/bash.
+```{r}
+###### #!/usr/bin/env Rscript # this part is unnecessary, as long as the SLURM script sets the working directory, and calls Rscript /path/file.R
+
+# install and load libraries needed
+install.packages("sf", "lwgeom", "dplyr", "tictoc")
+library(sf)
+library(lwgeom)
+library(dplyr)
+library(tictoc)
+
+tic("full script")
+
+# define function
+cc_make_valid <- function (sf, add_reasons = TRUE) {
+  if (class(sf)[1] != "sf") {stop("The function requires the input to be an sf object.")}# 0. Check to make sure input is an sf object.
+  if (add_reasons == FALSE) {
+    valid_sf <- st_make_valid(sf) # 2a. run st_make_valid to make the geometries valid. This usually takes a long time.
+    return(valid_sf)
+  } else {
+    reasons_df <-   # 1. Creates a dataframe listing whether each geometry is valid or not (along with reasons why not)
+      st_is_valid(sf, reason = TRUE) %>% # 1a. Test to see which geometries are not valid, returning a character vector (NA means corrupt geometry)
+      data.frame(pre_fix_reasons = .) %>% # 1b. Place those reasons in a data frame, titling the column
+      mutate(key = row_number()) %>% # 1c. Add a surrogate key based on row number
+      select(key, everything()) # 1d. Rearrange to have the key as the first column.
+    valid_sf <-
+      st_make_valid(sf) %>% # 2a. run st_make_valid to make the geometries valid. This usually takes a long time.
+      mutate(key = row_number()) %>% # 2b. Add a surrogate key
+      select(key, everything()) # 2c. Rearrange to make the key first column
+    reasons_df <- # 3. Check geometries again, and add another column to reasons_df
+      valid_sf %>%
+      st_is_valid(reason = TRUE) %>% # 3a. Run st_is_valid to check the geometries again after fixing them.
+      cbind(reasons_df, post_fix_reasons = .) # 3b. Add this vector to reasons_df, naming the column.
+    valid_sf <-
+      left_join(valid_sf, reasons_df, by = "key") # 4. Finally, join the now valid sf object to the dataframe listing pre and post valid status, and assign to a new object
+    return(valid_sf)
+  }
+}
+
+# now, the code for actually doing the stuff. 
+
+tic("load bird data")
+dat <- st_read(dsn = "home/clc6/data/BOTW.gdb", layer = "All_Species")
+toc()
+
+tic("add row number")
+dat <- bird_sf[1:300,]
+dat <- dat %>%
+  mutate(key = row_number()) %>%
+  select(key, everything())
+toc()
+
+tic("run in parallel")
+system.time(
+  results_par <- mclapply(seq(nrow(dat)), function(i) cc_make_valid(dat[i, ]), mc.cores = 8)
+)
+toc()
+
+tic("recombine")
+final_par <- do.call("rbind", results_par)
+toc()
+
+toc()
+
+.libPaths()
+
+install.packages("tictoc")
+
+
+```
+
+# Adroit
+```{r rscript}
+####### Test R script to run on the cluster ----------------------------------
+# the script is intended to make valid an sf object, in parallel
+
+# install and load libraries needed
+pkgs <- c("sf", "lwgeom", "dplyr", "tictoc", "parallel") # package names
+inst <- lapply(pkgs, library, character.only = TRUE)
+# install.packages(pkgs) # IMPORTANT: one cannot install packages on individual cores, which is what this code bit in the Rscript would try to do, since the individual cores do not have access to the internet. You have to install them on the head node. You do this by opening R, and using the typical R commands, install.packages("package") and library(package).
+
+
+tic("full script")
+
+# define function
+cc_make_valid <- function (sf, add_reasons = TRUE) {
+  if (class(sf)[1] != "sf") {stop("The function requires the input to be an sf object.")}# 0. Check to make sure input is an sf object.
+  if (add_reasons == FALSE) {
+    valid_sf <- st_make_valid(sf) # 2a. run st_make_valid to make the geometries valid. This usually takes a long time.
+    return(valid_sf)
+  } else {
+    reasons_df <-   # 1. Creates a dataframe listing whether each geometry is valid or not (along with reasons why not)
+      st_is_valid(sf, reason = TRUE) %>% # 1a. Test to see which geometries are not valid, returning a character vector (NA means corrupt geometry)
+      data.frame(pre_fix_reasons = .) %>% # 1b. Place those reasons in a data frame, titling the column
+      mutate(key = row_number()) %>% # 1c. Add a surrogate key based on row number
+      select(key, everything()) # 1d. Rearrange to have the key as the first column.
+    valid_sf <-
+      st_make_valid(sf) %>% # 2a. run st_make_valid to make the geometries valid. This usually takes a long time.
+      mutate(key = row_number()) %>% # 2b. Add a surrogate key
+      select(key, everything()) # 2c. Rearrange to make the key first column
+    reasons_df <- # 3. Check geometries again, and add another column to reasons_df
+      valid_sf %>%
+      st_is_valid(reason = TRUE) %>% # 3a. Run st_is_valid to check the geometries again after fixing them.
+      cbind(reasons_df, post_fix_reasons = .) # 3b. Add this vector to reasons_df, naming the column.
+    valid_sf <-
+      left_join(valid_sf, reasons_df, by = "key") # 4. Finally, join the now valid sf object to the dataframe listing pre and post valid status, and assign to a new object
+    return(valid_sf)
+  }
+}
+
+# now, the code for actually doing the stuff. 
+
+tic("load data")
+amp_sf <- st_read(dsn = "/scratch/network/clc6/data/AMPHIBIANS/AMPHIBIANS.shp")
+dat <- amp_sf[1:500,]
+toc(log = TRUE)
+
+tic("add row number")
+dat <- dat %>%
+  mutate(key = row_number()) %>%
+  select(key, everything())
+toc(log = TRUE)
+
+tic("run in parallel")
+dat_par <- mclapply(seq(nrow(dat)), function(i) cc_make_valid(dat[i, ]), mc.cores = 10)
+toc(log = TRUE)
+
+tic("recombine")
+dat_par <- do.call("rbind", dat_par)
+toc(log = TRUE)
+
+toc(log = TRUE)
+
+
+tic("serial_lapply")
+dat_ser <- lapply(seq(nrow(dat)), function(i) cc_make_valid(dat[i, ])) # the last input specifies a parameter for my function
+dat_ser <- do.call("rbind", dat_ser)
+toc(log = TRUE)
+
+identical(dat_par, dat_ser) # are they identical?
+
+tic.log(format = TRUE)
+
+tic("write dat_par file")
+save(dat_par, file = "/scratch/network/clc6/data_derived/dat_par_test.RData")
+toc(log = TRUE)
+
+tic.log(format = TRUE)
+```
+
+
+Run this with `sbatch /home/clc6/scripts/make_valid.slurm`
+```{bash slurm-script}
+#!/bin/bash
+#SBATCH --nodes=1
+#SBATCH --ntasks-per-node=10
+#SBATCH --time=0:20:00
+#SBATCH --mem-per-cpu=8G
+#SBATCH --job-name="cc_make_valid parallel amp500 test"
+#SBATCH --mail-type=begin
+#SBATCH --mail-type=end
+#SBATCH --mail-user=clc6@princeton.edu
+
+module load gdal # this line loads gdal
+# Module load rh # this line loads red hat. (I think I can do this on the same line as gdal, but might be giving me an error.) rh stands for red hat, which is a compiler (gcc/g++).
+
+cd /home/clc6 # set the working directory
+
+Rscript ./scripts/make_valid_par_test.R # load an Rscript, at the following location
+
+# Notes ----------------------------------
+# Run this with 
+# sbatch ./make_valid_par_test.slurm
+
+```
+
+test
+```{r cluster-output-tester}
+load(file = "/Users/christophercrawford/Google Drive/_Projects/Zambia/cluster/data_derived/dat_par_test0.RData", verbose = TRUE)
+
+dat_par2 <- dat_par
+identical(dat_par, dat_par2)
+
+load(file = "/Users/christophercrawford/Downloads/bird_valid_par.RData", verbose = TRUE)
+```
+

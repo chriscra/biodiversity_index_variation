@@ -1,0 +1,26 @@
+\contentsline {section}{List of Figures}{2}{section*.2}%
+\contentsline {section}{\numberline {1}Expanded Methods}{4}{section.1}%
+\contentsline {subsection}{\numberline {1.1}Land-use prioritization model (Estes et al. 2016)}{4}{subsection.1.1}%
+\contentsline {subsubsection}{\numberline {1.1.1}Non-Biodiversity Model Inputs}{4}{subsubsection.1.1.1}%
+\contentsline {subsection}{\numberline {1.2}Model weighting specifications}{5}{subsection.1.2}%
+\contentsline {subsection}{\numberline {1.3}Construction of Biodiversity Indices}{6}{subsection.1.3}%
+\contentsline {subsubsection}{\numberline {1.3.1}Existing Biodiversity Indices}{6}{subsubsection.1.3.1}%
+\contentsline {subsubsection}{\numberline {1.3.2}Types of Richness and Taxonomic Groups}{7}{subsubsection.1.3.2}%
+\contentsline {subsubsection}{\numberline {1.3.3}Index Calculation Methods}{8}{subsubsection.1.3.3}%
+\contentsline {subsubsection}{\numberline {1.3.4}Processing spatial data and producing biodviersity indices}{9}{subsubsection.1.3.4}%
+\contentsline {subsubsection}{\numberline {1.3.5}Maps of Biodiversity Inputs}{9}{subsubsection.1.3.5}%
+\contentsline {subsection}{\numberline {1.4}Conversion maps for \emph {bp} weighting specification}{13}{subsection.1.4}%
+\contentsline {subsection}{\numberline {1.5}Calculation of weighted Jaccard Similarity index}{13}{subsection.1.5}%
+\contentsline {subsection}{\numberline {1.6}Adjacency -- nearest neighbor distance}{18}{subsection.1.6}%
+\contentsline {subsection}{\numberline {1.7}Challenges with spatial uncertainty analysis}{18}{subsection.1.7}%
+\contentsline {section}{\numberline {2}Additional Analyses}{19}{section.2}%
+\contentsline {subsection}{\numberline {2.1}Increasing the production target}{19}{subsection.2.1}%
+\contentsline {subsection}{\numberline {2.2}Directly Comparing the Order of Conversion}{19}{subsection.2.2}%
+\contentsline {subsection}{\numberline {2.3}Incorporating non-biodiversity constraints}{24}{subsection.2.3}%
+\contentsline {subsubsection}{\numberline {2.3.1}Threatened Species Richness}{25}{subsubsection.2.3.1}%
+\contentsline {subsubsection}{\numberline {2.3.2}Additional composites}{29}{subsubsection.2.3.2}%
+\contentsline {subsubsection}{\numberline {2.3.3}Normalization order}{31}{subsubsection.2.3.3}%
+\contentsline {section}{\numberline {3}Conversion Maps}{34}{section.3}%
+\contentsline {subsection}{\numberline {3.1}Conversion maps at different model weighting specifications}{34}{subsection.3.1}%
+\contentsline {subsection}{\numberline {3.2}Panels of conversion maps at different weights}{41}{subsection.3.2}%
+\contentsline {section}{References}{49}{section*.3}%

@@ -1,0 +1,73 @@
+# my gitignore file, Zambia project
+
+# directories to exclude
+Backups/
+external/
+lyndon_files/
+
+# files to exclude
+*.bib
+*.webloc
+# installer.sh
+
+# scripts to exclude
+scripts/cc_MS-draft2019.Rmd
+scripts/**/*.html
+scripts/**/*.pdf
+scripts/**/*.png
+scripts/**/*.rda
+scripts/versions/
+
+# note: a/**/z matches nested directories
+
+
+## from R.gitignore template
+
+# History files
+.Rhistory
+.Rapp.history
+
+# Session Data files
+.RData
+
+# User-specific files
+.Ruserdata
+
+# RStudio files
+.Rproj.user/
+
+# knitr and R markdown default cache directories
+*_cache/
+/cache/
+*_files/
+
+# Temporary files created by R markdown
+*.utf8.md
+*.knit.md
+
+# R Environment Variables
+.Renviron
+
+# unused template items below here:
+
+# Example code in package build process
+*-Ex.R
+
+# Output files from R CMD build
+/*.tar.gz
+
+# Output files from R CMD check
+/*.Rcheck/
+
+# produced vignettes
+vignettes/*.html
+vignettes/*.pdf
+
+# OAuth2 token, see https://github.com/hadley/httr/releases/tag/v0.3
+.httr-oauth
+
+# pkgdown site
+docs/
+
+# translation temp files
+po/*~

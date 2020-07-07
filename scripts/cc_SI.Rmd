@@ -1,0 +1,794 @@
+---
+title: "Supporting Information:  Consequences of under-explored variation in biodiversity indices used for land-use prioritization"
+header-includes: \usepackage[nottoc]{tocbibind}
+output: 
+  bookdown::pdf_document2:
+    keep_tex: true
+    extra_dependencies: ["float"]
+geometry: 
+  margin=1in
+author: 
+  - Christopher L. Crawford^[Corresponding Author, ccrawford@princeton.edu, Robertson Hall, Princeton University, Princeton, NJ] $^1$ 
+  - Lyndon D. Estes$^2$
+  - Timothy S. Searchinger$^1$
+  - David S. Wilcove$^{1, 3}$
+date:
+  $^1$Princeton School of Public and International Affairs, Princeton University, Princeton, NJ \newline
+    $^2$Graduate School of Geography, Clark University, Worcester, MA \newline
+    $^3$Department of Ecology & Evolutionary Biology, Princeton University, Princeton, NJ \newline
+    \newline  
+    \newline
+    \today 
+
+editor_options:
+  chunk_output_type: inline
+bibliography: /Users/christophercrawford/Google Drive/Library/library.bib
+
+nocite: |
+  @RStudioTeam2018, @R-agroEcoTradeoff, @Estes2015, @R-lmisc, @R-raster, @R-rasterVis, @R-rgdal, @R-sf, @R-sp, @R-gdalUtils, @R-rasterVis, @R-data.table, @R-tictoc, @fasterize, @lwgeom, @magrittr, @parallel, @reshape2, @cowplot, @tidyverse, @knitr, @spatstat, @rmarkdown, @bookdown, @pryr
+---
+
+```{r misc, eval = FALSE, echo = FALSE}
+library(tinytex)
+tinytex::install_tinytex()
+
+# author: Christopher L. Crawford^[ccrawford@princeton.edu] $^1$ \and 
+#         Lyndon D. Estes$^2$ \and
+#         Timothy S. Searchinger$^1$ \and
+#         David S. Wilcove$^1$
+
+# author:
+#   - Christopher L. Crawford^[Princeton University, Princeton, NJ, ccrawford@princeton.edu]
+#   - Lyndon D. Estes^[Clark University, Worcester, MA]
+#   - Timothy S. Searchinger^[Princeton University, Princeton, NJ]
+#   - David S. Wilcove^[Princeton University, Princeton, NJ]
+
+```
+
+```{r start, eval = TRUE, echo = FALSE, include = FALSE}
+source("cc_libraries.R")
+source("cc_functions.R")
+source("cc_pathnames.R")
+```
+
+```{r load-files, include = FALSE}
+# names 
+facet_names_distill <- c("all", "endemism", "small", "mam", "bird", "amp", "rep", "average", "geometric", "max", "multi", "res1", "res10", "res110", "vert_endemism", "plants", "estes", "laurance", "habitats", "bird_composite", "damania", "bp", "b", "by", "bc", "bt", "byct", "z50")
+
+facet_names <- c("all_bp", "endemism_bp", "threat_bp", "small_bp", "mam_bp", "bird_bp", "amp_bp", "rep_bp", "average_bp", "geometric_bp", "max_bp", "multi_bp", "res1_bp", "res10_bp", "res110_bp", "vert_endemism_bp", "plants_bp", "estes_bp", "laurance_bp", "habitats_bp", "bird_composite_bp", "damania_bp", "all_b", "endemism_b", "threat_b", "small_b", "mam_b", "bird_b", "amp_b", "rep_b", "average_b", "geometric_b", "max_b", "multi_b", "res1_b", "res10_b", "res110_b", "vert_endemism_b", "plants_b", "estes_b", "laurance_b", "habitats_b", "bird_composite_b", "damania_b", "all_by", "endemism_by", "threat_by", "small_by", "mam_by", "bird_by", "amp_by", "rep_by", "average_by", "geometric_by", "max_by", "multi_by", "res1_by", "res10_by", "res110_by", "vert_endemism_by", "plants_by", "estes_by", "laurance_by", "habitats_by", "bird_composite_by", "damania_by", "all_bc", "endemism_bc", "threat_bc", "small_bc", "mam_bc", "bird_bc", "amp_bc", "rep_bc", "average_bc", "geometric_bc", "max_bc", "multi_bc", "res1_bc", "res10_bc", "res110_bc", "vert_endemism_bc", "plants_bc", "estes_bc", "laurance_bc", "habitats_bc", "bird_composite_bc", "damania_bc", "all_bt", "endemism_bt", "threat_bt", "small_bt", "mam_bt", "bird_bt", "amp_bt", "rep_bt", "average_bt", "geometric_bt", "max_bt", "multi_bt", "res1_bt", "res10_bt", "res110_bt", "vert_endemism_bt", "plants_bt", "estes_bt", "laurance_bt", "habitats_bt", "bird_composite_bt", "damania_bt", "all_byct", "endemism_byct", "threat_byct", "small_byct", "mam_byct", "bird_byct", "amp_byct", "rep_byct", "average_byct", "geometric_byct", "max_byct", "multi_byct", "res1_byct", "res10_byct", "res110_byct", "vert_endemism_byct", "plants_byct", "estes_byct", "laurance_byct", "habitats_byct", "bird_composite_byct", "damania_byct", "all_z50", "endemism_z50", "threat_z50", "small_z50", "mam_z50", "bird_z50", "amp_z50", "rep_z50", "average_z50", "geometric_z50", "max_z50", "multi_z50", "res1_z50", "res10_z50", "res110_z50", "vert_endemism_z50", "plants_z50", "estes_z50", "laurance_z50", "habitats_z50", "bird_composite_z50", "damania_z50", "all", "endemism", "threat", "small", "mam", "bird", "amp", "rep", "average", "geometric", "max", "multi", "res1", "res10", "res110", "vert_endemism", "plants", "estes", "laurance", "habitats", "bird_composite", "damania", "bp", "b", "by", "bc", "bt", "byct", "z50")
+
+
+
+jac_w_melt <- read_csv(file = fp(p_mod_output, "jac_w_melt.csv")) %>% 
+  mutate(
+    facet = fct_relevel(facet, grep("bird_composite|habitats|plants", facet_names_distill, value = TRUE, invert = TRUE)),
+    facet_full = fct_relevel(facet_full, facet_names),
+    pair_full = fct_relevel(pair_full, facet_names),
+    pair = fct_relevel(pair, grep("bird_composite|habitats|plants", facet_names_distill, value = TRUE, invert = TRUE)),
+    comparison = fct_relevel(comparison, c("indices", "taxa", "types", "methods", "resolution", "weights")),
+    comparison = fct_recode(comparison, #"indices" = "composites", 
+                            "richness" = "types"),
+
+    weight = fct_relevel(weight, c("bp",   "b",    "by",   "bc",   "bt",   "byct", "z50",  "all"))) %>%
+  arrange(facet) %>%
+  as_tibble()
+
+facet_stats <- read_csv(file = fp(p_mod_output, "facet_stats.csv")) %>%
+  mutate(facet = fct_relevel(facet, grep("bird_composite|habitats|plants", facet_names_distill, value = TRUE, invert = TRUE)),
+         comparison = fct_relevel(comparison, c("composites", "taxa", "types", "methods", "resolution", "weights")),
+         comparison = fct_recode(comparison, "indices" = "composites", "richness" = "types"),
+         weight = fct_relevel(weight, c("bp",   "b",    "by",   "bc",   "bt",   "byct", "z50",  "all")))
+
+facet_stats_order_conv <- read_csv(file = fp(p_mod_output, "facet_stats_order_conv.csv")) %>%
+  mutate(facet = fct_relevel(facet, facet_names_distill),
+         comparison = fct_relevel(
+           comparison,c("indices", "taxa", "types", "methods", "resolution", "weights")),
+         comparison = fct_recode(comparison, #"indices" = "composites", 
+                                 "richness" = "types"),
+         weight = fct_relevel(weight, c("bp",   "b",    "by",   "bc",   "bt",   "byct", "z50",  "all", "order")))
+  
+
+facet_stats_order_protect <- read_csv(file = fp(p_mod_output, "facet_stats_order_protect.csv")) %>%
+  mutate(facet = fct_relevel(facet, facet_names_distill),
+         comparison = fct_relevel(comparison, c("composites", "taxa", "types", "methods", "resolution", "weights")),
+         comparison = fct_recode(comparison, #"indices" = "composites", 
+                                 "richness" = "types"),
+         weight = fct_relevel(weight, c("bp",   "b",    "by",   "bc",   "bt",   "byct", "z50",  "all", "order" )))
+  
+
+species_occurrence_zambia <- data.frame(
+  "Taxa" = c("Mammals", "Birds", "Amphibians", "Reptiles"),
+  "All species" = c("252", "738", "94", "226 (GARD)"),
+  "Threatened (CR, EN, VU)" = c("11", "20", "1", "3 (out of 37 assessed by IUCN in Zambia)"),
+  "Small-Ranged (50% smallest)" = c("17", "67", "3", "10 (GARD)"),
+  "Small-Ranged OR Threatened" = c("26", "82", "3", "13 (GARD/IUCN)"),
+  "Median global range size (km2)" = c("170,600", "471,000", "4,500", "31,500 (GARD)")
+)
+
+
+######### full, with all composites
+jac_w_melt_full <- read_csv(file = fp(p_mod_output, "jac_w_melt_full.csv")) %>% 
+  mutate(
+    facet = fct_relevel(facet, grep("bird_composite|habitats|plants", facet_names_distill, value = TRUE, invert = TRUE)),
+    facet_full = fct_relevel(facet_full, facet_names),
+    pair_full = fct_relevel(pair_full, facet_names),
+    pair = fct_relevel(pair, grep("bird_composite|habitats|plants", facet_names_distill, value = TRUE, invert = TRUE)),
+    comparison = fct_relevel(comparison, c("composites", "taxa", "types", "methods", "resolution", "weights")),
+    comparison = fct_recode(comparison, "indices" = "composites", "richness" = "types"),
+    weight = fct_relevel(weight, c("bp",   "b",    "by",   "bc",   "bt",   "byct", "z50",  "all"))) %>%
+  arrange(facet) %>%
+  as_tibble()
+
+facet_stats_full <- read_csv(file = fp(p_mod_output, "facet_stats_full.csv")) %>%
+  mutate(facet = fct_relevel(facet, grep("bird_composite|habitats|plants", facet_names_distill, value = TRUE, invert = TRUE)),
+         comparison = fct_relevel(comparison, c("composites", "taxa", "types", "methods", "resolution", "weights")),
+         comparison = fct_recode(comparison, "indices" = "composites", "richness" = "types"),
+         weight = fct_relevel(weight, c("bp",   "b",    "by",   "bc",   "bt",   "byct", "z50",  "all")))
+
+
+```
+
+```{r set-chunk-opts, include = FALSE}
+# set default chunk options
+knitr::opts_chunk$set(out.width = "1\\textwidth", #comment=NA #fig.width=6, fig.height=6
+                      echo = FALSE
+                      )
+```
+
+```{r include-graphics, eval=FALSE, echo=FALSE, fig.cap="A caption", out.width = '100%'}
+# this is a chunk for including a pre-existing plot or graphic.
+#knitr::include_graphics("/Users/christophercrawford/Google Drive/_Projects/Zambia/agroEcoTradeoff/external/plots/Estes-plots_test.png")
+
+# https://bookdown.org/yihui/rmarkdown-cookbook/cross-ref.html
+# cross reference in line with: #\@ref(fig:cars-plot) (or eq:label, or tab:label)
+
+# can also include a list of figures by including the following in the YAML
+# lof: True
+# or, as I currently have it.
+# \listoffigures
+
+```
+
+\listoffigures
+
+# Expanded Methods
+
+## Land-use prioritization model [@Estes2016a]
+
+Our analysis builds on the `agroEcoTradeoff` land-use model described in @Estes2016a and applied to Zambia. The `agroEcoTradeoff` model is designed to prioritize areas for agricultural expansion in order to meet a set of crop-specific production targets while simultaneously minimizing four costs: the total area of land required (i.e. maximizing yields), transportation costs, carbon released through conversion of natural vegetation to agriculture, and biodiversity loss. The model requires spatially explicit inputs representing these four costs in the form of maps with pixel values ranging from 0-1. The model is structured to express these costs in terms of production efficiency, or cost per unit yield estimated to result from conversion of a given cell. These constraints are then weighted according to user preferences and combined into a single map of “conversion priority.” Cells are then sequentially chosen for conversion until production targets are met, based on the expected yield in each cell and adjusted to account for the proportion of each pixel that is not currently cropped, settled, protected, or with slopes greater than 20%. 
+
+### Non-Biodiversity Model Inputs {#non-bd-inputs}
+In our analysis, we use this model to explore how a range of approaches for formulating biodiversity values affects land-use recommendations. We therefore use the same settings for non-biodiversity elements as applied in @Estes2016a, including representative future production targets for maize and soy (projecting a fourfold increase for maize and a 10-fold increase for soy by 2050, compared with 2009–2014 average), as well as the input yield, carbon density, and travel cost maps. Yield estimates are modelled using DSSAT [@Jones2003] based on weather station data and soil profiles, mapped to a 1 km$^2$ grid using a generalized additive model, and rescaled to match FAO yield-growth projections for Zambia by 2050 (see Figure \@ref(fig:yield)). Travel cost is based on travel time to the nearest market town. Carbon loss is based on estimates of aboveground and belowground biomass carbon stocks @Baccini2012. Additional detail on the model structure and how constraints were modeled can be found in @Estes2016a. The general structure of the model is illustrated in Main Text Figure 1b. See @Estes2016a for additional details. 
+
+(ref:caption-yield) Estimated maize and soy yields across Zambia, in tons/ha (different scales for each crop). Average yields, used in the pure biodiversity (*bp*) and 50% conversion (*z50*) model weighting specifications, are 5.30 tons/ha for maize and 3.38 tons/ha for soy. See @Estes2016a for details on how yields were modelled.
+
+```{r yield, fig.cap = '(ref:caption-yield)', echo=FALSE}
+knitr::include_graphics(fp(p_plots, "yield_maps.png"))
+```
+
+## Model weighting specifications {#model-weights}
+
+As our analysis primarily focuses on the consequences of variation in biodiversity metrics, the main text presents the results of model runs that place 100% of model weight on biodiversity and assume average yields throughout Zambia, designed to isolate only variation due to the biodiversity input (our primary analysis, which we label *bp*). Because the model can factor in heterogeneous yields in order to estimate the lowest-cost cells for meeting production targets (by calculating the production efficiency, or biodiversity cost/yield), those differential yields could play a significant role in the final selections. To remove the influence of yield in this base *bp* scenario, we assumed constant, average yields for maize and soy throughout Zambia. Average yields are 5.30 tons/ha for maize and 3.38 tons/ha for soy (Figure \@ref(fig:yield)).
+
+Ignoring non-biodiversity constraints and removing yield variation means that pixels are selected for conversion based only on their biodiversity value, selecting the least valuable cell and sequentially converting pixels until production targets are met. In addition to our main analysis (*bp*), we also assessed the effect of increasing our production target to assess the scale dependence of our results (Section \@ref(section-prod-targ)) and the effect of incorporating heterogeneous yield estimates and distributing weight from biodiversity onto the other three costs (Section \@ref(weights-results)). We also directly compared the sequential order of conversion (and, inversely, protection) based on biodiversity value (Section \@ref(section-order)).
+
+We ran the model through five additional scenarios that progressively shared weight between biodiversity and yield, carbon loss, and transportation cost, allowing these factors to also influence conversion decisions. These are:
+
+- *b* = 100% biodiversity, accurate, spatially heterogeneous yields
+- *by* = 50%/50% biodiversity/yield
+- *bc* = 50%/50% biodiversity/carbon
+- *bt* = 50%/50% biodiversity/transportation cost, and
+- *byct* = 25% weight on biodiversity, yield, carbon, and transportation cost
+
+Our baseline production target is based on current projections of future demand and yield increases, and converts to cropland an additional ~5% of Zambia remaining unprotected, uncultivated, and undeveloped land area of (approximately 22,000 km$^2$). In addition to these analyses, we also assessed the effect of increasing our production target so that ~50% of Zambia’s available land area must now be converted, in order to assess scale dependence. This model specification (*z50*), also assumes constant, average yields throughout Zambia, just like the primary analysis (*bp*). See Section \@ref(section-prod-targ) for details and results. See full results for the additional weighting specifications in Section \@ref(weights-results).
+
+
+## Construction of Biodiversity Indices {#bd-inputs}
+
+In order to capture the variation in how biodiversity can be represented in prioritization analyses, we construct a range of biodiversity indices representing variation within five groups (“**categories of variation**”), each with multiple options, or factors. First, we compare a set of published biodiversity indices. We then develop multiple biodiversity indices that capture *biological variation*, including types of species richness and taxonomic groups, and *methodological variation*, including index calculation methods and input spatial resolution. These biodiversity indices are either drawn from the literature (as noted) or derived from a set of expert vertebrate species range maps obtained from BirdLife International (bird species; @BirdLife2018), the IUCN (mammal and amphibian species; @IUCN2017), and GARD (reptile species; @Roll2017). These biodiversity indices are constructed as follows.
+
+### Existing Biodiversity Indices
+
+(@) *estes*: @Estes2016a’s composite incorporates threat, rarity, and intactness of potential natural vegetation (PNV) types of eastern and southern Africa, described by @VanBreugel2015. Rarity was calculated as the proportion of Zambia occupied by that vegetation type (these values were log transformed due to a highly skewed distribution). Threat was calculated as the proportion of vegetation falling within a protected area. Low values correspond to a rare, relatively unprotected vegetation class, one with high conservation priority. Intactness was then calculated based on the proportion of undisturbed vegetation existing in the surrounding 11 km $\times$ 11 km neighborhood. The final composite was calculated as follows:
+
+\[ Index = \frac{(rarity \cdot threat) + intactness}{2} \]
+
+(@) *damania*: @Damania2015’s composite combines two sublayers, 1) vertebrate species richness weighted by endemism and threat status, and 2) ecoregion rarity based on area. They use a unique approach that combines factors by taking the maximum value at each cell across multiple layers. They first calculate species richness weighted by both endemism (range-size rarity) and by extinction risk (assessed by IUCN threat status), for all four verebrate taxonomic groups. They then take the maximum across these eight layers at each pixel to calculate their first sublayer. They then calculate ecoregion rarity based on the inverse of ecoregion area. These two sublayers are then converted to percentiles. The final composite consists of the maximum of these two sublayers. Note: following @Damania2015, this includes threatened reptile species from IUCN, despite the fact that reptiles have not been comprehensively assessed.
+
+(@) *laurance*: the biodiversity specific subset of @Laurance2014a’s environmental values index, combining two equally-weighted sublayers: 1) equally-weighted threatened vertebrate and plant species richness, and 2) four equally-weighted pre-existing important habitat prioritizations (biodiversity hotspots [@Myers2000], global 200 ecoregions [@Olson2002], IBAs/EBAs [@Stattersfield1998; @Waliczky2019], and High Biodiversity Wilderness Areas combined with Frontier Forests [@Mittermeier2003; @Bryant1997]).
+
+@Laurance2014a produced an “environmental values layer” on three equally weighted sub-layers: 1) biodiversity, 2) key habitats, and 3) carbon and climate regulation ecosystem services (estimates of net carbon emissions from land use change and estimates of atmospheric temperature and moisture regulation). In order to prioritize areas for protection and roads development, this environmental values layer was then combined with a “road-benefits layer,” based on four equally-weighted continuous agricultural metrics (1. areas with closing yield gaps, 2. existing agriculture, 3. distance to markets, 4. projected production increases] multiplied by a fifth metric (5. agro-ecological suitability). Given that the focus of this paper is on biodiversity, and specifically variation in different approaches to representing biodiversity in a single index, we extract only those parts of @Laurance2014a's index that specifically relate to biodiversity: 1) threatened vertebrate and plant species richness, and 2) the four habitat priorities. Climate related ecosystem service layers were excluded, along with economic factors. Frontier Forests do not occur within Zambia, so were also excluded from our analysis.  See more details in @Laurance2014a and https://www.global-roadmap.org/.
+
+\[ Index = \frac{vert_{threat} + plants}{2} + \frac{hotspots + ecoregions + IBAs/EBAs + HBWA}{4} \]
+
+(@) *vert_endemism*: Endemism richness, alternatively known as range area-weighted or rarity-weighted species richness, following @Kier2009,  @Williams1996, and @Soto-Navarro2020. Endemism richness is the sum, for all species present in a cell, of the proportion of each species’ range contained in that cell (i.e. the summed inverse of range size). This effectively weights species richness by each species’ global range size, giving species with smaller ranges greater weight, combining elements of both endemism and species richness. Endemism richness is calculated for each taxa first, normalizing each taxa individually before averaging across all taxa into a composite for all vertebrate species combined [@Brancalion2019]. This approach treats each taxonomic group equally, but in doing so gives individual species in more speciose groups relatively less weight. We assess the impact of the order in which these layers are normalized and combined in Section \@ref(section-norm-order).
+
+
+### Types of Richness and Taxonomic Groups 
+
+Derived from IUCN [@IUCN2017], BirdLife International [@BirdLife2018], and GARD range map data [@Roll2017].
+
+**Richness for all vertebrate species combined:**
+Note: values are calculated by first calculating richness within each taxonomic group, normalizing to between 0-1, then averaging across all four taxonomic groups, following @Brancalion2019. See Section \@ref(section-norm-order) for a detailed comparison of this approach vs. the opposite, taken by @Laurance2014a.
+
+(@) *vert_all*: All vertebreate species richness
+(@) *vert_endemism* vertebrate endemism richness is also included (see above)
+(@) *vert_small*: Small-ranged vertebrate species richness
+(@) *vert_threat*: Threatened vertebrate species richness was also run, but not included in the main analysis, because reptiles have not been comprehensively assessed. 
+
+**All species richness per taxonomic group:**
+
+(@) *mam_all*: All mammal richness
+(@) *bird_all*: All bird richness
+(@) *amp_all*: All amphibian richness
+(@) *rep_all*: All reptile richness
+
+**Endemism richness per taxonomic group** (i.e. rarity-weighted species richness): 
+This is calculated as the sum, for all species present in a cell, of the proportion of each species’ range contained in that cell, following @Kier2009. This effectively weights species richness by each species’ global range size, giving species with smaller ranges greater weight, thereby combining elements of both endemism and species richness. 
+
+(@) *mam_endemism*: Mammal endemism richness
+(@) *bird_endemism*: Bird endemism richness
+(@) *amp_endemism*: Amphibian endemism richness
+(@) *rep_endemism*: Reptile endemism richness
+
+**Threatened species richness per taxonomic group:** 
+(*Note*: this richness type was not used in primary analysis, because reptiles have not been comprehensively assessed by the IUCN. See Section \@ref(section-threat) for an extended comparison of threatened species richness to the other types, using only mammals, birds, and amphibians.)
+
+(@) *mammal_threat*: Threatened mammal richness
+(@) *bird_threat*: Threatened bird richness
+(@) *amp_threat*: Threatened amphibian richness
+(@) *rep_threat*: Threatened reptile richness (not comprehensive, only 37 out of 226 species that occur in Zambia have been assessed, see Table \@ref(tab:species-occurrence))
+
+**Small-ranged species richness per taxonomic group:** small-ranged species are defined as those with ranges smaller than the global median within each taxon, following @Jenkins2013.
+
+(@) *mam_small*: Small-ranged mammal richness
+(@) *bird_small*: Small-ranged bird richness
+(@) *amp_small*: Small-ranged amphibian richness
+(@) *rep_small*: Small-ranged reptile richness
+
+
+### Index Calculation Methods
+
+Different methods for combining multiple layers, for three pairs of layers: 1) threatened mammal and bird species richness (*mb*), approximating an approach focused on the two vertebrate taxa for which we have the best data, and which also have relatively large numbers of threatened species within Zambia; 2) vertebrate species richness and plant species richness (*vp*), approximating the goal of treating all species as equally valuable; and 3) vertebrate species richness with endemism richness (*ae*), approximating a goal of compromising between aspects of richness, endemism, and rarity, following in part @Soto-Navarro2020.
+
+**Combining mammal and bird richness:**
+
+(@) *average_mb*: Arithmetic mean of threatened mammal & bird richness, following @Laurance2014a: \( value = \frac{(x \cdot y)}{2} \)
+(@) *geometric_mb*: Geometric mean of threatened mammal & bird richness, following @Soto-Navarro2020: \( value = (x \cdot y)^{1/2} \)
+(@) *max_mb*: Maximum of threatened mammal & bird richness, following @Damania2015: \( value = maximum (x,y) \)
+(@) *multi_mb*: Multiplying threatened mammal & bird richness, following @Estes2016a and @Koh2010a: \( value = x \cdot y \)
+
+**Combining vertebrate species richness and plant species richness per ecoregion:**
+
+(@) *average_vp*: Arithmetic mean of vertebrate richness & plant species richness per ecoregion
+(@) *geometric_vp*: Geometric mean of vertebrate richness & plant species richness per ecoregion
+(@) *max_vp*: Maximum of vertebrate richness & plant species richness per ecoregion
+(@) *multi_vp*: Multiplying vertebrate richness & plant species richness per ecoregion
+
+**Combining vertebrate species richness and vertebrate endemism richness:**
+
+(@) *average_ae*: Arithmetic mean of vertebrate species richness & endemism richness
+(@) *geometric_ae*: Geometric mean of vertebrate species richness & endemism richness
+(@) *max_ae*: Maximum of vertebrate species richness & endemism richness 
+(@) *multi_ae*: Multiplying vertebrate species richness & endemism richness
+
+We produced 90 unique indices to cover the full range of permutations in the five groups above. This included the four existing biodiversity indices (n = 4), three richness types for four taxonomic groups and all vertebrates combined (n = 15, including one of the existing indices, vertebrate endemism richness), four methods for three pairs of layers (n = 12), yielding 30 combinations. These were then calculated for three resolutions, yielding 90 unique model runs.
+
+### Processing spatial data and producing biodviersity indices
+
+Prior to analysis, species range maps were filtered prior to the calculation of species richness in order to: exclude marine species; exclude species classified as “Extinct” (EX) or “Extinct in the Wild” (EW); include only ranges where species were considered “extant;” include only ranges where species are considered “native” or “reintroduced;” and include only portions of the range where species are “resident,” “breeding,” or “non-breeding” (i.e. wintering, excluding “passage” areas for migratory species).
+
+Range maps, species richness maps, and biodiversity indices were processed and calculated in RStudio using R version 3.6.0 (2019-04-26), using the `agroEcoTradeoff`, `dtraster`, `lmisc`, `raster`, `rgdal`, `sf`, `sp`, `gdalUtils`, `rasterVis`, `data.table`, `tictoc`, `fasterize`, `lwgeom`, `magrittr`, `parallel`, `reshape2`, `cowplot`, `tidyverse`, `knitr`, `spatstat`, `rmarkdown`, `bookdown`, and `pryr` packages.
+
+
+```{r packages-bib, include = FALSE, eval = FALSE}
+knitr::write_bib(x = c(pkgs, lyndon_pkgs, "RStudio"), file = 'packages_2020.bib')
+```
+
+
+Before running the `agroEcoTradeoff` model, each biodiversity index was cropped and masked to the outline of Zambia, removing large bodies of water, then rescaled to between 0-1, setting a given index’s maximum value to 1 and the minimum to 0. This involved taking the value of each cell, subtracting the index’s global minimum value, then dividing this value by the difference between the global maximum and the global minimum. All inputs were run through the model at three resolutions: 1 km grid, 10 km grid, and 110 km grid. We downscaled raster values to the desired resolution using the mean value of the cells (via `raster::aggregate()`). Because the `agroEcoTradeoff` model requires inputs at a 1 km grid resolution, we then disaggregated these larger cells back down to 1 km grid (via `raster::disaggregate()`), but keeping the same values as the coarser rasters rather than interpolating values.
+
+In order to compare different resolutions, we first aggregated inputs to coarse resolutions (using mean values), and then downscaled these layers to 1 km$^2$ without any interpolation (because `agroEcoTradeoff` requires input data at 1 km$^2$ resolution).
+
+### Maps of Biodiversity Inputs {#bd-input-maps}
+
+```{r species-occurrence}
+species_occurrence_zambia <- data.frame(
+  "Taxa" = c("Mammals", "Birds", "Amphibians", "Reptiles"),
+  "All species" = c("252", "738", "94", "226 (GARD)"),
+  "Threatened (CR, EN, VU)" = c("11", "20", "1", 
+                                "3 (out of 37 assessed 
+                                by IUCN in Zambia)"),
+  "Small-Ranged (50% smallest)" = c("17", "67", "3", "10 (GARD)"),
+  "Small-Ranged OR Threatened" = c("26", "82", "3", "13 (GARD + IUCN)"),
+  "Median global range size (km2)" = c("170,600", "471,000", "4,500", "31,500 (GARD)")
+)
+ 
+
+knitr::kable(species_occurrence_zambia, col.names = c("Taxa", "All species", "Threatened \n(CR, EN, VU)", "Small-Ranged \n(50% smallest)", "Small-Ranged \nOR Threatened", "Median global \nrange size (km2)"),
+             caption = "Species occurrence in Zambia.", booktabs = TRUE) %>%
+  column_spec(2, width = "6em") %>%
+  column_spec(3, width = "6em") %>%
+  column_spec(4, width = "6em") %>%
+  column_spec(5, width = "6em") %>%
+  column_spec(6, width = "6em")
+```
+
+(ref:caption-bd-inputs-1) Raw Biodiversity inputs, 1 km$^2$ resolution
+(ref:caption-bd-inputs-10) Raw Biodiversity inputs, 10 km grid (100 km$^2$) resolution
+(ref:caption-bd-inputs-110) Raw Biodiversity inputs, 110 km grid (12,100 km$^2$, 1$^{\circ}$ latitude) resolution
+
+```{r bd-inputs-1, fig.cap = '(ref:caption-bd-inputs-1)', echo=FALSE}
+knitr::include_graphics(fp(p_plots, "ms_v5/bd_input_maps_runs_1.png"))
+```
+
+```{r bd-inputs-10, fig.cap = '(ref:caption-bd-inputs-10)', echo=FALSE}
+knitr::include_graphics(fp(p_plots, "ms_v5/bd_input_maps_runs_10.png"))
+```
+
+```{r bd-inputs-110, fig.cap = '(ref:caption-bd-inputs-110)', echo=FALSE}
+knitr::include_graphics(fp(p_plots, "ms_v5/bd_input_maps_runs_110.png"))
+```
+
+\newpage
+
+## Conversion maps for *bp* weighting specification
+
+We show maps for only our primary model weighting specification, with 100% weight on biodiversity and average yields (*bp*), run for all three resolutions, 1 km$^2$ (Figure \@ref(fig:conv-maps-1-bp)), 10 km grid (100 km$^2$, Figure \@ref(fig:conv-maps-10-bp)), and 110 km grid (12,100 km$^2$, 1$^{\circ}$ latitude, Figure \@ref(fig:conv-maps-110-bp)) resolution. See Section \@ref(conv-maps) for maps of all conversion maps produced across the different weighting scenarios.
+
+(ref:caption-conv-maps-1-bp) Modelled conversion maps, 1 km$^2$ resolution, with 100% weight on biodiversity and average yields (*bp*)
+(ref:caption-conv-maps-10-bp) Modelled conversion maps, 10 km grid (100 km$^2$) resolution, with 100% weight on biodiversity and average yields (*bp*)
+(ref:caption-conv-maps-110-bp) Modelled conversion maps, 110 km grid (12,100 km$^2$, $1^{\circ}\times1^{\circ}$  latitude) resolution, with 100% weight on biodiversity and average yields (*bp*)
+
+```{r conv-maps-1-bp, fig.cap = '(ref:caption-conv-maps-1-bp)', echo=FALSE}
+knitr::include_graphics("/Users/christophercrawford/Google Drive/_Projects/Zambia/agroEcoTradeoff/external/plots/ms_v5/conv_maps/basic_conv_maps_bp_1.png")
+```
+
+```{r conv-maps-10-bp, fig.cap = '(ref:caption-conv-maps-10-bp)', echo=FALSE}
+knitr::include_graphics("/Users/christophercrawford/Google Drive/_Projects/Zambia/agroEcoTradeoff/external/plots/ms_v5/conv_maps/basic_conv_maps_bp_10.png")
+```
+
+```{r conv-maps-110-bp, fig.cap = '(ref:caption-conv-maps-110-bp)', echo=FALSE}
+knitr::include_graphics("/Users/christophercrawford/Google Drive/_Projects/Zambia/agroEcoTradeoff/external/plots/ms_v5/conv_maps/basic_conv_maps_bp_110.png")
+```
+
+## Calculation of weighted Jaccard Similarity index
+
+As a measure of spatial consistency across model results, we calculated a weighted version of the Jaccard Similarity index [@Ioffe2010; @Legendre2012] for all pairs of facets within each category of variation. The Jaccard Similarity is a pairwise similarity metric commonly used to assess similarity between two sets, and is defined as the proportion of elements in either set that are shared between the two, or the intersection of the two sets divided by the union of the two sets. \( J(a,b) = \frac{a\cap b}{a\cup b} \) [@Legendre2012]. In the context of the categorical conversion maps produced by the `agroEcoTradeoff` model, the Jaccard Similarity between two model runs is simply the number of cells selected for conversion in both model runs a and b divided by the number of cells selected for conversion by either model runs a or b. However, our ensemble averages have values that fall continuously between 0-1 and are no longer categorical in nature, instead representing the proportion of model runs that select that particular pixel for conversion. To account for this variation, we instead calculated an adapted Weighted Jaccard Similarity Index [@Ioffe2010], defined in Equation \@ref(eq:jac-w)
+
+\begin{equation}
+J_{w} (a,b) = \frac{\sum_{i=1}^n min(a_{i}, b_{i})}{\sum_{i=1}^n max(a_{i}, b_{i})} (\#eq:jac-w)
+\end{equation}
+
+The weighted Jaccard Similarity allows us to compare non-categorical rasters and can be interpreted as a measure of congruence (how well two factors agree about the least costly areas to convert to agriculture). The lower the similarity value for a particular factor, the less similar it is to the other factors within a given category of variation. Low similarity values across an entire category of variation indicates that the choice represented by that category of variation (e.g. which taxonomic group to use) has a large effect on the model recommendations.
+
+The Weighted Jaccard Similarity is a pairwise metric, so calculating the mean Jaccard Similarity for a given factor's ensemble mean required averaging across all possible pairs with that particular ensemble mean within each category of variation.  We only calculate pairwise Jaccard Similarity between ensemble means within each category of variation to allow for consistent comparisons. For example, the mean $J_w$ for mammals is the mean of three pairwise similarity values between mammals and the other three taxonomic groups: $J_w(mammals, birds)$, $J_w(mammals,amphibians)$, and $J_w(mammals,reptiles)$. This metric gives us a sense of how similar the model’s conversion recommendations are across the different taxonomic groups (and similarly across the facets of variation in the other categories of variation). A $J_w$ = 0.70 means that two sets are 70% similar to each other, or have an overlap of 70%. The lower the value of a particular ensemble mean (i.e. mammals, threatened species richness, 110 km grid resolution, etc.), the less similar it is to the other facets within a category of variation. Low values across an entire category of variation indicates that variation within that category of variation has a relatively larger effect on the model outcomes than that within other categories of variation.
+
+Figure \@ref(fig:pairwise-jaccard) shows the pairwise Jaccard Similarity values for our primary analysis (*bp*). While these values are included in Main Text Figure 3, this additional figure shows each pair more clearly.
+
+(ref:caption-pairwise-jaccard) Pairwise Jaccard Similarity values, for *bp* model run.
+
+```{r pairwise-jaccard, fig.cap = '(ref:caption-pairwise-jaccard)'}
+ggplot(filter(jac_w_melt, 
+              weight == "bp"#, 
+              # !facet %in% c("habitats", "plants", "bird_composite"),
+              # !pair %in% c("habitats", "plants", "bird_composite")
+              ),
+       aes(x = facet, y = jac_w, fill = pair)) +
+  geom_bar(position = "dodge", stat = "identity") + theme_classic() + 
+  theme(axis.text.x = element_text(angle = 320, vjust = 1, hjust = 0)) +
+  xlab(NULL) + ylab("Jaccard Similarity") + 
+  facet_grid(cols = vars(comparison), scales = "free_x", switch = "x", 
+             space = "free_x") + theme(legend.position = "bottom") + 
+  theme(plot.margin = unit(c(0.4, 0.5, 0.2, 0.2), "cm"))
+```
+
+\newpage
+
+## Adjacency – nearest neighbor distance {#section-adjacency}
+
+As an additional measure of spatial similarity, we calculate **adjacency**, as the average nearest neighbor distance for each factor ensemble mean (Figure \@ref(fig:nnd-fig)). This represents the average distance between each cell in ensemble mean A and its nearest neighbor in ensemble mean B. Because these factor ensemble means are continuous between 0-1, not categorical, calculating adjacency required adjusting the distance based on the value of the cell in A and the value of its nearest nearest neighbor in B, by multiplying the distance by the average of those two values. We then took a weighted average of these adjusted distances, dividing by the sum of the averaged cell values (instead of the number of points). These results in generally accord with what we see in Main Text Figure 3. Types of richness and taxonomic groups have a much higher average distance to neighbor, meaning that the individual facets within richness types and taxa are less adjacent to each other. This matches with Main Text Figure 3, which shows that types and taxa are much less similar than methods and resolution. In contrast, methods and resolution show much lower distances, meaning that different factors are more similar to each other (matching Main Text Figure 3), but also, that when model recommendations do not match, they remain relatively close spatially within the country.
+
+(ref:caption-nnd-fig) Average distance to nearest neighbor (adjacency) for ensemble mean conversion areas across different categories of variation, assuming 100% weight on biodiversity and constant average yields throughout Zambia.
+
+```{r nnd-fig, echo=FALSE, fig.cap = '(ref:caption-nnd-fig)', echo=FALSE}
+knitr::include_graphics(fp(p_plots, "ms_v5/SI_fig_nnd_bp.png"))
+```
+
+
+## Challenges with spatial uncertainty analysis
+
+Our study also highlights the challenges of conducting spatial uncertainty and sensitivity analyses [@Lilburne2009], which is rarely factored into conservation planning (though see @Field2019). With such large scales and so many units of analysis (pixels), formal uncertainty analyses such as systematic Monte Carlo methods become computationally prohibitive, making it difficult to choose between multiple options for constructing biodiversity indices. We ultimately chose a simple similarity metric that allows for systematic comparison across many pairs of layers, complemented with a spatial measure of adjacency (see Section \@ref(section-adjacency)). Our ensemble means allow us to isolate variation due to a give choice, while allowing for variation in other ways. 
+
+We also avoid any prediction “biodiversity loss” resulting from various configurations of conversion, because such a calculation requires many of the same choices that we seek to explore here, making it difficult to determine an unbiased metric. However, given the complex nature of these comparisons, it is inevitable that the use of our similarity metric simplified trends and differences between layers, and we recognize these limitations. Though coarser than a formal uncertainty analysis, this analysis nevertheless presents a valuable step towards understanding the implications of the wide variation in how we choose to represent biodiversity.
+
+
+# Additional Analyses {#robust}
+
+## Increasing the production target {#section-prod-targ}
+
+Our first robustness check involved assessing the influence of our production target on the similarity results, by increasing the production target from the baseline level of ~5% all the way to ~50%. Our original model run (*bp*), assumes a production target of ~5% based on current projections of demand and yield growth [@Estes2016a], amounting to about 22,000 km$^2$ of land (about the size of New Jersey). For comparison we run the model with a much higher production target, at ~50% (*z50*), in order to assess how similarity is affected by the size of the area being converted (and therefore, being compared). 
+
+The relative similarity between these two production targets is shown in Figure \@ref(fig:z50-bp-comparison). We find that running the model with this larger production target produces higher overall similarity: for example, mean $J_w$ = 0.36 across all existing indices (Figure \@ref(fig:jac-w-z50)), compared to mean $J_w$ = 0.0223 for our primary analysis (*bp*, main text Figure 4). We expect higher similarity when a greater proportion of the country is converted, simply because there is less area left for disagreement. The pattern of relative differences between categories of variation stays the same, showing which sources of variation have the largest effect on land use outcomes. Most importantly, we find low levels of agreement at this high production target scenario, even with such high production targets.
+
+See Figure \@ref(fig:jac-w-z50) for in depth results including mean and pairwise Jaccard Similarity values for this *z50* scenario. For visual comparison of ensemble mean conversion areas for this *z50* weighting specification, see Figure \@ref(fig:facet-r-z50).
+
+
+(ref:caption-z50-bp-comparison) Comparing the effect of production target on similarity results. Our main analysis (*bp*) assumes a production target of ~5% of Zambia. For comparison, we show model results assuming a much larger production target (*z50*), which converts ~50% of Zambia. Both model runs place 100% model weight on biodiversity and using average, constant yields.
+
+```{r z50-bp-comparison, fig.cap = '(ref:caption-z50-bp-comparison)'}
+# add in this line to the caption, if I add order back in...
+# *order* refers to similarity of the order in which cells are selected for conversion (or protection) based on biodiversity value.
+
+# png(paste0(p_plots, "/ms_v5/", "ms_fig_robustness", ".png"),
+#     width = 7, height = 3.4, units = "in", res = 400)
+
+ggplot() +
+  theme_classic() +
+  theme(axis.text.x = element_text(angle = 320, vjust = 1, hjust = 0)) +
+  xlab("Facet") + ylab("Mean Jaccard Similarity") +
+  geom_line(data = filter(facet_stats, weight == "bp"),
+             mapping = aes(x = facet, y = mean_jac_w, group = comparison, color = weight), size = 1) +
+  geom_line(data = filter(facet_stats, weight == "z50"),
+             mapping = aes(x = facet, y = mean_jac_w, group = comparison, color = weight), size = 1) +
+  # geom_line(data = facet_stats_order_conv,
+  #            mapping = aes(x = facet, y = mean_jac_w, group = comparison, color = weight), size = 1) +
+  facet_grid(cols = vars(comparison), scales = "free_x", switch = "x",
+             space = "free_x") +
+  scale_color_manual(name = "Production \nTarget",
+                     
+                     # labels for main text
+                     # labels = c("bp" = "5% of Zambia",
+                     #            "order" = "\nConversion \nOrder (order) \n ",
+                     #            "z50" = "50% of Zambia"),
+                     
+                     # labels for SI
+                     labels = c("bp" = "\n5% of Zambia \n(100% bd, \nmean yield, bp) \n ",
+                                "order" = "\nConversion \nOrder (order) \n ",
+                                "z50" = "\n50% of Zambia \n(100% bd, \nmean yield, z50) \n "),
+                     values = c("bp" = hue_pal()(3)[1], # "red"
+                                "order" = hue_pal()(3)[2], #"green"
+                                "z50" = hue_pal()(3)[3])
+                     ) + #"blue"
+  coord_cartesian(ylim=c(0, 1.0)) #+ theme(legend.position = "bottom") #plot.margin = unit(c(0.4, 0.5, 0.2, 0.2), "cm"))
+
+# dev.off()
+
+```
+
+(ref:caption-jaccard-z50) Similarity between conversion areas assuming a production target that results in the conversion of ~50% or the remaining unprotected, uncultivated, and undeveloped land in Zambia.
+
+```{r jac-w-z50, fig.cap = '(ref:caption-jaccard-z50)', out.width = "1\\textwidth"}
+knitr::include_graphics(fp(p_plots, "ms_v5/SI_fig_jac_w_z50.png"))
+```
+
+(ref:caption-facet-r-z50) Mean conversion priorities assuming a production target that results in the conversion of ~50% of Zambia (*z50*), placing 100% weight in biodiversity and using average and constant yields across Zambia (compare with Main Text Figure 2). The panels show biodiversity indices within five categories of variation: a) existing biodiversity indices (vertebrate endemism richness, plant species richness, Estes et al. 2016, Laurance et al. 2014, four habitat priorities, threatened bird richness combined with IBAs and EBAs, and Damania & Wheeler 2015); b) taxonomic groups (mammals, birds, amphibians, and reptiles); c) types of species richness (all species richness, endemism richness, and small-ranged species richness); d) index calculation methods (average, geometric mean, maximum, and multiplication); and e) input resolutions (1 km, 10 km, and 110 km grids). Cell values correspond to the proportion of model runs using that particular factor that select a given cell for conversion. Blank areas within Zambia correspond to currently protected, cultivated, or settled areas.
+
+```{r facet-r-z50, fig.cap = '(ref:caption-facet-r-z50)', out.width = "1\\textwidth"}
+knitr::include_graphics(fp(p_plots, "ms_v5/ms_fig_facet_r_z50_wide.png"))
+```
+
+## Directly Comparing the Order of Conversion {#section-order}
+
+We also directly compared the similarity of the order in which cells are prioritized for conversion based on biodiversity value (entirely removing the effect of the production target). Figure \@ref(fig:order-conv) and Figure \@ref(fig:order-protect) show the similarity of the order in which cells are prioritized for conversion or protection respectively, for each ensemble mean. Cells are prioritized for conversion in order from lowest biodiversity to highest, and prioritized for protection from highest to lowest biodiversity (the inverse of conversion). The pattern of similarity between these two analyses is nearly identical. The results show higher similarity than our base case (*bp*), which is again expected given that each cell in Zambia is given a value, and there is less area for disagreement. However, we are stuck by the low levels of similarity, and the same pattern of relative difference across categories of variation.
+
+(ref:caption-order-conv) Similarity of the order in which cells are selected for conversion, starting with the lowest biodiversity cells.
+
+(ref:caption-order-protect) Similarity of the order in which cells are selected for protection, starting with the highest biodiversity cells.
+
+```{r order-conv, fig.cap = '(ref:caption-order-conv)', out.width = "0.8\\textwidth"}
+# cross-reference with \@ref(fig:chunk_label)
+knitr::include_graphics(fp(p_plots, "ms_v5/SI_fig_jac_w_order_conv.png"))
+```
+
+```{r order-protect, fig.cap = '(ref:caption-order-protect)', out.width = "0.8\\textwidth"}
+knitr::include_graphics(fp(p_plots, "ms_v5/SI_fig_jac_w_order_protect.png"))
+```
+
+\newpage
+
+## Incorporating non-biodiversity constraints {#weights-results}
+
+In addition to our baseline scenario (*bp*, with 100% on biodiversity, assuming homogeneous yields throughout Zambia), we ran the model through five additional scenarios that progressively shared weight between biodiversity and yield, carbon loss, and transportation cost, allowing these factors to also influence conversion decisions. As a reminder, these are:
+
+- *b* = 100% biodiversity, accurate, spatially heterogeneous yields
+- *by* = 50%/50% biodiversity/yield
+- *bc* = 50%/50% biodiversity/carbon
+- *bt* = 50%/50% biodiversity/transportation cost, and
+- *byct* = 25% weight on biodiversity, yield, carbon, and transportation cost
+
+First, we show the mean Jaccard Similarity for each model specification, together in Figure \@ref(fig:jac-w-weights-line). This shows that as weight is increasingly placed on non-biodiversity constraints, similarity increases overall, yet the pattern of relative similarity between categories of variation remains the same.
+
+(ref:caption-jac-w-b) Jaccard Similarity between facets with 100% weight on biodiversity, but incorporating accurate, spatially heterogeneous yields.
+
+(ref:caption-jac-w-by) Jaccard Similarity between facets with 50% weight on biodiversity and yield.
+
+(ref:caption-jac-w-bc) Jaccard Similarity between facets with 50% weight on biodiversity and carbon emissions due to conversion.
+
+(ref:caption-jac-w-bt) Jaccard Similarity between facets with 50% weight on biodiversity and transportation costs.
+
+(ref:caption-jac-w-byct) Jaccard Similarity between facets with weight equally distributed among the four constraints (25% weight on biodiversity, yield, carbon, and transportation costs).
+
+(ref:caption-jac-w-all) Jaccard Similarities between ensemble means that average across all six weighting schemes (all assuming accurate, spatially heterogeneous yields except for *bp* and *z50*). *bp* = 100% biodiversity, average yields, *b* = 100% biodiversity, accurate, spatially heterogeneous yields, *by* = 50%/50% biodiversity/yield, *bc* = 50%/50% biodiversity/carbon, *bt* = 50%/50% biodiversity/transportation cost, and *byct* = 25% weight on biodiversity, yield, carbon, and transportation cost. For reference, we also show similarity with *z50*, representing a production target that converts a full 50% of Zambia (assuming constant, average yields throughout Zambia).
+
+(ref:caption-jac-w-weights-line) Mean Jaccard Similarity between ensemble means within different categories of variation, as shown across different model weighting schemes. All weighting specifications assume accurate, spatially heterogeneous yields except for *bp*. *bp* = 100% biodiversity, average yields, *b* = 100% biodiversity, accurate, spatially heterogeneous yields, *by* = 50%/50% biodiversity/yield, *bc* = 50%/50% biodiversity/carbon, *bt* = 50%/50% biodiversity/transportation cost, *byct* = 25% weight on biodiversity, yield, carbon, and transportation cost, and *z50* = production target converting 50% of Zambia.
+
+```{r jac-w-weights-line, fig.cap = '(ref:caption-jac-w-weights-line)'}
+ggplot() +
+  theme_classic() +
+  theme(axis.text.x = element_text(angle = 320, vjust = 1, hjust = 0)) +
+  xlab("Facet") + ylab("Jaccard Similarity") +
+  geom_line(data = filter(facet_stats, weight == "bp"),
+             mapping = aes(x = facet, y = mean_jac_w,group = comparison, color = weight), size = 1) +
+  geom_line(data = filter(facet_stats, weight == "all", comparison != "weights"),
+             mapping = aes(x = facet, y = mean_jac_w,group = comparison, color = weight), size = 1) +
+  geom_line(data = filter(facet_stats, weight == "b"),
+             mapping = aes(x = facet, y = mean_jac_w,group = comparison, color = weight), size = 1) +
+  geom_line(data = filter(facet_stats, weight == "by"),
+             mapping = aes(x = facet, y = mean_jac_w,group = comparison, color = weight), size = 1) +
+  geom_line(data = filter(facet_stats, weight == "byct"),
+             mapping = aes(x = facet, y = mean_jac_w,group = comparison, color = weight), size = 1) +
+  geom_line(data = filter(facet_stats, weight == "bc"),
+             mapping = aes(x = facet, y = mean_jac_w,group = comparison, color = weight), size = 1) +
+  geom_line(data = filter(facet_stats, weight == "bt"),
+             mapping = aes(x = facet, y = mean_jac_w,group = comparison, color = weight), size = 1) +
+  geom_line(data = filter(facet_stats, weight == "z50"),
+             mapping = aes(x = facet, y = mean_jac_w,group = comparison, color = weight), size = 1) +
+  geom_line(data = filter(facet_stats, weight == "all", comparison != "weights"),
+             mapping = aes(x = facet, y = mean_jac_w,group = comparison, color = weight), size = 1) +
+  # geom_point(data = filter(jac_w_melt, weight == "b"#, facet != "z50"
+  #                          ),
+  #            mapping = aes(x = facet, y = jac_w),
+  #            alpha = 0.15) +
+  facet_grid(cols = vars(comparison), scales = "free_x", switch = "x",
+             space = "free_x")
+
+```
+
+Figure \@ref(fig:jac-w-all) shows similarity between ensemble means that incorporate model runs at each weighting scenario. Just like the construction of ensemble means in our main scenario include runs at three resolutions for a given factor, these ensemble means also include runs across the six weighting specifications with the baseline production target. This effectively removes the influence of weighting specification, by looking at patterns across all weighting specifications.
+
+Importantly, Figure \@ref(fig:jac-w-all) also shows similarity between ensemble means for each model weighting specification itself (*weights*). These ensemble means average across *all* model runs for each weighting specification, in order to isolate the variation due to model weighting specifically. While we are not surprised to see differences in model recommendations when we value biodiversity less and incorporate other environmental and economic concerns, the relative differences caused by changing the weights relative to changing factors in the other categories of variation *is* surprising. Similarity levels across weighting specifications are at about the same level as similarity between different existing indices and different taxonomic groups. This means that changing model weights has an effect of similar magnitude to using a different existing index or using a different taxonomic group, regardless of the weighting specification. In other words, different existing indices and taxonomic groups differ from each other as much as entirely different value judgements about how to weight biodiversity relative to other environmental and economic concerns.  Variation in these non-biodiversity costs is a good area for future exploration. 
+
+The relative changes in similarity across the different weighting schemes are shown in Figure \@ref(fig:jac-w-weights-line). Diving into the results for each individual weighting specification, we test the influence of including accurate and spatially heterogenous yields in the calculation of biodiversity in terms of production efficiency, while placing 100% of model weight on biodiversity (*b*, Figure \@ref(fig:jac-w-b)), then equally weighting biodiversity and yield (*by*, Figure \@ref(fig:jac-w-by)) in the model weighting specification. Figures \@ref(fig:jac-w-bc) and \@ref(fig:jac-w-bt) shows similarity results when equally weighting biodiversity and carbon loss (*bc*) or transportation cost (*bt*) respectively. Figure \@ref(fig:jac-w-byct) shows similarity when placing equal weight on all four constraints (*byct*).
+
+```{r jac-w-all, fig.cap = '(ref:caption-jac-w-all)'}
+knitr::include_graphics(fp(p_plots, "ms_v5/SI_fig_jac_w_all.png"))
+```
+
+```{r jac-w-b, fig.cap = '(ref:caption-jac-w-b)', out.width = "0.8\\textwidth"}
+knitr::include_graphics(fp(p_plots, "ms_v5/SI_fig_jac_w_b.png"))
+```
+
+```{r jac-w-by, fig.cap = '(ref:caption-jac-w-by)', out.width = "0.8\\textwidth"}
+knitr::include_graphics(fp(p_plots, "ms_v5/SI_fig_jac_w_by.png"))
+```
+
+```{r jac-w-bc, fig.cap = '(ref:caption-jac-w-bc)', out.width = "0.8\\textwidth"}
+knitr::include_graphics(fp(p_plots, "ms_v5/SI_fig_jac_w_bc.png"))
+```
+
+```{r jac-w-bt, fig.cap = '(ref:caption-jac-w-bt)', out.width = "0.8\\textwidth"}
+knitr::include_graphics(fp(p_plots, "ms_v5/SI_fig_jac_w_bt.png"))
+```
+
+```{r jac-w-byct, fig.cap = '(ref:caption-jac-w-byct)', out.width = "0.8\\textwidth"}
+knitr::include_graphics(fp(p_plots, "ms_v5/SI_fig_jac_w_byct.png"))
+```
+
+
+In the real world, decision makers must consider factors other than biodiversity in making land-use decisions. When distributing weight from biodiversity to yield, carbon storage, and transportation costs, we found that the similarity between land-use recommendations increased overall, though the overall pattern of relative differences between factors in the different categories remained largely consistent. This is not so surprising, considering that we held these other three factors constant, so including them reduced the amount of variation between model runs. However, we also found that different model weighting specifications produced recommendations that differed from each other as much as different existing indices and taxonomic groups (see Figure \@ref(fig:jac-w-all)). This signals a relative lack of congruence between the four constraints themselves: the least-cost areas for biodiversity do not necessarily overlap with those that maximize yields or minimize transportation cost, nor do those that minimize carbon emissions. This supports research that has shown that goals related to climate mitigation and adaptation and those related to biodiversity conservation are not always spatially aligned [@Anderson2009; @Thomas2013], and that variation in socioeconomic factors can have greater importance for determining land-use priorities than biodiversity [@Field2019; @Keeler2019].  That such tradeoffs between social and environmental goals exist means that when factoring many constraints into a land-use prioritization model, variation in biodiversity may be dominated by variation between broad constraints.  Of course, biodiversity is not the only aspect of land use prioritization that is subject to uncertainty. We held these other three factors constant, but they are surely subject to uncertainty and variation worthy of exploration, even though estimates of yields, carbon storage, and travel cost are not dependent on values judgements in the way that maps of biodiversity value are. 
+
+
+### Threatened Species Richness {#section-threat}
+
+We did not include threatened species richness in our main analysis of different richness types because reptiles have not been comprehensively assessed by IUCN, making it impossible to calculate the number of threatened species in Zambia. For context, only 37 out of the 226 reptile species included in the GARD database [@Roll2017] that occur in Zambia have been assessed by the IUCN. Of those, only three are listed as threatened: *Malacochersus tornieri* (pancake tortoise), *Cycloderma frenatum* (Zambezi flapshell turtle), and *Mecistops cataphractus* (slender-snouted crocodile). (See Table \@ref(tab:species-occurrence))
+
+Based on our framework, in which multiple model runs are averaged into ensemble means that isolate each source of variation (i.e. each type of richness), any comparison of threatened species richness would therefore require us to leave out reptile species not only from our calculation of threatened species richness, but also the other three types of richness in order to keep the comparisons consistent.
+
+We display these results in Figure \@ref(fig:threat-richness), for mammals, birds, and amphibians, along with all species richness, endemism richness, threatened species richness, and small-ranged species richness. Note that these model runs assumed 100% weight on biodiversity, the baseline production target, and average yields throughout Zambia.
+
+We found a category mean $J_w$ = 0.10 for the three taxonomic groups (mammals, birds, and amphibians), and category mean $J_w$ = 0.17 for the four types of richness (all, endemism, threatened, and small-ranged). These results are remarkably similar to our primary analysis, though the addition of threatened species richness reduces the overall similarity between richness types (our original *bp* analysis, which excluded threatened species richness but included reptiles, produced category mean $J_w$ = 0.10 and 0.26 for taxa and richness types, respectively). If anything, this strengthens the overall conclusions of this study.
+
+(ref:caption-threat-richness) Comparing species richness types including threatened species richness. Because reptiles have not been comprehensively assessed by the IUCN, the ensemble means displayed here are calculated with *only* mammal, bird, and amphibian species, but with the four richness types.
+
+```{r threat-richness, fig.cap = '(ref:caption-threat-richness)', out.width = "0.7\\textwidth", fig.align = 'center'}
+knitr::include_graphics(fp(p_plots, "ms_v5/SI_fig_facet_r_threat_combo.png"))
+```
+
+
+### Additional composites
+
+In addition to the four existing indices we compare in our main analysis, we also considered two specific subsets of the @Laurance2014a composite, as well as a hypothetical composite oriented towards bird conservation. 
+
+- *plants*: Plant species richness per ecoregion [@Kier2005]
+
+- *habitats*: A habitat prioritization index derived from four well-known habitat prioritizations, each equally weighted. This is included as one sub component of the @Laurance2014a index, but we felt it important to consider an index that represents expert-prioritized habitats separately, to better understand their effect on prioritization.
+
+1. Conservation International’s 35 biodiversity hotspots [@Myers2000; @Zachos2011]
+2. The World Wildlife Fund’s Global 200 Ecoregions [@Olson2002]
+3. BirdLife International’s Important Bird Areas (IBAs) and Endemic Bird Areas (EBAs) [@Stattersfield1998; @Butchart2012; @Waliczky2019]
+4. High Biodiversity Wilderness Areas [@Mittermeier2003]
+
+- *bird_composite*: Stylized bird species prioritization composite, combining threatened bird richness with Important Bird Areas and Endemic Bird Areas [@BirdLife2018; @Stattersfield1998; @Butchart2012; @Waliczky2019], equally-weighted.
+
+These *plants*, *habitats*, and *bird_composite* indices were not included in our main analysis, in order to keep our analysis consistent (the *plants* and *habitats* layers, by virtue of being part of the *laurance* composite, show relatively higher similarity to each other). However, for the sake of comparison, we show the ensemble mean conversion maps for the full set of seven indices and their mean Jaccard Similarities ($J_w$) in Figure \@ref(fig:all-composites).
+
+(ref:caption-all-composites) All existing composite indices that we compared in our analysis, including four key habitat priorities (*habitats*), plant species richness per ecoregion (*plants*), and our own stylized bird conservation composite (*bird_composite*).
+
+```{r print-composites-fig, eval=FALSE, include = FALSE}
+facet_r_bp <- brick(fp(p_mod_output,"facet_r_bp.tif"))
+
+names(facet_r_bp) <- gsub("_bp", "", grep("_bp$", facet_names, value = TRUE))
+
+p1 <- gplot(facet_r_bp[[c("vert_endemism", "estes", "laurance", "damania")]], 
+            maxpixels = 5000000) + 
+      geom_raster(aes(fill = value)) +
+      facet_wrap(~ variable, nrow = 1) + 
+      scale_fill_gradientn(colors = terrain.colors(50, rev = TRUE), na.value = "white", limits = c(0, 1)) + 
+      labs(y = "Existing Indices", x = NULL) + 
+      theme(rect = element_blank(), line = element_blank(), 
+            axis.line = element_blank(), axis.ticks = element_blank(), 
+            axis.ticks.length = unit(0, "pt"), axis.text = element_blank(),
+            legend.title = element_blank()) + 
+      coord_equal()
+
+p2 <- gplot(facet_r_bp[[c("plants", "habitats", "bird_composite")]], 
+            maxpixels = 5000000) + 
+      geom_raster(aes(fill = value)) +
+      facet_wrap(~ variable, nrow = 1) + 
+      scale_fill_gradientn(colors = terrain.colors(50, rev = TRUE), na.value = "white", limits = c(0, 1)) + 
+      labs(y = "Additional \nIndices", x = NULL) + 
+      theme(rect = element_blank(), line = element_blank(), 
+            axis.line = element_blank(), axis.ticks = element_blank(), 
+            axis.ticks.length = unit(0, "pt"), axis.text = element_blank(),
+            legend.position = "none") + 
+      coord_equal()
+
+p3 <- ggplot() +
+  theme_classic() + 
+  theme(axis.text.x = element_text(angle = 320, vjust = 1, hjust = 0)) +
+  xlab("Facet") + ylab("Jaccard Similarity") +
+  geom_point(data = filter(facet_stats_full, weight == "bp", comparison == "indices"),
+             mapping = aes(x = facet, y = mean_jac_w, color = facet
+                           ),
+             size = 2) +
+  geom_point(data = filter(jac_w_melt_full, weight == "bp", comparison == "indices"), 
+             mapping = aes(x = facet, y = jac_w), #color = "black", show.legend = FALSE,
+             alpha = 0.15) + 
+  #facet_grid(cols = vars(comparison), scales = "free_x", switch = "x", 
+  #           space = "free_x") + 
+  scale_colour_discrete("Mean Values") #+ theme(legend.text = element_text("1", "2", "3", "4", "5"))
+
+png(paste0(p_plots, "/ms_v5/","SI_fig_facet_r_extra_composites.png"),    
+    width = 8, height = 7,
+    units = "in", res = 300)
+
+plot_grid(p1, p2, p3, ncol = 1, rel_heights = c(1, 1, 1.5), labels = "auto")
+
+dev.off()
+
+rm(p1, p2, p3)
+
+```
+```{r all-composites, fig.cap = '(ref:caption-all-composites)'}
+knitr::include_graphics(fp(p_plots, "ms_v5/SI_fig_facet_r_extra_composites.png"))
+```
+
+
+### Normalization order {#section-norm-order}
+
+Additional purely methodological choices include the simple decision to change the order in which taxonomic groups are normalized and combined into a single layer, treating all species equally or each taxonomic group equally, which can result in model results that are only 79% similar.
+
+We compared the influence of the stage at which normalization takes place, by comparing these two common ways of calculating the cumulative vertebrate richness: 1) by normalizing within each taxa first before summing across taxa (effectively averaging the four taxonomic groups, following @Brancalion2019, or 2) by summing across all four taxa, without normalizing first following @Laurance2014a. Our main analysis follows method 1 (normalizing before summing). 
+
+On the one hand, summing first treats all threatened species as equally valuable. But, it ends up being biased towards some taxa. For example, birds (max sp. richness 15 species, 20 total species occurring anywhere in Zambia) and mammals (max richness 7 species, 11 total species occurring anywhere in Zambia) are overrepresented, compared to amphibians and reptiles, which each have a max richness of 1 in Zambia (amphibians have one threatened species occurring in Zambia, and reptiles have 3). If normalization takes place within each taxa before being summed, it will give that one threatened amphibian species the same weight as 15 threatened bird species. 
+
+We found that ensemble averages of the conversion maps produced by the three vertebrate species richness types at our three resolutions (n = 9) had a pairwise Jaccard Similarity $J_w$ of 0.789. In other words, the simple decision to count each species as equal instead of counting each taxonomic group as equal results in model results that are only 78.9% similar. This less consequential than choices in the categories of variation we assess in the main text (e.g. category means for existing indices: 2.2%; taxa: 10.3%; richness types: 26%; methods: 59.4%; and resolutions: 59.2%), but it is striking how much of a difference it can make.
+
+(ref:caption-norm-order) Overlap between ensemble mean conversion areas for two differing methods for combining vertebrate taxonomic groups, either normalizing within each taxon before combining ("norm_first", @Brancalion2019), or combining all taxonomic groups before normalizing ("sum_first", @Laurance2014a). Positive values show areas selected only by the "norm_first" method, and negative values show areas selected by only the "sum_first" method. Areas with 0 value are areas where the two approaches agree (either to convert or not to convert).
+
+```{r norm-order, fig.cap = '(ref:caption-norm-order)', out.width = "0.7\\textwidth", fig.align = 'center'}
+knitr::include_graphics(fp(p_plots, "ms_v5/SI_norm_order_plots.png"))
+```
+
+
+\newpage
+
+# Conversion Maps {#conv-maps}
+
+## Conversion maps at different model weighting specifications
+
+Shown for 1 km grid resolution for illustrative purposes only.
+
+(ref:caption-conv-maps-1-b) Modelled conversion maps, 1 km$^2$ resolution, with 100% weight on biodiversity and accurate, spatially heterogeneous yields (*b*). See Section \@ref(bd-inputs) for full descriptions of biodiversity indices.
+
+(ref:caption-conv-maps-1-by) Modelled conversion maps, 1 km$^2$ resolution, with 50%/50% biodiversity, yield model weighting (*by*). See Section \@ref(bd-inputs) for full descriptions of biodiversity indices.
+
+(ref:caption-conv-maps-1-bc) Modelled conversion maps, 1 km$^2$ resolution, with 50%/50% biodiversity, carbon model weighting (*bc*). See Section \@ref(bd-inputs) for full descriptions of biodiversity indices.
+
+(ref:caption-conv-maps-1-bt) Modelled conversion maps, 1 km$^2$ resolution, with 50%/50% biodiversity, transportation cost model weighting (*bt*). See Section \@ref(bd-inputs) for full descriptions of biodiversity indices.
+
+(ref:caption-conv-maps-1-byct) Modelled conversion maps, 1 km$^2$ resolution, with equal model weights (25% weight on biodiversity, yield, carbon, and transportation cost, *byct*). See Section \@ref(bd-inputs) for full descriptions of biodiversity indices.
+
+(ref:caption-conv-maps-1-z50) Modelled conversion maps, 1 km$^2$ resolution, with 100% weight on biodiversity, assuming average yields, but with a production target that converts 50% of Zambia (*z50*). See Section \@ref(bd-inputs) for full descriptions of biodiversity indices.
+
+```{r conv-maps-1-b, fig.cap = '(ref:caption-conv-maps-1-b)', echo=FALSE}
+knitr::include_graphics("/Users/christophercrawford/Google Drive/_Projects/Zambia/agroEcoTradeoff/external/plots/ms_v5/conv_maps/basic_conv_maps_b_1.png")
+```
+
+```{r conv-maps-1-by, fig.cap = '(ref:caption-conv-maps-1-by)', echo=FALSE}
+knitr::include_graphics("/Users/christophercrawford/Google Drive/_Projects/Zambia/agroEcoTradeoff/external/plots/ms_v5/conv_maps/basic_conv_maps_by_1.png")
+```
+
+```{r conv-maps-1-bc, fig.cap = '(ref:caption-conv-maps-1-bc)', echo=FALSE}
+knitr::include_graphics("/Users/christophercrawford/Google Drive/_Projects/Zambia/agroEcoTradeoff/external/plots/ms_v5/conv_maps/basic_conv_maps_bc_1.png")
+```
+
+```{r conv-maps-1-bt, fig.cap = '(ref:caption-conv-maps-1-bt)', echo=FALSE}
+knitr::include_graphics("/Users/christophercrawford/Google Drive/_Projects/Zambia/agroEcoTradeoff/external/plots/ms_v5/conv_maps/basic_conv_maps_bt_1.png")
+```
+
+```{r conv-maps-1-byct, fig.cap = '(ref:caption-conv-maps-1-byct)', echo=FALSE}
+knitr::include_graphics("/Users/christophercrawford/Google Drive/_Projects/Zambia/agroEcoTradeoff/external/plots/ms_v5/conv_maps/basic_conv_maps_byct_1.png")
+```
+
+```{r conv-maps-1-z50, fig.cap = '(ref:caption-conv-maps-1-z50)', echo=FALSE}
+knitr::include_graphics("/Users/christophercrawford/Google Drive/_Projects/Zambia/agroEcoTradeoff/external/plots/ms_v5/conv_maps/basic_conv_maps_z50_1.png")
+```
+
+\newpage
+
+## Panels of conversion maps at different weights
+
+Each of the following figures shows, from top to bottom: the distribution of values in each layer, the raw biodiveristy inputs provided to the model, and conversion maps at 3 model specifications: *bp* (100% weight on biodiversity, average yields, baseline production target of ~5% of Zambia), *b* (100% weight on biodiversity, but with heterogeneous yields), and *z50* (100% weight on biodiversity, average yields, but with a production target resulting in conversion of ~50% of Zambia).
+
+(ref:caption-conv-maps-comp-1) Existing composites, including vertebrate endemism, plant species richness per ecoregion, @Estes2016a, @Laurance2014a, habitat priorities, our stylized bird conservation composite, and @Damania2015.
+
+(ref:caption-conv-maps-types-1) Types of Richness, shown for all vertebrate species combined. Note that this figure shows threatend species richness for all four taxonomic groups, even though reptiles have not been comprehensively assessed by IUCN. Threatened species richness is not included in our main analysis. See Section \@ref(section-threat) for a comparison of all species richness, endemism richness, small-ranged species richness, and threatened species richness, using data for mammals, birds, and amphibians alone.
+
+(ref:caption-conv-maps-taxa-all-1) All species richness for mammal, bird, amphibian, and reptiles species.
+
+(ref:caption-conv-maps-taxa-endemism-1) Endemism richness (rarity-weighted) for mammal, bird, amphibian, and reptiles species.
+
+(ref:caption-conv-maps-taxa-small-1) Small-ranged species richness for mammal, bird, amphibian, and reptiles species. Small-ranged species are those with ranges smaller than the global median range size within each taxonomic group.
+
+(ref:caption-conv-maps-methods-mb-1) Methods for combining multiple layers the arithmetic mean (average), geometric mean, maximum, and multiplication, shown here for combining threatened mammal and bird species richness layers.
+
+(ref:caption-conv-maps-methods-vp-1) Methods for combining multiple layers the arithmetic mean (average), geometric mean, maximum, and multiplication, shown here for combining all vertebrate species richness and plant species richness.
+
+(ref:caption-conv-maps-methods-ae-1) Methods for combining multiple layers the arithmetic mean (average), geometric mean, maximum, and multiplication, shown here for combining all vertebrate species richness and endemism richness.
+
+```{r conv-maps-comp-1, fig.cap = '(ref:caption-conv-maps-comp-1)', echo=FALSE, out.height = "1\\textheight"}
+knitr::include_graphics("/Users/christophercrawford/Google Drive/_Projects/Zambia/agroEcoTradeoff/external/plots/ms_v5/conv_maps_by_ensemble/composites_1_conv_maps.png")
+```
+
+```{r conv-maps-types-1, fig.cap = '(ref:caption-conv-maps-types-1)', echo=FALSE, out.height = "0.9\\textheight"}
+knitr::include_graphics("/Users/christophercrawford/Google Drive/_Projects/Zambia/agroEcoTradeoff/external/plots/ms_v5/conv_maps_by_ensemble/types_1_conv_maps.png")
+```
+
+```{r conv-maps-taxa-all-1, fig.cap = '(ref:caption-conv-maps-taxa-all-1)', echo=FALSE, out.height = "0.9\\textheight"}
+knitr::include_graphics("/Users/christophercrawford/Google Drive/_Projects/Zambia/agroEcoTradeoff/external/plots/ms_v5/conv_maps_by_ensemble/taxa_all_1_conv_maps.png")
+```
+
+```{r conv-maps-taxa-endemism-1, fig.cap = '(ref:caption-conv-maps-taxa-endemism-1)', echo=FALSE, out.height = "0.9\\textheight"}
+knitr::include_graphics("/Users/christophercrawford/Google Drive/_Projects/Zambia/agroEcoTradeoff/external/plots/ms_v5/conv_maps_by_ensemble/taxa_endemism_1_conv_maps.png")
+```
+
+```{r conv-maps-taxa-small-1, fig.cap = '(ref:caption-conv-maps-taxa-small-1)', echo=FALSE, out.height = "0.9\\textheight"}
+knitr::include_graphics("/Users/christophercrawford/Google Drive/_Projects/Zambia/agroEcoTradeoff/external/plots/ms_v5/conv_maps_by_ensemble/taxa_small_1_conv_maps.png")
+```
+
+```{r conv-maps-methods-mb-1, fig.cap = '(ref:caption-conv-maps-methods-mb-1)', echo=FALSE, out.height = "0.9\\textheight"}
+knitr::include_graphics("/Users/christophercrawford/Google Drive/_Projects/Zambia/agroEcoTradeoff/external/plots/ms_v5/conv_maps_by_ensemble/methods_mb_1_conv_maps.png")
+```
+
+```{r conv-maps-methods-vp-1, fig.cap = '(ref:caption-conv-maps-methods-vp-1)', echo=FALSE, out.height = "0.9\\textheight"}
+knitr::include_graphics("/Users/christophercrawford/Google Drive/_Projects/Zambia/agroEcoTradeoff/external/plots/ms_v5/conv_maps_by_ensemble/methods_vp_1_conv_maps.png")
+```
+
+```{r conv-maps-methods-ae-1, fig.cap = '(ref:caption-conv-maps-methods-ae-1)', echo=FALSE, out.height = "0.9\\textheight"}
+knitr::include_graphics("/Users/christophercrawford/Google Drive/_Projects/Zambia/agroEcoTradeoff/external/plots/ms_v5/conv_maps_by_ensemble/methods_ae_1_conv_maps.png")
+```
+
+\newpage
+# References
