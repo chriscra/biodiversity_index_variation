@@ -14,9 +14,11 @@ This repository houses scripts with data and analyses for our paper "Consequence
 
 Note that in order for these scripts to run, one must download the `agroEcoTradeoff` package, which must be downloaded directly. See: https://github.com/PrincetonUniversity/agroEcoTradeoff. In order to do this in terminal, first you have to install wget (and before that, gdal): https://stackoverflow.com/questions/33886917/how-to-install-wget-in-macos. You can use brew to do this, and then install wget. After that, run the following three lines of code from Lyndon's github, which installed the `agroEcoTradeoff` package:
 
-wget https://github.com/PrincetonUniversity/agroEcoTradeoff/raw/master/installer.sh  
-chmod +x installer.sh  
-./installer.sh  
+```
+wget https://github.com/PrincetonUniversity/agroEcoTradeoff/raw/master/installer.sh
+chmod +x installer.sh
+./installer.sh
+```
 
 The first one uses wget to download the installer.sh script from Lyndon's github. (wget does a similar thing to curl, and I'm not sure why one is preferred over another.)
 The second line changes the scripts permissions to allow it to be executed. "chmod" is a command for modifying the file's permissions. "+x" sets execute permissions. The script name is placed last, so that terminal knows which file to modify.
