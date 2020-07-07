@@ -1,3 +1,5 @@
+# Consequences of Biodiversity index variation and land-use prioritization
+
 # Authors
 Christopher L. Crawford [\*1], Lyndon D. Estes [2], Timothy D. Searchinger [1], and David S. Wilcove [1, 3]
 
@@ -6,9 +8,16 @@ Christopher L. Crawford [\*1], Lyndon D. Estes [2], Timothy D. Searchinger [1], 
 2. Graduate School of Geography, Clark University, Worcester, MA  
 3. Department of Ecology & Evolutionary Biology, Princeton University, Princeton, NJ  
 
-# Description
+## Overview
 
-This repository houses scripts with data and analyses for our paper "Consequences of under-explored variation in biodiversity indices used for land-use prioritization." We explore how different methods for designing biodiversity indices affect the outcomes of a land-use prioritization model designed to identify areas for agricultural expansion so as to meet a given production target while minimizing the environmental effects of that expansion, applying the [`agroEcoTradeoff`](https://github.com/PrincetonUniversity/agroEcoTradeoff) model to a case study in Zambia. The `agroEcoTradeoff` model allows users to minimize four constraints -- 1) biodiversity loss, 2) total agricultural area (maximizing yields), 3) carbon loss, and 4) transportation costs. Our primary analysis focuses on how biodiversity loss is modelled: we assess congruence between the least biodiverse areas in Zambia as identified using different ways of representing biodiversity.
+This repository houses scripts with data and analyses for:
+Crawford CL, Estes LD, Searchinger TD, and Wilcove, DS. (2020). Consequences of under-explored variation in biodiversity indices used for land-use prioritization.
+
+We explore how different methods for designing biodiversity indices affect the outcomes of a land-use prioritization model designed to identify areas for agricultural expansion so as to meet a given production target while minimizing the environmental effects of that expansion, applying the [`agroEcoTradeoff`](https://github.com/PrincetonUniversity/agroEcoTradeoff) model to a case study in Zambia. The `agroEcoTradeoff` model allows users to minimize four constraints -- 1) biodiversity loss, 2) total agricultural area (maximizing yields), 3) carbon loss, and 4) transportation costs. Our primary analysis focuses on how biodiversity loss is modelled: we assess congruence between the least biodiverse areas in Zambia as identified using different ways of representing biodiversity.
+
+## Components of this Repository
+
+
 
 ## Downloading agroEcoTradeoff
 
@@ -25,8 +34,4 @@ The second line changes the scripts permissions to allow it to be executed. "chm
 The third line runs the script itself.
 
 In order for the `agroEcoTradeoff` model to work correctly, the working directory of your R project *must* be set to your agroEcoTradeoff/ directory. If you're working in a git repository, you can have it be a different name from the folder within which your R project lives.  You can create a scripts folder within your agroEcoTradeoff/ directory, and go from there. The data that the agroEcoTradeoff model pulls from is housed in a folder within external/data/folder_name. You use the name of this folder as the "input key" that points the model towards the folder you want when you run `tradeoff_mod(input_key = "folder_name")` function.
-
-## Analyses
-
-## Data
 
