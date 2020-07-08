@@ -11,8 +11,6 @@ source("scripts/cc_functions.R")
 source("scripts/cc_pathnames.R")
 source("scripts/cc_plot_things.R")
 
-# setwd("/Users/christophercrawford/Google Drive/_Projects/Zambia")
-
 ```
 
 ```{r load-basic-gis-files}

@@ -7,7 +7,7 @@ editor_options:
 This notebook outlines the main `agroEcoTradeoff` model runs 
 
 # Start up:
-See: scripts/cc_Start.Rmd 
+See: scripts/1_Start.Rmd 
 
 Note that in order for these scripts to run, one must download the `agroEcoTradeoff` package, which must be downloaded directly. See: https://github.com/PrincetonUniversity/agroEcoTradeoff. In order to do this in terminal, first you have to install wget (and before that, gdal): https://stackoverflow.com/questions/33886917/how-to-install-wget-in-macos. You can use brew to do this, and then install wget. After that, run the following three lines of code from Lyndon's github, which installed the agroEcoTradeoff package:
 

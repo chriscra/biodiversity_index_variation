@@ -8,7 +8,7 @@ This document outlines methods for preparing biodiversity rasters from sources u
 
 # Set up
 ## Utilities
-See: scripts/cc_Start.Rmd 
+See: scripts/1_Start.Rmd 
 
 
 
@@ -1534,7 +1534,7 @@ names(mam_brick) <- names(mam_list$brick)
 
 
 ### Extras: General Species Richness Extras and Unused methods:
-Note: See cc_BD_input_prep.Rmd for my initial code, with some potentially useful notes. 
+Note: See 2_BD_input_prep.Rmd for my initial code, with some potentially useful notes. 
 
 This is important! Plotting stuff with lots of features is hard and takes a long time for the Mac Quartz device (the interactive one that RStudio uses in the IDE). A very good way to speed up plotting is to simplify the geometry, by removing vertices. You can do this with sf objects using the `st_simplify()` function. The dTolerance option sets how simplified to make this. I'm not totally sure what it means, but perhaps it is measured in meters. For things in the Africa Albers Equal Area Conic (aaeac, same as for msk_shp) projection, dTolerance = 1000 seems to make things very speedy and still pretty detailed (even when looking at it at the scale of Zambia). 
 

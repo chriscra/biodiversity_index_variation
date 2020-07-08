@@ -4,7 +4,7 @@ output: html_notebook
 editor_options: 
   chunk_output_type: console
 ---
-See: scripts/cc_Start.Rmd 
+See: scripts/1_Start.Rmd 
 
 ```{r save_or_load_workspace}
 save.image(file = fp(p_proj, "Backups/workspace_2020_4_5.RData"))
@@ -63,7 +63,7 @@ bd_raw_dt <- na.omit(bd_raw_dt) # omit NAs (this is critical)
 
 names(bd_raw_dt)[3:10] <- paste0(runs[1:8], "_raw")
 
-# see cc_Start.rmd, inputs and input_handler
+# see 1_Start.rmd, inputs and input_handler
 bd_raw_dt <- bd_raw_dt[valinds, ] 
 # check it out.
 bd_raw_dt %>% dt_to_raster(., CRSobj) %T>% plot()
@@ -861,7 +861,7 @@ dt_m0 <- fread(file = fp(p_mod_output, "dt_m0.csv")) # original dt_m file, with 
 ```
 
 ```{r adjust_by_convertible}
-# see cc_Start.rmd chunk "load-basic-gis-files" for inputs, specifically the below
+# see 1_Start.rmd chunk "load-basic-gis-files" for inputs, specifically the below
 # il <- agroEcoTradeoff::fetch_inputs(path = p_ZA)
 
 # ----------------------------------------------
@@ -2405,7 +2405,7 @@ rs_over <- lapply(1:nrow(pms2b), function(x) {  # apply logic tests
 names(rs_over) <- pms2b$pair #pms2b$cl
 # I get an error, but the result is the same as when using a raster stack and the extra bracket. 
 
-# $convertible is the proportion of each cell that is "unconverted to cropland or urban." This determines how much area each pixel could supply, and therefore how much food  the pixel can create if it's converted to agriculture. See cc_Start chunk "load-basic-gis-files" for inputs. 
+# $convertible is the proportion of each cell that is "unconverted to cropland or urban." This determines how much area each pixel could supply, and therefore how much food  the pixel can create if it's converted to agriculture. See 1_Start chunk "load-basic-gis-files" for inputs. 
 
 
 # -----------------------------
