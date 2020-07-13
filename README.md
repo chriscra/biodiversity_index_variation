@@ -35,3 +35,4 @@ The third line runs the script itself.
 
 In order for the `agroEcoTradeoff` model to work correctly, the working directory of your R project *must* be set to your agroEcoTradeoff/ directory. If you're working in a git repository, you can have it be a different name from the folder within which your R project lives.  You can create a scripts folder within your agroEcoTradeoff/ directory, and go from there. The data that the agroEcoTradeoff model pulls from is housed in a folder within external/data/folder_name. You use the name of this folder as the "input key" that points the model towards the folder you want when you run `tradeoff_mod(input_key = "folder_name")` function.
 
+Contact Chris at ccrawford@princeton.edu with any questions. Thanks!
