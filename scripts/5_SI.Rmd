@@ -46,8 +46,8 @@ tinytex::install_tinytex()
 ```
 
 ```{r start, eval = TRUE, echo = FALSE, include = FALSE}
-source("cc_libraries.R")
 source("cc_functions.R")
+source("cc_libraries.R")
 source("cc_pathnames.R")
 ```
 
@@ -209,7 +209,7 @@ In order to capture the variation in how biodiversity can be represented in prio
 Derived from IUCN [@IUCN2017], BirdLife International [@BirdLife2018], and GARD range map data [@Roll2017].
 
 **Richness for all vertebrate species combined:**
-Note: values are calculated by first calculating richness within each taxonomic group, normalizing to between 0-1, then averaging across all four taxonomic groups, following @Brancalion2019. See Section \@ref(section-norm-order) for a detailed comparison of this approach vs. the opposite, taken by @Laurance2014a.
+Note: values are calculated by first calculating richness within each taxonomic group, normalizing to between 0-1, then averaging across all four taxonomic groups, following @Brancalion2019. See Section \@ref(section-norm-order) for a detailed comparison of this approach with the opposite (summing across all taxonomic groups without normalizing first), as taken by @Laurance2014a.
 
 (@) *vert_all*: All vertebreate species richness
 (@) *vert_endemism* vertebrate endemism richness is also included (see above)
@@ -274,7 +274,7 @@ Different methods for combining multiple layers, for three pairs of layers: 1) t
 
 We produced 90 unique indices to cover the full range of permutations in the five groups above. This included the four existing biodiversity indices (n = 4), three richness types for four taxonomic groups and all vertebrates combined (n = 15, including one of the existing indices, vertebrate endemism richness), four methods for three pairs of layers (n = 12), yielding 30 combinations. These were then calculated for three resolutions, yielding 90 unique model runs.
 
-### Processing spatial data and producing biodviersity indices
+### Processing spatial data and producing biodiversity indices
 
 Prior to analysis, species range maps were filtered prior to the calculation of species richness in order to: exclude marine species; exclude species classified as “Extinct” (EX) or “Extinct in the Wild” (EW); include only ranges where species were considered “extant;” include only ranges where species are considered “native” or “reintroduced;” and include only portions of the range where species are “resident,” “breeding,” or “non-breeding” (i.e. wintering, excluding “passage” areas for migratory species).
 
@@ -579,7 +579,7 @@ knitr::include_graphics(fp(p_plots, "ms_v5/SI_fig_jac_w_byct.png"))
 In the real world, decision makers must consider factors other than biodiversity in making land-use decisions. When distributing weight from biodiversity to yield, carbon storage, and transportation costs, we found that the similarity between land-use recommendations increased overall, though the overall pattern of relative differences between factors in the different categories remained largely consistent. This is not so surprising, considering that we held these other three factors constant, so including them reduced the amount of variation between model runs. However, we also found that different model weighting specifications produced recommendations that differed from each other as much as different existing indices and taxonomic groups (see Figure \@ref(fig:jac-w-all)). This signals a relative lack of congruence between the four constraints themselves: the least-cost areas for biodiversity do not necessarily overlap with those that maximize yields or minimize transportation cost, nor do those that minimize carbon emissions. This supports research that has shown that goals related to climate mitigation and adaptation and those related to biodiversity conservation are not always spatially aligned [@Anderson2009; @Thomas2013], and that variation in socioeconomic factors can have greater importance for determining land-use priorities than biodiversity [@Field2019; @Keeler2019].  That such tradeoffs between social and environmental goals exist means that when factoring many constraints into a land-use prioritization model, variation in biodiversity may be dominated by variation between broad constraints.  Of course, biodiversity is not the only aspect of land use prioritization that is subject to uncertainty. We held these other three factors constant, but they are surely subject to uncertainty and variation worthy of exploration, even though estimates of yields, carbon storage, and travel cost are not dependent on values judgements in the way that maps of biodiversity value are. 
 
 
-### Threatened Species Richness {#section-threat}
+## Threatened Species Richness {#section-threat}
 
 We did not include threatened species richness in our main analysis of different richness types because reptiles have not been comprehensively assessed by IUCN, making it impossible to calculate the number of threatened species in Zambia. For context, only 37 out of the 226 reptile species included in the GARD database [@Roll2017] that occur in Zambia have been assessed by the IUCN. Of those, only three are listed as threatened: *Malacochersus tornieri* (pancake tortoise), *Cycloderma frenatum* (Zambezi flapshell turtle), and *Mecistops cataphractus* (slender-snouted crocodile). (See Table \@ref(tab:species-occurrence))
 
@@ -596,7 +596,7 @@ knitr::include_graphics(fp(p_plots, "ms_v5/SI_fig_facet_r_threat_combo.png"))
 ```
 
 
-### Additional composites
+## Additional composites
 
 In addition to the four existing indices we compare in our main analysis, we also considered two specific subsets of the @Laurance2014a composite, as well as a hypothetical composite oriented towards bird conservation. 
 
@@ -675,15 +675,15 @@ knitr::include_graphics(fp(p_plots, "ms_v5/SI_fig_facet_r_extra_composites.png")
 ```
 
 
-### Normalization order {#section-norm-order}
+## Normalization order {#section-norm-order}
 
-Additional purely methodological choices include the simple decision to change the order in which taxonomic groups are normalized and combined into a single layer, treating all species equally or each taxonomic group equally, which can result in model results that are only 79% similar.
+Additional purely methodological choices include the simple decision to change the order in which taxonomic groups are normalized and combined into a single layer, whether treating all species equally or each taxonomic group equally, which can result in model results that are only 79% similar (see Figure \@ref(fig:norm-order)).
 
 We compared the influence of the stage at which normalization takes place, by comparing these two common ways of calculating the cumulative vertebrate richness: 1) by normalizing within each taxa first before summing across taxa (effectively averaging the four taxonomic groups, following @Brancalion2019, or 2) by summing across all four taxa, without normalizing first following @Laurance2014a. Our main analysis follows method 1 (normalizing before summing). 
 
 On the one hand, summing first treats all threatened species as equally valuable. But, it ends up being biased towards some taxa. For example, birds (max sp. richness 15 species, 20 total species occurring anywhere in Zambia) and mammals (max richness 7 species, 11 total species occurring anywhere in Zambia) are overrepresented, compared to amphibians and reptiles, which each have a max richness of 1 in Zambia (amphibians have one threatened species occurring in Zambia, and reptiles have 3). If normalization takes place within each taxa before being summed, it will give that one threatened amphibian species the same weight as 15 threatened bird species. 
 
-We found that ensemble averages of the conversion maps produced by the three vertebrate species richness types at our three resolutions (n = 9) had a pairwise Jaccard Similarity $J_w$ of 0.789. In other words, the simple decision to count each species as equal instead of counting each taxonomic group as equal results in model results that are only 78.9% similar. This less consequential than choices in the categories of variation we assess in the main text (e.g. category means for existing indices: 2.2%; taxa: 10.3%; richness types: 26%; methods: 59.4%; and resolutions: 59.2%), but it is striking how much of a difference it can make.
+We found that ensemble averages of the conversion maps produced by the three vertebrate species richness types at our three resolutions (n = 9) had a pairwise Jaccard Similarity $J_w$ of 0.789 (see Figure \@ref(fig:norm-order)). In other words, the simple decision to count each species as equal instead of counting each taxonomic group as equal results in model results that are only 78.9% similar. This less consequential than choices in the categories of variation we assess in the main text (e.g. category means for existing indices: 2.2%; taxa: 10.3%; richness types: 26%; methods: 59.4%; and resolutions: 59.2%), but it is striking how much of a difference it can make.
 
 (ref:caption-norm-order) Overlap between ensemble mean conversion areas for two differing methods for combining vertebrate taxonomic groups, either normalizing within each taxon before combining ("norm_first", @Brancalion2019), or combining all taxonomic groups before normalizing ("sum_first", @Laurance2014a). Positive values show areas selected only by the "norm_first" method, and negative values show areas selected by only the "sum_first" method. Areas with 0 value are areas where the two approaches agree (either to convert or not to convert).
 
@@ -740,7 +740,7 @@ knitr::include_graphics("/Users/christophercrawford/Google Drive/_Projects/Zambi
 
 ## Panels of conversion maps at different weights
 
-Each of the following figures shows, from top to bottom: the distribution of values in each layer, the raw biodiveristy inputs provided to the model, and conversion maps at 3 model specifications: *bp* (100% weight on biodiversity, average yields, baseline production target of ~5% of Zambia), *b* (100% weight on biodiversity, but with heterogeneous yields), and *z50* (100% weight on biodiversity, average yields, but with a production target resulting in conversion of ~50% of Zambia).
+Each of the following figures shows, from top to bottom: the distribution of values in each layer, the raw biodiversity inputs provided to the model, and conversion maps at 3 model specifications: *bp* (100% weight on biodiversity, average yields, baseline production target of ~5% of Zambia), *b* (100% weight on biodiversity, but with heterogeneous yields), and *z50* (100% weight on biodiversity, average yields, but with a production target resulting in conversion of ~50% of Zambia).
 
 (ref:caption-conv-maps-comp-1) Existing composites, including vertebrate endemism, plant species richness per ecoregion, @Estes2016a, @Laurance2014a, habitat priorities, our stylized bird conservation composite, and @Damania2015.
 

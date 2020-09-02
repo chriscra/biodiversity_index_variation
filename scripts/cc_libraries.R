@@ -8,16 +8,52 @@ pkgs_aux <- c("citr", "rticles", "mapview", "gdata", "GISTools",
           "rgeos", "RColorBrewer", "stringr",
           "maps", "rangeBuilder", "rnaturalearth", "spatialEco", "smoothr",
           "ggnewscale", "plotly", "scales", "patchwork", "biomod2") # aux package names
+
+
+install_missing_packages(pkgs)
+install_missing_packages(pkgs_aux)
+
+# -- old-school version -- #
 #install.packages(pkgs)
 #install.packages(pkgs_aux)
 #update.packages()
+#
+# inst <- lapply(pkgs, library, character.only = TRUE) # load them
+# inst_aux <- lapply(pkgs_aux, library, character.only = TRUE) # load them
 
-inst <- lapply(pkgs, library, character.only = TRUE) # load them
-inst_aux <- lapply(pkgs_aux, library, character.only = TRUE) # load them
+# -------------------------
+# Additional development packages, to be installed with devtools:
+# -------------------------
+
+# ----
+# Lyndon's packages
+
+# devtools::install_github("ldemaz/dtraster")
+# devtools::install_github("PrincetonUniversity/lmisc")
+# devtools::install_github("PrincetonUniversity/agroEcoTradeoff@devel")
+
+# ----
+# rnaturalearth extras
+
+# devtools::install_github("ropensci/rnaturalearthdata")
+# devtools::install_github("ropensci/rnaturalearthhires")
+
+# ----
+# others
+# devtools::install_github('BigelowLab/dismotools')
+
+# ----
+# load
+github_packages <- c(
+  "dtraster", "lmisc", "agroEcoTradeoff",
+  "rnaturalearthdata", "rnaturalearthhires",
+  "dismotools")
+
+github_packages_inst <- sapply(github_packages, library, character.only = TRUE) # load them
 
 lyndon_pkgs <- c("dtraster", "lmisc", "agroEcoTradeoff")
-lyndon_inst <- lapply(lyndon_pkgs, library, character.only = TRUE) # load them
-#install.packages(lyndon_pkgs)
+# lyndon_inst <- lapply(lyndon_pkgs, library, character.only = TRUE) # load them
+# #install.packages(lyndon_pkgs)
 
 # generate .bib document from packages I've loaded and used,
 # to then add to Mendeley to make it into the library.bib doc

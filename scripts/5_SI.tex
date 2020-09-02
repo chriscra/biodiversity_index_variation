@@ -1,43 +1,56 @@
-\PassOptionsToPackage{unicode=true}{hyperref} % options for packages loaded elsewhere
+% Options for packages loaded elsewhere
+\PassOptionsToPackage{unicode}{hyperref}
 \PassOptionsToPackage{hyphens}{url}
 %
-\documentclass[]{article}
+\documentclass[
+]{article}
 \usepackage{lmodern}
 \usepackage{amssymb,amsmath}
 \usepackage{ifxetex,ifluatex}
-\usepackage{fixltx2e} % provides \textsubscript
 \ifnum 0\ifxetex 1\fi\ifluatex 1\fi=0 % if pdftex
   \usepackage[T1]{fontenc}
   \usepackage[utf8]{inputenc}
-  \usepackage{textcomp} % provides euro and other symbols
-\else % if luatex or xelatex
+  \usepackage{textcomp} % provide euro and other symbols
+\else % if luatex or xetex
   \usepackage{unicode-math}
-  \defaultfontfeatures{Ligatures=TeX,Scale=MatchLowercase}
+  \defaultfontfeatures{Scale=MatchLowercase}
+  \defaultfontfeatures[\rmfamily]{Ligatures=TeX,Scale=1}
 \fi
-% use upquote if available, for straight quotes in verbatim environments
+% Use upquote if available, for straight quotes in verbatim environments
 \IfFileExists{upquote.sty}{\usepackage{upquote}}{}
-% use microtype if available
-\IfFileExists{microtype.sty}{%
-\usepackage[]{microtype}
-\UseMicrotypeSet[protrusion]{basicmath} % disable protrusion for tt fonts
+\IfFileExists{microtype.sty}{% use microtype if available
+  \usepackage[]{microtype}
+  \UseMicrotypeSet[protrusion]{basicmath} % disable protrusion for tt fonts
 }{}
-\IfFileExists{parskip.sty}{%
-\usepackage{parskip}
-}{% else
-\setlength{\parindent}{0pt}
-\setlength{\parskip}{6pt plus 2pt minus 1pt}
-}
-\usepackage{hyperref}
+\makeatletter
+\@ifundefined{KOMAClassName}{% if non-KOMA class
+  \IfFileExists{parskip.sty}{%
+    \usepackage{parskip}
+  }{% else
+    \setlength{\parindent}{0pt}
+    \setlength{\parskip}{6pt plus 2pt minus 1pt}}
+}{% if KOMA class
+  \KOMAoptions{parskip=half}}
+\makeatother
+\usepackage{xcolor}
+\IfFileExists{xurl.sty}{\usepackage{xurl}}{} % add URL line breaks if available
+\IfFileExists{bookmark.sty}{\usepackage{bookmark}}{\usepackage{hyperref}}
 \hypersetup{
-            pdftitle={Supporting Information: Consequences of under-explored variation in biodiversity indices used for land-use prioritization},
-            pdfauthor={Christopher L. Crawford \^{}1; Lyndon D. Estes\^{}2; Timothy S. Searchinger\^{}1; David S. Wilcove\^{}\{1, 3\}},
-            pdfborder={0 0 0},
-            breaklinks=true}
-\urlstyle{same}  % don't use monospace font for urls
+  pdftitle={Supporting Information: Consequences of under-explored variation in biodiversity indices used for land-use prioritization},
+  pdfauthor={Christopher L. Crawford \^{}1; Lyndon D. Estes\^{}2; Timothy S. Searchinger\^{}1; David S. Wilcove\^{}\{1, 3\}},
+  hidelinks,
+  pdfcreator={LaTeX via pandoc}}
+\urlstyle{same} % disable monospaced font for URLs
 \usepackage[margin=1in]{geometry}
 \usepackage{longtable,booktabs}
-% Fix footnotes in tables (requires footnote package)
-\IfFileExists{footnote.sty}{\usepackage{footnote}\makesavenoteenv{longtable}}{}
+% Correct order of tables after \paragraph or \subparagraph
+\usepackage{etoolbox}
+\makeatletter
+\patchcmd\longtable{\par}{\if@noskipsec\mbox{}\fi\par}{}{}
+\makeatother
+% Allow footnotes in longtable head/foot
+\IfFileExists{footnotehyper.sty}{\usepackage{footnotehyper}}{\usepackage{footnote}}
+\makesavenoteenv{longtable}
 \usepackage{graphicx,grffile}
 \makeatletter
 \def\maxwidth{\ifdim\Gin@nat@width>\linewidth\linewidth\else\Gin@nat@width\fi}
@@ -47,25 +60,14 @@
 % margins by default, and it is still possible to overwrite the defaults
 % using explicit options in \includegraphics[width, height, ...]{}
 \setkeys{Gin}{width=\maxwidth,height=\maxheight,keepaspectratio}
-\setlength{\emergencystretch}{3em}  % prevent overfull lines
-\providecommand{\tightlist}{%
-  \setlength{\itemsep}{0pt}\setlength{\parskip}{0pt}}
-\setcounter{secnumdepth}{5}
-% Redefines (sub)paragraphs to behave more like sections
-\ifx\paragraph\undefined\else
-\let\oldparagraph\paragraph
-\renewcommand{\paragraph}[1]{\oldparagraph{#1}\mbox{}}
-\fi
-\ifx\subparagraph\undefined\else
-\let\oldsubparagraph\subparagraph
-\renewcommand{\subparagraph}[1]{\oldsubparagraph{#1}\mbox{}}
-\fi
-
-% set default figure placement to htbp
+% Set default figure placement to htbp
 \makeatletter
 \def\fps@figure{htbp}
 \makeatother
-
+\setlength{\emergencystretch}{3em} % prevent overfull lines
+\providecommand{\tightlist}{%
+  \setlength{\itemsep}{0pt}\setlength{\parskip}{0pt}}
+\setcounter{secnumdepth}{5}
 \usepackage[nottoc]{tocbibind}
 \usepackage{float}
 \usepackage{booktabs}
@@ -80,7 +82,6 @@
 \usepackage{threeparttablex}
 \usepackage[normalem]{ulem}
 \usepackage{makecell}
-\usepackage{xcolor}
 
 \title{Supporting Information: Consequences of under-explored variation in biodiversity indices used for land-use prioritization}
 \author{Christopher L. Crawford\footnote{Corresponding Author, \href{mailto:ccrawford@princeton.edu}{\nolinkurl{ccrawford@princeton.edu}}, Robertson Hall, Princeton University, Princeton, NJ} \(^1\) \and Lyndon D. Estes\(^2\) \and Timothy S. Searchinger\(^1\) \and David S. Wilcove\(^{1, 3}\)}
@@ -137,7 +138,7 @@ We ran the model through five additional scenarios that progressively shared wei
   \emph{byct} = 25\% weight on biodiversity, yield, carbon, and transportation cost
 \end{itemize}
 
-Our baseline production target is based on current projections of future demand and yield increases, and converts to cropland an additional \textasciitilde{}5\% of Zambia remaining unprotected, uncultivated, and undeveloped land area of (approximately 22,000 km\(^2\)). In addition to these analyses, we also assessed the effect of increasing our production target so that \textasciitilde{}50\% of Zambia's available land area must now be converted, in order to assess scale dependence. This model specification (\emph{z50}), also assumes constant, average yields throughout Zambia, just like the primary analysis (\emph{bp}). See Section \ref{section-prod-targ} for details and results. See full results for the additional weighting specifications in Section \ref{weights-results}.
+Our baseline production target is based on current projections of future demand and yield increases, and converts to cropland an additional \textasciitilde5\% of Zambia remaining unprotected, uncultivated, and undeveloped land area of (approximately 22,000 km\(^2\)). In addition to these analyses, we also assessed the effect of increasing our production target so that \textasciitilde50\% of Zambia's available land area must now be converted, in order to assess scale dependence. This model specification (\emph{z50}), also assumes constant, average yields throughout Zambia, just like the primary analysis (\emph{bp}). See Section \ref{section-prod-targ} for details and results. See full results for the additional weighting specifications in Section \ref{weights-results}.
 
 \hypertarget{bd-inputs}{%
 \subsection{Construction of Biodiversity Indices}\label{bd-inputs}}
@@ -183,7 +184,7 @@ Laurance et al. (2014) produced an ``environmental values layer'' on three equal
 Derived from IUCN (IUCN 2017), BirdLife International (BirdLife International and Handbook of the Birds of the World 2018), and GARD range map data (Roll et al. 2017).
 
 \textbf{Richness for all vertebrate species combined:}
-Note: values are calculated by first calculating richness within each taxonomic group, normalizing to between 0-1, then averaging across all four taxonomic groups, following Brancalion et al. (2019). See Section \ref{section-norm-order} for a detailed comparison of this approach vs.~the opposite, taken by Laurance et al. (2014).
+Note: values are calculated by first calculating richness within each taxonomic group, normalizing to between 0-1, then averaging across all four taxonomic groups, following Brancalion et al. (2019). See Section \ref{section-norm-order} for a detailed comparison of this approach with the opposite (summing across all taxonomic groups without normalizing first), as taken by Laurance et al. (2014).
 
 \begin{enumerate}
 \def\labelenumi{(\arabic{enumi})}
@@ -320,8 +321,8 @@ Different methods for combining multiple layers, for three pairs of layers: 1) t
 
 We produced 90 unique indices to cover the full range of permutations in the five groups above. This included the four existing biodiversity indices (n = 4), three richness types for four taxonomic groups and all vertebrates combined (n = 15, including one of the existing indices, vertebrate endemism richness), four methods for three pairs of layers (n = 12), yielding 30 combinations. These were then calculated for three resolutions, yielding 90 unique model runs.
 
-\hypertarget{processing-spatial-data-and-producing-biodviersity-indices}{%
-\subsubsection{Processing spatial data and producing biodviersity indices}\label{processing-spatial-data-and-producing-biodviersity-indices}}
+\hypertarget{processing-spatial-data-and-producing-biodiversity-indices}{%
+\subsubsection{Processing spatial data and producing biodiversity indices}\label{processing-spatial-data-and-producing-biodiversity-indices}}
 
 Prior to analysis, species range maps were filtered prior to the calculation of species richness in order to: exclude marine species; exclude species classified as ``Extinct'' (EX) or ``Extinct in the Wild'' (EW); include only ranges where species were considered ``extant;'' include only ranges where species are considered ``native'' or ``reintroduced;'' and include only portions of the range where species are ``resident,'' ``breeding,'' or ``non-breeding'' (i.e.~wintering, excluding ``passage'' areas for migratory species).
 
@@ -441,7 +442,7 @@ We also avoid any prediction ``biodiversity loss'' resulting from various config
 \hypertarget{section-prod-targ}{%
 \subsection{Increasing the production target}\label{section-prod-targ}}
 
-Our first robustness check involved assessing the influence of our production target on the similarity results, by increasing the production target from the baseline level of \textasciitilde{}5\% all the way to \textasciitilde{}50\%. Our original model run (\emph{bp}), assumes a production target of \textasciitilde{}5\% based on current projections of demand and yield growth (Estes et al. 2016), amounting to about 22,000 km\(^2\) of land (about the size of New Jersey). For comparison we run the model with a much higher production target, at \textasciitilde{}50\% (\emph{z50}), in order to assess how similarity is affected by the size of the area being converted (and therefore, being compared).
+Our first robustness check involved assessing the influence of our production target on the similarity results, by increasing the production target from the baseline level of \textasciitilde5\% all the way to \textasciitilde50\%. Our original model run (\emph{bp}), assumes a production target of \textasciitilde5\% based on current projections of demand and yield growth (Estes et al. 2016), amounting to about 22,000 km\(^2\) of land (about the size of New Jersey). For comparison we run the model with a much higher production target, at \textasciitilde50\% (\emph{z50}), in order to assess how similarity is affected by the size of the area being converted (and therefore, being compared).
 
 The relative similarity between these two production targets is shown in Figure \ref{fig:z50-bp-comparison}. We find that running the model with this larger production target produces higher overall similarity: for example, mean \(J_w\) = 0.36 across all existing indices (Figure \ref{fig:jac-w-z50}), compared to mean \(J_w\) = 0.0223 for our primary analysis (\emph{bp}, main text Figure 4). We expect higher similarity when a greater proportion of the country is converted, simply because there is less area left for disagreement. The pattern of relative differences between categories of variation stays the same, showing which sources of variation have the largest effect on land use outcomes. Most importantly, we find low levels of agreement at this high production target scenario, even with such high production targets.
 
@@ -450,19 +451,19 @@ See Figure \ref{fig:jac-w-z50} for in depth results including mean and pairwise 
 
 
 \begin{figure}
-\includegraphics[width=1\textwidth]{5_SI_files/figure-latex/z50-bp-comparison-1} \caption{Comparing the effect of production target on similarity results. Our main analysis (\emph{bp}) assumes a production target of \textasciitilde{}5\% of Zambia. For comparison, we show model results assuming a much larger production target (\emph{z50}), which converts \textasciitilde{}50\% of Zambia. Both model runs place 100\% model weight on biodiversity and using average, constant yields.}\label{fig:z50-bp-comparison}
+\includegraphics[width=1\textwidth]{5_SI_files/figure-latex/z50-bp-comparison-1} \caption{Comparing the effect of production target on similarity results. Our main analysis (\emph{bp}) assumes a production target of \textasciitilde5\% of Zambia. For comparison, we show model results assuming a much larger production target (\emph{z50}), which converts \textasciitilde50\% of Zambia. Both model runs place 100\% model weight on biodiversity and using average, constant yields.}\label{fig:z50-bp-comparison}
 \end{figure}
 
 
 
 \begin{figure}
-\includegraphics[width=1\textwidth]{/Users/christophercrawford/Google Drive/_Projects/Zambia/agroEcoTradeoff/external/plots/ms_v5/SI_fig_jac_w_z50} \caption{Similarity between conversion areas assuming a production target that results in the conversion of \textasciitilde{}50\% or the remaining unprotected, uncultivated, and undeveloped land in Zambia.}\label{fig:jac-w-z50}
+\includegraphics[width=1\textwidth]{/Users/christophercrawford/Google Drive/_Projects/Zambia/agroEcoTradeoff/external/plots/ms_v5/SI_fig_jac_w_z50} \caption{Similarity between conversion areas assuming a production target that results in the conversion of \textasciitilde50\% or the remaining unprotected, uncultivated, and undeveloped land in Zambia.}\label{fig:jac-w-z50}
 \end{figure}
 
 
 
 \begin{figure}
-\includegraphics[width=1\textwidth]{/Users/christophercrawford/Google Drive/_Projects/Zambia/agroEcoTradeoff/external/plots/ms_v5/ms_fig_facet_r_z50_wide} \caption{Mean conversion priorities assuming a production target that results in the conversion of \textasciitilde{}50\% of Zambia (\emph{z50}), placing 100\% weight in biodiversity and using average and constant yields across Zambia (compare with Main Text Figure 2). The panels show biodiversity indices within five categories of variation: a) existing biodiversity indices (vertebrate endemism richness, plant species richness, Estes et al.~2016, Laurance et al.~2014, four habitat priorities, threatened bird richness combined with IBAs and EBAs, and Damania \& Wheeler 2015); b) taxonomic groups (mammals, birds, amphibians, and reptiles); c) types of species richness (all species richness, endemism richness, and small-ranged species richness); d) index calculation methods (average, geometric mean, maximum, and multiplication); and e) input resolutions (1 km, 10 km, and 110 km grids). Cell values correspond to the proportion of model runs using that particular factor that select a given cell for conversion. Blank areas within Zambia correspond to currently protected, cultivated, or settled areas.}\label{fig:facet-r-z50}
+\includegraphics[width=1\textwidth]{/Users/christophercrawford/Google Drive/_Projects/Zambia/agroEcoTradeoff/external/plots/ms_v5/ms_fig_facet_r_z50_wide} \caption{Mean conversion priorities assuming a production target that results in the conversion of \textasciitilde50\% of Zambia (\emph{z50}), placing 100\% weight in biodiversity and using average and constant yields across Zambia (compare with Main Text Figure 2). The panels show biodiversity indices within five categories of variation: a) existing biodiversity indices (vertebrate endemism richness, plant species richness, Estes et al.~2016, Laurance et al.~2014, four habitat priorities, threatened bird richness combined with IBAs and EBAs, and Damania \& Wheeler 2015); b) taxonomic groups (mammals, birds, amphibians, and reptiles); c) types of species richness (all species richness, endemism richness, and small-ranged species richness); d) index calculation methods (average, geometric mean, maximum, and multiplication); and e) input resolutions (1 km, 10 km, and 110 km grids). Cell values correspond to the proportion of model runs using that particular factor that select a given cell for conversion. Blank areas within Zambia correspond to currently protected, cultivated, or settled areas.}\label{fig:facet-r-z50}
 \end{figure}
 
 \hypertarget{section-order}{%
@@ -556,7 +557,7 @@ The relative changes in similarity across the different weighting schemes are sh
 In the real world, decision makers must consider factors other than biodiversity in making land-use decisions. When distributing weight from biodiversity to yield, carbon storage, and transportation costs, we found that the similarity between land-use recommendations increased overall, though the overall pattern of relative differences between factors in the different categories remained largely consistent. This is not so surprising, considering that we held these other three factors constant, so including them reduced the amount of variation between model runs. However, we also found that different model weighting specifications produced recommendations that differed from each other as much as different existing indices and taxonomic groups (see Figure \ref{fig:jac-w-all}). This signals a relative lack of congruence between the four constraints themselves: the least-cost areas for biodiversity do not necessarily overlap with those that maximize yields or minimize transportation cost, nor do those that minimize carbon emissions. This supports research that has shown that goals related to climate mitigation and adaptation and those related to biodiversity conservation are not always spatially aligned (Anderson et al. 2009; Thomas et al. 2013), and that variation in socioeconomic factors can have greater importance for determining land-use priorities than biodiversity (Field and Elphick 2019; Keeler et al. 2019). That such tradeoffs between social and environmental goals exist means that when factoring many constraints into a land-use prioritization model, variation in biodiversity may be dominated by variation between broad constraints. Of course, biodiversity is not the only aspect of land use prioritization that is subject to uncertainty. We held these other three factors constant, but they are surely subject to uncertainty and variation worthy of exploration, even though estimates of yields, carbon storage, and travel cost are not dependent on values judgements in the way that maps of biodiversity value are.
 
 \hypertarget{section-threat}{%
-\subsubsection{Threatened Species Richness}\label{section-threat}}
+\subsection{Threatened Species Richness}\label{section-threat}}
 
 We did not include threatened species richness in our main analysis of different richness types because reptiles have not been comprehensively assessed by IUCN, making it impossible to calculate the number of threatened species in Zambia. For context, only 37 out of the 226 reptile species included in the GARD database (Roll et al. 2017) that occur in Zambia have been assessed by the IUCN. Of those, only three are listed as threatened: \emph{Malacochersus tornieri} (pancake tortoise), \emph{Cycloderma frenatum} (Zambezi flapshell turtle), and \emph{Mecistops cataphractus} (slender-snouted crocodile). (See Table \ref{tab:species-occurrence})
 
@@ -578,7 +579,7 @@ We found a category mean \(J_w\) = 0.10 for the three taxonomic groups (mammals,
 \end{figure}
 
 \hypertarget{additional-composites}{%
-\subsubsection{Additional composites}\label{additional-composites}}
+\subsection{Additional composites}\label{additional-composites}}
 
 In addition to the four existing indices we compare in our main analysis, we also considered two specific subsets of the Laurance et al. (2014) composite, as well as a hypothetical composite oriented towards bird conservation.
 
@@ -617,15 +618,15 @@ These \emph{plants}, \emph{habitats}, and \emph{bird\_composite} indices were no
 \end{figure}
 
 \hypertarget{section-norm-order}{%
-\subsubsection{Normalization order}\label{section-norm-order}}
+\subsection{Normalization order}\label{section-norm-order}}
 
-Additional purely methodological choices include the simple decision to change the order in which taxonomic groups are normalized and combined into a single layer, treating all species equally or each taxonomic group equally, which can result in model results that are only 79\% similar.
+Additional purely methodological choices include the simple decision to change the order in which taxonomic groups are normalized and combined into a single layer, whether treating all species equally or each taxonomic group equally, which can result in model results that are only 79\% similar (see Figure \ref{fig:norm-order}).
 
 We compared the influence of the stage at which normalization takes place, by comparing these two common ways of calculating the cumulative vertebrate richness: 1) by normalizing within each taxa first before summing across taxa (effectively averaging the four taxonomic groups, following Brancalion et al. (2019), or 2) by summing across all four taxa, without normalizing first following Laurance et al. (2014). Our main analysis follows method 1 (normalizing before summing).
 
 On the one hand, summing first treats all threatened species as equally valuable. But, it ends up being biased towards some taxa. For example, birds (max sp. richness 15 species, 20 total species occurring anywhere in Zambia) and mammals (max richness 7 species, 11 total species occurring anywhere in Zambia) are overrepresented, compared to amphibians and reptiles, which each have a max richness of 1 in Zambia (amphibians have one threatened species occurring in Zambia, and reptiles have 3). If normalization takes place within each taxa before being summed, it will give that one threatened amphibian species the same weight as 15 threatened bird species.
 
-We found that ensemble averages of the conversion maps produced by the three vertebrate species richness types at our three resolutions (n = 9) had a pairwise Jaccard Similarity \(J_w\) of 0.789. In other words, the simple decision to count each species as equal instead of counting each taxonomic group as equal results in model results that are only 78.9\% similar. This less consequential than choices in the categories of variation we assess in the main text (e.g.~category means for existing indices: 2.2\%; taxa: 10.3\%; richness types: 26\%; methods: 59.4\%; and resolutions: 59.2\%), but it is striking how much of a difference it can make.
+We found that ensemble averages of the conversion maps produced by the three vertebrate species richness types at our three resolutions (n = 9) had a pairwise Jaccard Similarity \(J_w\) of 0.789 (see Figure \ref{fig:norm-order}). In other words, the simple decision to count each species as equal instead of counting each taxonomic group as equal results in model results that are only 78.9\% similar. This less consequential than choices in the categories of variation we assess in the main text (e.g.~category means for existing indices: 2.2\%; taxa: 10.3\%; richness types: 26\%; methods: 59.4\%; and resolutions: 59.2\%), but it is striking how much of a difference it can make.
 
 
 
@@ -689,7 +690,7 @@ Shown for 1 km grid resolution for illustrative purposes only.
 \hypertarget{panels-of-conversion-maps-at-different-weights}{%
 \subsection{Panels of conversion maps at different weights}\label{panels-of-conversion-maps-at-different-weights}}
 
-Each of the following figures shows, from top to bottom: the distribution of values in each layer, the raw biodiveristy inputs provided to the model, and conversion maps at 3 model specifications: \emph{bp} (100\% weight on biodiversity, average yields, baseline production target of \textasciitilde{}5\% of Zambia), \emph{b} (100\% weight on biodiversity, but with heterogeneous yields), and \emph{z50} (100\% weight on biodiversity, average yields, but with a production target resulting in conversion of \textasciitilde{}50\% of Zambia).
+Each of the following figures shows, from top to bottom: the distribution of values in each layer, the raw biodiversity inputs provided to the model, and conversion maps at 3 model specifications: \emph{bp} (100\% weight on biodiversity, average yields, baseline production target of \textasciitilde5\% of Zambia), \emph{b} (100\% weight on biodiversity, but with heterogeneous yields), and \emph{z50} (100\% weight on biodiversity, average yields, but with a production target resulting in conversion of \textasciitilde50\% of Zambia).
 
 
 
@@ -750,7 +751,7 @@ Each of the following figures shows, from top to bottom: the distribution of val
 Anderson, Barbara J., Paul R. Armsworth, Felix Eigenbrod, Chris D. Thomas, Simon Gillings, Andreas Heinemeyer, David B. Roy, and Kevin J. Gaston. 2009. ``Spatial covariance between biodiversity and other ecosystem service priorities.'' \emph{Journal of Applied Ecology} 46 (4): 888--96. \url{https://doi.org/10.1111/j.1365-2664.2009.01666.x}.
 
 \leavevmode\hypertarget{ref-Baccini2012}{}%
-Baccini, A., S. J. Goetz, W. S. Walker, N. T. Laporte, M. Sun, D. Sulla-Menashe, J. Hackler, et al. 2012. ``Estimated carbon dioxide emissions from tropical deforestation improved by carbon-density maps.'' \emph{Nature Climate Change} 2 (3). Nature Publishing Group: 182--85. \url{https://doi.org/10.1038/nclimate1354}.
+Baccini, A., S. J. Goetz, W. S. Walker, N. T. Laporte, M. Sun, D. Sulla-Menashe, J. Hackler, et al. 2012. ``Estimated carbon dioxide emissions from tropical deforestation improved by carbon-density maps.'' \emph{Nature Climate Change} 2 (3): 182--85. \url{https://doi.org/10.1038/nclimate1354}.
 
 \leavevmode\hypertarget{ref-BirdLife2018}{}%
 BirdLife International and Handbook of the Birds of the World. 2018. ``Bird species distribution maps of the world.'' Cambridge, United Kingdom: BirdLife International. \url{http://datazone.birdlife.org/species/requestdis}.
@@ -765,7 +766,7 @@ Brancalion, Pedro H S, Aidin Niamir, Eben Broadbent, Renato Crouzeilles, Felipe 
 Bryant, Dirk, Daniel Nielsen, and Laura Tangley. 1997. \emph{Last Frontier Forests: Ecosystems and Economies on the Edge}. \url{http://pdf.wri.org/lastfrontierforests.pdf}.
 
 \leavevmode\hypertarget{ref-Butchart2012}{}%
-Butchart, Stuart H.M., Jörn P.W. Scharlemann, Mike I. Evans, Suhel Quader, Salvatore Aricò, Julius Arinaitwe, Mark Balman, et al. 2012. ``Protecting important sites for biodiversity contributes to meeting global conservation targets.'' \emph{PLoS ONE} 7 (3). \url{https://doi.org/10.1371/journal.pone.0032529}.
+Butchart, Stuart H. M., Jörn P. W. Scharlemann, Mike I. Evans, Suhel Quader, Salvatore Aricò, Julius Arinaitwe, Mark Balman, et al. 2012. ``Protecting important sites for biodiversity contributes to meeting global conservation targets.'' \emph{PLoS ONE} 7 (3). \url{https://doi.org/10.1371/journal.pone.0032529}.
 
 \leavevmode\hypertarget{ref-Damania2015}{}%
 Damania, Richard, and David Wheeler. 2015. ``Road improvement and deforestation in the Congo Basin countries.'' \url{http://documents.worldbank.org/curated/en/762671467986281150/pdf/WPS7274.pdf}.
@@ -780,7 +781,7 @@ Estes, Lyndon. 2019. \emph{lmisc: Miscellaneous functions for plotting and perfo
 Estes, Lyndon D. 2015. ``dtraster: Raster operations with data.table.''
 
 \leavevmode\hypertarget{ref-Estes2016a}{}%
-Estes, Lyndon D., Timothy D. Searchinger, Marcus Spiegel, D Tian, S Sichinga, M Mwale, Laura Kehoe, et al. 2016. ``Reconciling agriculture, carbon and biodiversity in a savannah transformation frontier.'' \emph{Philosophical Transactions of the Royal Society B: Biological Sciences} 371 (1703). The Royal Society: 1--10. \url{https://doi.org/10.1098/rstb.2015.0316}.
+Estes, Lyndon D., Timothy D. Searchinger, Marcus Spiegel, D Tian, S Sichinga, M Mwale, Laura Kehoe, et al. 2016. ``Reconciling agriculture, carbon and biodiversity in a savannah transformation frontier.'' \emph{Philosophical Transactions of the Royal Society B: Biological Sciences} 371 (1703): 1--10. \url{https://doi.org/10.1098/rstb.2015.0316}.
 
 \leavevmode\hypertarget{ref-R-agroEcoTradeoff}{}%
 Estes, Lyndon, and Marcus Spiegel. 26AD. \emph{agroEcoTradeoff: Landuse Tradeoff analysis model}.
@@ -789,10 +790,10 @@ Estes, Lyndon, and Marcus Spiegel. 26AD. \emph{agroEcoTradeoff: Landuse Tradeoff
 Field, Christopher R, and Chris S Elphick. 2019. ``Quantifying the return on investment of social and ecological data for conservation planning.'' \emph{Environmental Research Letters} 14 (12): 124081. \url{https://doi.org/10.1088/1748-9326/ab5cae}.
 
 \leavevmode\hypertarget{ref-R-gdalUtils}{}%
-Greenberg, Jonathan Asher, and Matteo Mattiuzzi. 2020. \emph{gdalUtils: Wrappers for the Geospatial Data Abstraction Library (GDAL) Utilities}. \url{https://cran.r-project.org/package=gdalUtils}.
+Greenberg, Jonathan Asher, and Matteo Mattiuzzi. 2018. \emph{gdalUtils: Wrappers for the Geospatial Data Abstraction Library (GDAL) Utilities}. \url{https://cran.r-project.org/package=gdalUtils}.
 
 \leavevmode\hypertarget{ref-R-raster}{}%
-Hijmans, Robert J. 2019. \emph{raster: Geographic Data Analysis and Modeling}. \url{https://cran.r-project.org/package=raster}.
+Hijmans, Robert J. 2020. \emph{raster: Geographic Data Analysis and Modeling}. \url{https://cran.r-project.org/package=raster}.
 
 \leavevmode\hypertarget{ref-Ioffe2010}{}%
 Ioffe, Sergey. 2010. ``Improved consistent sampling, Weighted Minhash and L1 Sketching.'' \emph{Proceedings - IEEE International Conference on Data Mining, ICDM}, 246--55. \url{https://doi.org/10.1109/ICDM.2010.80}.
@@ -807,7 +808,7 @@ Izrailev, Sergei. 2014. \emph{tictoc: Functions for timing R scripts, as well as
 Jenkins, Clinton N., Stuart L Pimm, and Lucas N Joppa. 2013. ``Global patterns of terrestrial vertebrate diversity and conservation.'' \emph{Proceedings of the National Academy of Sciences} 110 (28): E2602--E2610. \url{https://doi.org/10.1073/pnas.1302251110}.
 
 \leavevmode\hypertarget{ref-Jones2003}{}%
-Jones, J. W., G. Hoogenboom, C. H. Porter, K. J. Boote, W. D. Batchelor, L. A. Hunt, P. W. Wilkens, U. Singh, A. J. Gijsman, and J. T. Ritchie. 2003. ``The DSSAT cropping system model.'' \emph{European Journal of Agronomy} 18 (3-4). Elsevier: 235--65. \url{https://doi.org/10.1016/S1161-0301(02)00107-7}.
+Jones, J. W., G. Hoogenboom, C. H. Porter, K. J. Boote, W. D. Batchelor, L. A. Hunt, P. W. Wilkens, U. Singh, A. J. Gijsman, and J. T. Ritchie. 2003. ``The DSSAT cropping system model.'' \emph{European Journal of Agronomy} 18 (3-4): 235--65. \url{https://doi.org/10.1016/S1161-0301(02)00107-7}.
 
 \leavevmode\hypertarget{ref-Keeler2019}{}%
 Keeler, Bonnie L, Brent J Dalzell, Jesse D Gourevitch, Peter L Hawthorne, Kris A Johnson, and Ryan R Noe. 2019. ``Putting people on the map improves the prioritization of ecosystem services.'' \emph{Frontiers in Ecology and the Environment}, 1--6. \url{https://doi.org/10.1002/fee.2004}.
@@ -822,7 +823,7 @@ Kier, Gerold, Jens Mutke, Eric Dinerstein, Taylor H. Ricketts, Wolfgang Küper, 
 Koh, Lian Pin, and J. Ghazoul. 2010. ``Spatially explicit scenario analysis for reconciling agricultural expansion, forest protection, and carbon conservation in Indonesia.'' \emph{Proceedings of the National Academy of Sciences} 107 (24): 11140--4. \url{https://doi.org/10.1073/pnas.1012681107}.
 
 \leavevmode\hypertarget{ref-Laurance2014a}{}%
-Laurance, William F., Gopalasamy Reuben Clements, Sean Sloan, Christine S. O'Connell, Nathan D. Mueller, Miriam Goosem, Oscar Venter, et al. 2014. ``A global strategy for road building.'' \emph{Nature} 513 (7517). Nature Publishing Group: 229--33. \url{https://doi.org/10.1038/nature13876}.
+Laurance, William F., Gopalasamy Reuben Clements, Sean Sloan, Christine S. O'Connell, Nathan D. Mueller, Miriam Goosem, Oscar Venter, et al. 2014. ``A global strategy for road building.'' \emph{Nature} 513 (7517): 229--33. \url{https://doi.org/10.1038/nature13876}.
 
 \leavevmode\hypertarget{ref-Legendre2012}{}%
 Legendre, Pierre, and Louis Legendre. 2012. \emph{Numerical ecology}. 3rd ed. Developments in Environmental Modelling ; 24. Boston: Elsevier.
@@ -834,13 +835,13 @@ Lilburne, Linda, and Stefano Tarantola. 2009. ``Sensitivity analysis of spatial 
 Mittermeier, Russell A., C. G. Mittermeier, T. M. Brooks, J. D. Pilgrim, W. R. Konstant, G. A. B. da Fonseca, and C. Kormos. 2003. ``Wilderness and biodiversity conservation.'' \emph{Proceedings of the National Academy of Sciences} 100 (18): 10309--13. \url{https://doi.org/10.1073/pnas.1732458100}.
 
 \leavevmode\hypertarget{ref-Myers2000}{}%
-Myers, Norman, Russell A. Mittermeier, Cristina G. Mittermeier, Gustavo A. B. da Fonseca, and Jennifer Kent. 2000. ``Biodiversity hotspots for conservation priorities.'' \emph{Nature} 403 (6772). Nature Publishing Group: 853--58. \url{https://doi.org/10.1038/35002501}.
+Myers, Norman, Russell A. Mittermeier, Cristina G. Mittermeier, Gustavo A. B. da Fonseca, and Jennifer Kent. 2000. ``Biodiversity hotspots for conservation priorities.'' \emph{Nature} 403 (6772): 853--58. \url{https://doi.org/10.1038/35002501}.
 
 \leavevmode\hypertarget{ref-Olson2002}{}%
 Olson, David M., and Eric Dinerstein. 2002. ``The Global 200: Priority ecoregions for global conservation.'' \emph{Annals of the Missouri Botanical Garden} 89 (2): 199--224.
 
 \leavevmode\hypertarget{ref-R-sf}{}%
-Pebesma, Edzer. 2019. \emph{sf: Simple Features for R}. \url{https://cran.r-project.org/package=sf}.
+Pebesma, Edzer. 2020. \emph{sf: Simple Features for R}. \url{https://cran.r-project.org/package=sf}.
 
 \leavevmode\hypertarget{ref-R-sp}{}%
 Pebesma, Edzer, and Roger Bivand. 2020. \emph{sp: Classes and Methods for Spatial Data}. \url{https://cran.r-project.org/package=sp}.
@@ -849,7 +850,7 @@ Pebesma, Edzer, and Roger Bivand. 2020. \emph{sp: Classes and Methods for Spatia
 Perpinan Lamigueiro, Oscar, and Robert Hijmans. 2019. \emph{rasterVis: Visualization Methods for Raster Data}. \url{https://cran.r-project.org/package=rasterVis}.
 
 \leavevmode\hypertarget{ref-Roll2017}{}%
-Roll, Uri, Anat Feldman, Maria Novosolov, Allen Allison, Aaron M. Bauer, Rodolphe Bernard, Monika Böhm, et al. 2017. ``The global distribution of tetrapods reveals a need for targeted reptile conservation.'' \emph{Nature Ecology and Evolution} 1 (11). Springer US: 1677--82. \url{https://doi.org/10.1038/s41559-017-0332-2}.
+Roll, Uri, Anat Feldman, Maria Novosolov, Allen Allison, Aaron M. Bauer, Rodolphe Bernard, Monika Böhm, et al. 2017. ``The global distribution of tetrapods reveals a need for targeted reptile conservation.'' \emph{Nature Ecology and Evolution} 1 (11): 1677--82. \url{https://doi.org/10.1038/s41559-017-0332-2}.
 
 \leavevmode\hypertarget{ref-RStudioTeam2018}{}%
 RStudio Team. 2018. ``RStudio: Integrated Development Environment for R.'' Boston, MA: RStudio, Inc. \url{http://www.rstudio.com/}.
@@ -867,7 +868,7 @@ Thomas, Chris D., Barbara J. Anderson, Atte Moilanen, Felix Eigenbrod, Andreas H
 Van Breugel, Paulo, Roeland Kindt, Jens Peter Barnekow Lillesø, and Michiel Van Breugel. 2015. ``Environmental gap analysis to prioritize conservation efforts in eastern Africa.'' \emph{PLoS ONE} 10 (4): 1--26. \url{https://doi.org/10.1371/journal.pone.0121444}.
 
 \leavevmode\hypertarget{ref-Waliczky2019}{}%
-Waliczky, Zoltan, Lincoln D. C. Fishpool, Stuart H. M. Butchart, David Thomas, Melanie F. Heath, Carolina Hazin, Paul F. Donald, Aida Kowalska, Maria P. Dias, and Tristram S. M. Allinson. 2019. ``Important Bird and Biodiversity Areas (IBAs): their impact on conservation policy, advocacy and action.'' \emph{Bird Conservation International} 29 (2). Cambridge University Press: 199--215. \url{https://doi.org/10.1017/S0959270918000175}.
+Waliczky, Zoltan, Lincoln D. C. Fishpool, Stuart H. M. Butchart, David Thomas, Melanie F. Heath, Carolina Hazin, Paul F. Donald, Aida Kowalska, Maria P. Dias, and Tristram S. M. Allinson. 2019. ``Important Bird and Biodiversity Areas (IBAs): their impact on conservation policy, advocacy and action.'' \emph{Bird Conservation International} 29 (2): 199--215. \url{https://doi.org/10.1017/S0959270918000175}.
 
 \leavevmode\hypertarget{ref-Williams1996}{}%
 Williams, Paul, David Gibbons, Chris Margules, Anthony Rebelo, Chris Humphries, and Robert Pressey. 1996. ``A comparison of richness hotspots, rarity hotspots, and complementary areas for conserving diversity of British birds.'' \emph{Conservation Biology} 10 (1): 155--74. \url{https://doi.org/10.1046/j.1523-1739.1996.10010155.x}.

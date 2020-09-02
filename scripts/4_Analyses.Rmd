@@ -3157,6 +3157,62 @@ dev.off()
 rm(p1, p2)
 ```
 
+```{r endemism-richness}
+# what drives the vert_endemism conversion map? 
+# is it birds, or the order of combining layers? Let's look at plots and histograms
+par(mfrow=c(2, 3))
+
+plot(vert_r$endemism_richness$norm_sum, main = "vert_endemism")
+plot(vert_r$endemism_richness$mam, main = "mam_endemism")
+plot(vert_r$endemism_richness$bird, main = "bird_endemism")
+plot(vert_r$endemism_richness$amp, main = "amp_endemism")
+plot(vert_r$endemism_richness$rep, main = "rep_endemism")
+plot(NULL)
+
+dev.off()
+
+# histograms
+ncell(vert_r$endemism_richness$norm_sum)
+maxpixels <- 50000000
+par(mfrow=c(2, 4))
+hist(vert_r$endemism_richness$mam, 
+     main = "mam_endemism", maxpixels = maxpixels)
+hist(vert_r$endemism_richness$bird, 
+     main = "bird_endemism", maxpixels = maxpixels)
+hist(vert_r$endemism_richness$amp, 
+     main = "amp_endemism", maxpixels = maxpixels)
+hist(vert_r$endemism_richness$rep, 
+     main = "rep_endemism", maxpixels = maxpixels)
+hist(vert_r$endemism_richness$norm_sum, 
+     main = "vert_endemism", maxpixels = maxpixels)
+plot(vert_r$endemism_richness$norm_sum, main = "vert_endemism")
+plot(vert_r$endemism_richness$mam, main = "mam_endemism")
+plot(vert_r$endemism_richness$bird, main = "bird_endemism")
+
+dev.off()
+
+
+# mam
+plot(vert_r$endemism_richness$mam, 
+     main = "mam_endemism", maxpixels = maxpixels)
+hist(vert_r$endemism_richness$mam, 
+     main = "mam_endemism", maxpixels = maxpixels)
+
+hist(normalize(vert_r$endemism_richness$mam), 
+     main = "mam_endemism", maxpixels = maxpixels)
+hist(log(vert_r$endemism_richness$mam), 
+     main = "mam_endemism", maxpixels = maxpixels)
+
+
+# rep
+hist(vert_r$endemism_richness$rep, 
+     main = "rep_endemism", maxpixels = maxpixels)
+hist(normalize(vert_r$endemism_richness$rep), 
+     main = "rep_endemism", maxpixels = maxpixels)
+hist(log(vert_r$endemism_richness$rep), 
+     main = "rep_endemism", maxpixels = maxpixels)
+
+```
 
 
 # plots

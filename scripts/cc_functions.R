@@ -1,5 +1,16 @@
 ### Functions used for Zambia biodiversity project
 
+# ------------------------- #
+# Install only missing packages
+# ------------------------- #
+install_missing_packages <- function(list_of_packages) {
+  new_packages <- list_of_packages[!(list_of_packages %in% installed.packages()[ , "Package"])]
+  if(length(new_packages)) {
+    install.packages(new_packages, repo = 'https://cloud.r-project.org/')
+  }
+  sapply(list_of_packages, library, character.only = TRUE)
+}
+
 # sizes of things in the environment
 # run this as env_size(ls())
 env_size <- function(workspace) {
