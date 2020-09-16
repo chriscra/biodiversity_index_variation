@@ -3439,6 +3439,35 @@ gard_list$filtered_all %>%
   filter(Binomial %in% c("Malacochersus tornieri", "Cycloderma frenatum", "Mecistops cataphractus"))
 
 
+# note about what's driving the rep_endemism map
+load(file = "/Users/christophercrawford/Google Drive/_Projects/Zambia/agroEcoTradeoff/external/data_new/1_IUCN_dev/gard_prep.RData", verbose = TRUE) # contains gard_prep, which is gard, made valid, joined to IUCN table, and prepped for use in small species, endemism, etc. This entailed joining the table of red list categories, changing some of the column names, adding a column for area, totalling area for parts of the range we're using, and adding a column ranking the range size to allow things to be subset for small ranged species analyses.
+
+load(file = "/Users/christophercrawford/Google Drive/_Projects/Zambia/agroEcoTradeoff/external/data_new/1_IUCN_dev/gard_list.RData", verbose = TRUE)
+gard_list$filtered_small %>%
+  st_drop_geometry() %>%
+  filter(range_size_quantile < 0.5) %>% # do <= if nrow is even, and < if nrow is odd.
+  arrange(area_km2)
+
+# Acontias schmitzi is a lizard endemic to Zambia, with a tiny range of basically 10 km2. It's only locality is from near Mongu, at 15°23.015’S, 23°23.729’E. 
+# see: http://reptile-database.reptarium.cz/species?genus=Acontias&species=schmitzi
+
+# plot
+plot(vert_r$endemism_richness$rep, main = "rep_endemism")
+
+ext <- drawExtent(show = TRUE, col = "red")
+plot(vert_r$endemism_richness$rep, main = "rep_endemism", ext = ext)
+
+# maximum cell values
+cellStats(vert_r$endemism_richness$rep, "max") # 0.1001044
+hist(vert_r$endemism_richness$rep, 
+     main = "rep_endemism", maxpixels = maxpixels)
+
+
+1/0.1001044 # = 9.9, corresponding to the range of Acontias schmitzi: http://reptile-database.reptarium.cz/species?genus=Acontias&species=schmitzi
+
+# if you remove the values associated with Acontias schmitzi, the distribution of values looks much more "reasonable"
+hist(vert_r$endemism_richness$rep[vert_r$endemism_richness$rep < 0.09])
+max(vert_r$endemism_richness$rep[vert_r$endemism_richness$rep < 0.09]) # 0.000538
 
 ```
 
@@ -5809,6 +5838,7 @@ object_size(kba_z)
 plot(kba_z$geometry, border = "orange", add = TRUE)
 
 plot(iba_eba_zambia_r)
+env_size(ls())
 ```
 
 
