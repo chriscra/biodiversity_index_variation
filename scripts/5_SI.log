@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.14159265-2.6-1.40.21 (TeX Live 2020) (preloaded format=pdflatex 2020.6.11)  1 SEP 2020 18:31
+This is pdfTeX, Version 3.14159265-2.6-1.40.21 (TeX Live 2020) (preloaded format=pdflatex 2020.6.11)  22 SEP 2020 15:42
 entering extended mode
  restricted \write18 enabled.
  %&-line parsing enabled.
@@ -766,47 +766,47 @@ l.124
        </Users/christophercrawford/Google Drive/_Projects/Zambia/agroEcoTradeof
 f/external/plots/yield_maps.png>] [6] [7] [8] [9]
 </Users/christophercrawford/Google Drive/_Projects/Zambia/agroEcoTradeoff/exter
-nal/plots/ms_v5/bd_input_maps_runs_1.png, id=390, 3613.5pt x 3914.625pt>
+nal/plots/ms_v5/bd_input_maps_runs_1.png, id=391, 3613.5pt x 3914.625pt>
 File: /Users/christophercrawford/Google Drive/_Projects/Zambia/agroEcoTradeoff/
 external/plots/ms_v5/bd_input_maps_runs_1.png Graphic file (type png)
 <use /Users/christophercrawford/Google Drive/_Projects/Zambia/agroEcoTradeoff/e
 xternal/plots/ms_v5/bd_input_maps_runs_1.png>
 Package pdftex.def Info: /Users/christophercrawford/Google Drive/_Projects/Zamb
 ia/agroEcoTradeoff/external/plots/ms_v5/bd_input_maps_runs_1.png  used on input
- line 364.
+ line 369.
 (pdftex.def)             Requested size: 469.71635pt x 508.85939pt.
 
-Underfull \hbox (badness 10000) in paragraph at lines 364--364
+Underfull \hbox (badness 10000) in paragraph at lines 369--369
 [][]
  []
 
 </Users/christophercrawford/Google Drive/_Projects/Zambia/agroEcoTradeoff/exter
-nal/plots/ms_v5/bd_input_maps_runs_10.png, id=391, 3613.5pt x 3914.625pt>
+nal/plots/ms_v5/bd_input_maps_runs_10.png, id=392, 3613.5pt x 3914.625pt>
 File: /Users/christophercrawford/Google Drive/_Projects/Zambia/agroEcoTradeoff/
 external/plots/ms_v5/bd_input_maps_runs_10.png Graphic file (type png)
 <use /Users/christophercrawford/Google Drive/_Projects/Zambia/agroEcoTradeoff/e
 xternal/plots/ms_v5/bd_input_maps_runs_10.png>
 Package pdftex.def Info: /Users/christophercrawford/Google Drive/_Projects/Zamb
 ia/agroEcoTradeoff/external/plots/ms_v5/bd_input_maps_runs_10.png  used on inpu
-t line 368.
+t line 373.
 (pdftex.def)             Requested size: 469.71635pt x 508.85939pt.
 
-Underfull \hbox (badness 10000) in paragraph at lines 368--368
+Underfull \hbox (badness 10000) in paragraph at lines 373--373
 [][]
  []
 
 </Users/christophercrawford/Google Drive/_Projects/Zambia/agroEcoTradeoff/exter
-nal/plots/ms_v5/bd_input_maps_runs_110.png, id=392, 3613.5pt x 3914.625pt>
+nal/plots/ms_v5/bd_input_maps_runs_110.png, id=393, 3613.5pt x 3914.625pt>
 File: /Users/christophercrawford/Google Drive/_Projects/Zambia/agroEcoTradeoff/
 external/plots/ms_v5/bd_input_maps_runs_110.png Graphic file (type png)
 <use /Users/christophercrawford/Google Drive/_Projects/Zambia/agroEcoTradeoff/e
 xternal/plots/ms_v5/bd_input_maps_runs_110.png>
 Package pdftex.def Info: /Users/christophercrawford/Google Drive/_Projects/Zamb
 ia/agroEcoTradeoff/external/plots/ms_v5/bd_input_maps_runs_110.png  used on inp
-ut line 372.
+ut line 377.
 (pdftex.def)             Requested size: 469.71635pt x 508.85939pt.
 
-Underfull \hbox (badness 10000) in paragraph at lines 372--372
+Underfull \hbox (badness 10000) in paragraph at lines 377--377
 [][]
  []
 
@@ -815,13 +815,13 @@ has been already used, duplicate ignored
 
 \AtBegShi@Output ...ipout \box \AtBeginShipoutBox 
                                                   \fi \fi 
-l.375 \newpage
+l.380 \newpage
               ] [11pdfTeX warning (ext4): destination with the same identifier 
 (name{figure.2}) has been already used, duplicate ignored
 
 \AtBegShi@Output ...ipout \box \AtBeginShipoutBox 
                                                   \fi \fi 
-l.375 \newpage
+l.380 \newpage
                </Users/christophercrawford/Google Drive/_Projects/Zambia/agroEc
 oTradeoff/external/plots/ms_v5/bd_input_maps_runs_1.png>] [12pdfTeX warning (ex
 t4): destination with the same identifier (name{figure.3}) has been already use
@@ -829,7 +829,7 @@ d, duplicate ignored
 
 \AtBegShi@Output ...ipout \box \AtBeginShipoutBox 
                                                   \fi \fi 
-l.375 \newpage
+l.380 \newpage
                </Users/christophercrawford/Google Drive/_Projects/Zambia/agroEc
 oTradeoff/external/plots/ms_v5/bd_input_maps_runs_10.png>] [13pdfTeX warning (e
 xt4): destination with the same identifier (name{figure.4}) has been already us
@@ -837,11 +837,11 @@ ed, duplicate ignored
 
 \AtBegShi@Output ...ipout \box \AtBeginShipoutBox 
                                                   \fi \fi 
-l.375 \newpage
+l.380 \newpage
                </Users/christophercrawford/Google Drive/_Projects/Zambia/agroEc
 oTradeoff/external/plots/ms_v5/bd_input_maps_runs_110.png>]
 </Users/christophercrawford/Google Drive/_Projects/Zambia/agroEcoTradeoff/exter
-nal/plots/ms_v5/conv_maps/basic_conv_maps_bp_1.png, id=418, 3613.5pt x 3914.625
+nal/plots/ms_v5/conv_maps/basic_conv_maps_bp_1.png, id=420, 3613.5pt x 3914.625
 pt>
 File: /Users/christophercrawford/Google Drive/_Projects/Zambia/agroEcoTradeoff/
 external/plots/ms_v5/conv_maps/basic_conv_maps_bp_1.png Graphic file (type png)
@@ -850,15 +850,15 @@ external/plots/ms_v5/conv_maps/basic_conv_maps_bp_1.png Graphic file (type png)
 xternal/plots/ms_v5/conv_maps/basic_conv_maps_bp_1.png>
 Package pdftex.def Info: /Users/christophercrawford/Google Drive/_Projects/Zamb
 ia/agroEcoTradeoff/external/plots/ms_v5/conv_maps/basic_conv_maps_bp_1.png  use
-d on input line 387.
+d on input line 392.
 (pdftex.def)             Requested size: 469.71635pt x 508.85939pt.
 
-Underfull \hbox (badness 10000) in paragraph at lines 387--387
+Underfull \hbox (badness 10000) in paragraph at lines 392--392
 [][]
  []
 
 </Users/christophercrawford/Google Drive/_Projects/Zambia/agroEcoTradeoff/exter
-nal/plots/ms_v5/conv_maps/basic_conv_maps_bp_10.png, id=419, 3613.5pt x 3914.62
+nal/plots/ms_v5/conv_maps/basic_conv_maps_bp_10.png, id=421, 3613.5pt x 3914.62
 5pt>
 File: /Users/christophercrawford/Google Drive/_Projects/Zambia/agroEcoTradeoff/
 external/plots/ms_v5/conv_maps/basic_conv_maps_bp_10.png Graphic file (type png
@@ -867,15 +867,15 @@ external/plots/ms_v5/conv_maps/basic_conv_maps_bp_10.png Graphic file (type png
 xternal/plots/ms_v5/conv_maps/basic_conv_maps_bp_10.png>
 Package pdftex.def Info: /Users/christophercrawford/Google Drive/_Projects/Zamb
 ia/agroEcoTradeoff/external/plots/ms_v5/conv_maps/basic_conv_maps_bp_10.png  us
-ed on input line 391.
+ed on input line 396.
 (pdftex.def)             Requested size: 469.71635pt x 508.85939pt.
 
-Underfull \hbox (badness 10000) in paragraph at lines 391--391
+Underfull \hbox (badness 10000) in paragraph at lines 396--396
 [][]
  []
 
 </Users/christophercrawford/Google Drive/_Projects/Zambia/agroEcoTradeoff/exter
-nal/plots/ms_v5/conv_maps/basic_conv_maps_bp_110.png, id=420, 3613.5pt x 3914.6
+nal/plots/ms_v5/conv_maps/basic_conv_maps_bp_110.png, id=422, 3613.5pt x 3914.6
 25pt>
 File: /Users/christophercrawford/Google Drive/_Projects/Zambia/agroEcoTradeoff/
 external/plots/ms_v5/conv_maps/basic_conv_maps_bp_110.png Graphic file (type pn
@@ -884,22 +884,22 @@ g)
 xternal/plots/ms_v5/conv_maps/basic_conv_maps_bp_110.png>
 Package pdftex.def Info: /Users/christophercrawford/Google Drive/_Projects/Zamb
 ia/agroEcoTradeoff/external/plots/ms_v5/conv_maps/basic_conv_maps_bp_110.png  u
-sed on input line 395.
+sed on input line 400.
 (pdftex.def)             Requested size: 469.71635pt x 508.85939pt.
 
-Underfull \hbox (badness 10000) in paragraph at lines 395--395
+Underfull \hbox (badness 10000) in paragraph at lines 400--400
 [][]
  []
 
-<5_SI_files/figure-latex/pairwise-jaccard-1.pdf, id=423, 469.755pt x 325.215pt>
+<5_SI_files/figure-latex/pairwise-jaccard-1.pdf, id=425, 469.755pt x 325.215pt>
 
 File: 5_SI_files/figure-latex/pairwise-jaccard-1.pdf Graphic file (type pdf)
 <use 5_SI_files/figure-latex/pairwise-jaccard-1.pdf>
 Package pdftex.def Info: 5_SI_files/figure-latex/pairwise-jaccard-1.pdf  used o
-n input line 416.
+n input line 421.
 (pdftex.def)             Requested size: 469.75386pt x 325.2142pt.
 
-Underfull \hbox (badness 10000) in paragraph at lines 416--416
+Underfull \hbox (badness 10000) in paragraph at lines 421--421
 [][]
  []
 
@@ -908,7 +908,7 @@ e.5}) has been already used, duplicate ignored
 
 \AtBegShi@Output ...ipout \box \AtBeginShipoutBox 
                                                   \fi \fi 
-l.419 \newpage
+l.424 \newpage
                </Users/christophercrawford/Google Drive/_Projects/Zambia/agroEc
 oTradeoff/external/plots/ms_v5/conv_maps/basic_conv_maps_bp_1.png>] [16pdfTeX w
 arning (ext4): destination with the same identifier (name{figure.6}) has been a
@@ -916,7 +916,7 @@ lready used, duplicate ignored
 
 \AtBegShi@Output ...ipout \box \AtBeginShipoutBox 
                                                   \fi \fi 
-l.419 \newpage
+l.424 \newpage
                </Users/christophercrawford/Google Drive/_Projects/Zambia/agroEc
 oTradeoff/external/plots/ms_v5/conv_maps/basic_conv_maps_bp_10.png>] [17pdfTeX 
 warning (ext4): destination with the same identifier (name{figure.7}) has been 
@@ -924,7 +924,7 @@ already used, duplicate ignored
 
 \AtBegShi@Output ...ipout \box \AtBeginShipoutBox 
                                                   \fi \fi 
-l.419 \newpage
+l.424 \newpage
                </Users/christophercrawford/Google Drive/_Projects/Zambia/agroEc
 oTradeoff/external/plots/ms_v5/conv_maps/basic_conv_maps_bp_110.png>] [18pdfTeX
  warning (ext4): destination with the same identifier (name{figure.8}) has been
@@ -932,20 +932,20 @@ oTradeoff/external/plots/ms_v5/conv_maps/basic_conv_maps_bp_110.png>] [18pdfTeX
 
 \AtBegShi@Output ...ipout \box \AtBeginShipoutBox 
                                                   \fi \fi 
-l.419 \newpage
+l.424 \newpage
                <./5_SI_files/figure-latex/pairwise-jaccard-1.pdf>]
 </Users/christophercrawford/Google Drive/_Projects/Zambia/agroEcoTradeoff/exter
-nal/plots/ms_v5/SI_fig_nnd_bp.png, id=459, 2409.0pt x 1606.0pt>
+nal/plots/ms_v5/SI_fig_nnd_bp.png, id=461, 2409.0pt x 1606.0pt>
 File: /Users/christophercrawford/Google Drive/_Projects/Zambia/agroEcoTradeoff/
 external/plots/ms_v5/SI_fig_nnd_bp.png Graphic file (type png)
 <use /Users/christophercrawford/Google Drive/_Projects/Zambia/agroEcoTradeoff/e
 xternal/plots/ms_v5/SI_fig_nnd_bp.png>
 Package pdftex.def Info: /Users/christophercrawford/Google Drive/_Projects/Zamb
 ia/agroEcoTradeoff/external/plots/ms_v5/SI_fig_nnd_bp.png  used on input line 4
-29.
+34.
 (pdftex.def)             Requested size: 469.73474pt x 313.1565pt.
 
-Underfull \hbox (badness 10000) in paragraph at lines 429--429
+Underfull \hbox (badness 10000) in paragraph at lines 434--434
 [][]
  []
 
@@ -954,84 +954,84 @@ Underfull \hbox (badness 10000) in paragraph at lines 429--429
 
 \AtBegShi@Output ...ipout \box \AtBeginShipoutBox 
                                                   \fi \fi 
-l.436 
+l.441 
        </Users/christophercrawford/Google Drive/_Projects/Zambia/agroEcoTradeof
 f/external/plots/ms_v5/SI_fig_nnd_bp.png>]
-<5_SI_files/figure-latex/z50-bp-comparison-1.pdf, id=473, 469.755pt x 325.215pt
+<5_SI_files/figure-latex/z50-bp-comparison-1.pdf, id=475, 469.755pt x 325.215pt
 >
 File: 5_SI_files/figure-latex/z50-bp-comparison-1.pdf Graphic file (type pdf)
 <use 5_SI_files/figure-latex/z50-bp-comparison-1.pdf>
 Package pdftex.def Info: 5_SI_files/figure-latex/z50-bp-comparison-1.pdf  used 
-on input line 454.
+on input line 459.
 (pdftex.def)             Requested size: 469.75386pt x 325.2142pt.
 
-Underfull \hbox (badness 10000) in paragraph at lines 454--454
+Underfull \hbox (badness 10000) in paragraph at lines 459--459
 [][]
  []
 
 </Users/christophercrawford/Google Drive/_Projects/Zambia/agroEcoTradeoff/exter
-nal/plots/ms_v5/SI_fig_jac_w_z50.png, id=474, 2409.0pt x 1606.0pt>
+nal/plots/ms_v5/SI_fig_jac_w_z50.png, id=476, 2409.0pt x 1606.0pt>
 File: /Users/christophercrawford/Google Drive/_Projects/Zambia/agroEcoTradeoff/
 external/plots/ms_v5/SI_fig_jac_w_z50.png Graphic file (type png)
 <use /Users/christophercrawford/Google Drive/_Projects/Zambia/agroEcoTradeoff/e
 xternal/plots/ms_v5/SI_fig_jac_w_z50.png>
 Package pdftex.def Info: /Users/christophercrawford/Google Drive/_Projects/Zamb
 ia/agroEcoTradeoff/external/plots/ms_v5/SI_fig_jac_w_z50.png  used on input lin
-e 460.
+e 465.
 (pdftex.def)             Requested size: 469.73474pt x 313.1565pt.
 
-Underfull \hbox (badness 10000) in paragraph at lines 460--460
+Underfull \hbox (badness 10000) in paragraph at lines 465--465
 [][]
  []
 
 </Users/christophercrawford/Google Drive/_Projects/Zambia/agroEcoTradeoff/exter
-nal/plots/ms_v5/ms_fig_facet_r_z50_wide.png, id=475, 2409.0pt x 1505.625pt>
+nal/plots/ms_v5/SI_fig_facet_r_z50_wide.png, id=477, 2409.0pt x 1505.625pt>
 File: /Users/christophercrawford/Google Drive/_Projects/Zambia/agroEcoTradeoff/
-external/plots/ms_v5/ms_fig_facet_r_z50_wide.png Graphic file (type png)
+external/plots/ms_v5/SI_fig_facet_r_z50_wide.png Graphic file (type png)
 <use /Users/christophercrawford/Google Drive/_Projects/Zambia/agroEcoTradeoff/e
-xternal/plots/ms_v5/ms_fig_facet_r_z50_wide.png>
+xternal/plots/ms_v5/SI_fig_facet_r_z50_wide.png>
 Package pdftex.def Info: /Users/christophercrawford/Google Drive/_Projects/Zamb
-ia/agroEcoTradeoff/external/plots/ms_v5/ms_fig_facet_r_z50_wide.png  used on in
-put line 466.
+ia/agroEcoTradeoff/external/plots/ms_v5/SI_fig_facet_r_z50_wide.png  used on in
+put line 471.
 (pdftex.def)             Requested size: 469.73474pt x 293.58421pt.
 
-Underfull \hbox (badness 10000) in paragraph at lines 466--466
+Underfull \hbox (badness 10000) in paragraph at lines 471--471
 [][]
  []
 
 </Users/christophercrawford/Google Drive/_Projects/Zambia/agroEcoTradeoff/exter
-nal/plots/ms_v5/SI_fig_jac_w_order_conv.png, id=478, 2409.0pt x 1606.0pt>
+nal/plots/ms_v5/SI_fig_jac_w_order_conv.png, id=480, 2409.0pt x 1606.0pt>
 File: /Users/christophercrawford/Google Drive/_Projects/Zambia/agroEcoTradeoff/
 external/plots/ms_v5/SI_fig_jac_w_order_conv.png Graphic file (type png)
 <use /Users/christophercrawford/Google Drive/_Projects/Zambia/agroEcoTradeoff/e
 xternal/plots/ms_v5/SI_fig_jac_w_order_conv.png>
 Package pdftex.def Info: /Users/christophercrawford/Google Drive/_Projects/Zamb
 ia/agroEcoTradeoff/external/plots/ms_v5/SI_fig_jac_w_order_conv.png  used on in
-put line 479.
+put line 484.
 (pdftex.def)             Requested size: 375.78044pt x 250.5203pt.
 </Users/christophercrawford/Google Drive/_Projects/Zambia/agroEcoTradeoff/exter
-nal/plots/ms_v5/SI_fig_jac_w_order_protect.png, id=479, 2409.0pt x 1606.0pt>
+nal/plots/ms_v5/SI_fig_jac_w_order_protect.png, id=481, 2409.0pt x 1606.0pt>
 File: /Users/christophercrawford/Google Drive/_Projects/Zambia/agroEcoTradeoff/
 external/plots/ms_v5/SI_fig_jac_w_order_protect.png Graphic file (type png)
 <use /Users/christophercrawford/Google Drive/_Projects/Zambia/agroEcoTradeoff/e
 xternal/plots/ms_v5/SI_fig_jac_w_order_protect.png>
 Package pdftex.def Info: /Users/christophercrawford/Google Drive/_Projects/Zamb
 ia/agroEcoTradeoff/external/plots/ms_v5/SI_fig_jac_w_order_protect.png  used on
- input line 483.
+ input line 488.
 (pdftex.def)             Requested size: 375.78044pt x 250.5203pt.
 [20] [21pdfTeX warning (ext4): destination with the same identifier (name{figur
 e.10}) has been already used, duplicate ignored
 
 \AtBegShi@Output ...ipout \box \AtBeginShipoutBox 
                                                   \fi \fi 
-l.486 \newpage
+l.491 \newpage
                <./5_SI_files/figure-latex/z50-bp-comparison-1.pdf>] [22pdfTeX w
 arning (ext4): destination with the same identifier (name{figure.11}) has been 
 already used, duplicate ignored
 
 \AtBegShi@Output ...ipout \box \AtBeginShipoutBox 
                                                   \fi \fi 
-l.486 \newpage
+l.491 \newpage
                </Users/christophercrawford/Google Drive/_Projects/Zambia/agroEc
 oTradeoff/external/plots/ms_v5/SI_fig_jac_w_z50.png>] [23pdfTeX warning (ext4):
  destination with the same identifier (name{figure.12}) has been already used, 
@@ -1039,34 +1039,34 @@ duplicate ignored
 
 \AtBegShi@Output ...ipout \box \AtBeginShipoutBox 
                                                   \fi \fi 
-l.486 \newpage
+l.491 \newpage
                </Users/christophercrawford/Google Drive/_Projects/Zambia/agroEc
-oTradeoff/external/plots/ms_v5/ms_fig_facet_r_z50_wide.png>] [24pdfTeX warning 
+oTradeoff/external/plots/ms_v5/SI_fig_facet_r_z50_wide.png>] [24pdfTeX warning 
 (ext4): destination with the same identifier (name{figure.13}) has been already
  used, duplicate ignored
 
 \AtBegShi@Output ...ipout \box \AtBeginShipoutBox 
                                                   \fi \fi 
-l.486 \newpage
+l.491 \newpage
               pdfTeX warning (ext4): destination with the same identifier (name
 {figure.14}) has been already used, duplicate ignored
 
 \AtBegShi@Output ...ipout \box \AtBeginShipoutBox 
                                                   \fi \fi 
-l.486 \newpage
+l.491 \newpage
                </Users/christophercrawford/Google Drive/_Projects/Zambia/agroEc
 oTradeoff/external/plots/ms_v5/SI_fig_jac_w_order_conv.png> </Users/christopher
 crawford/Google Drive/_Projects/Zambia/agroEcoTradeoff/external/plots/ms_v5/SI_
 fig_jac_w_order_protect.png>]
-<5_SI_files/figure-latex/jac-w-weights-line-1.pdf, id=513, 469.755pt x 325.215p
+<5_SI_files/figure-latex/jac-w-weights-line-1.pdf, id=519, 469.755pt x 325.215p
 t>
 File: 5_SI_files/figure-latex/jac-w-weights-line-1.pdf Graphic file (type pdf)
 <use 5_SI_files/figure-latex/jac-w-weights-line-1.pdf>
 Package pdftex.def Info: 5_SI_files/figure-latex/jac-w-weights-line-1.pdf  used
- on input line 524.
+ on input line 529.
 (pdftex.def)             Requested size: 469.75386pt x 325.2142pt.
 
-Underfull \hbox (badness 10000) in paragraph at lines 524--524
+Underfull \hbox (badness 10000) in paragraph at lines 529--529
 [][]
  []
 
@@ -1075,79 +1075,79 @@ Underfull \hbox (badness 10000) in paragraph at lines 524--524
 
 \AtBegShi@Output ...ipout \box \AtBeginShipoutBox 
                                                   \fi \fi 
-l.528 
+l.533 
        <./5_SI_files/figure-latex/jac-w-weights-line-1.pdf>]
 </Users/christophercrawford/Google Drive/_Projects/Zambia/agroEcoTradeoff/exter
-nal/plots/ms_v5/SI_fig_jac_w_all.png, id=533, 2810.5pt x 1606.0pt>
+nal/plots/ms_v5/SI_fig_jac_w_all.png, id=539, 2810.5pt x 1606.0pt>
 File: /Users/christophercrawford/Google Drive/_Projects/Zambia/agroEcoTradeoff/
 external/plots/ms_v5/SI_fig_jac_w_all.png Graphic file (type png)
 <use /Users/christophercrawford/Google Drive/_Projects/Zambia/agroEcoTradeoff/e
 xternal/plots/ms_v5/SI_fig_jac_w_all.png>
 Package pdftex.def Info: /Users/christophercrawford/Google Drive/_Projects/Zamb
 ia/agroEcoTradeoff/external/plots/ms_v5/SI_fig_jac_w_all.png  used on input lin
-e 534.
+e 539.
 (pdftex.def)             Requested size: 469.71635pt x 268.40935pt.
 
-Underfull \hbox (badness 10000) in paragraph at lines 534--534
+Underfull \hbox (badness 10000) in paragraph at lines 539--539
 [][]
  []
 
 </Users/christophercrawford/Google Drive/_Projects/Zambia/agroEcoTradeoff/exter
-nal/plots/ms_v5/SI_fig_jac_w_b.png, id=534, 2409.0pt x 1606.0pt>
+nal/plots/ms_v5/SI_fig_jac_w_b.png, id=540, 2409.0pt x 1606.0pt>
 File: /Users/christophercrawford/Google Drive/_Projects/Zambia/agroEcoTradeoff/
 external/plots/ms_v5/SI_fig_jac_w_b.png Graphic file (type png)
 <use /Users/christophercrawford/Google Drive/_Projects/Zambia/agroEcoTradeoff/e
 xternal/plots/ms_v5/SI_fig_jac_w_b.png>
 Package pdftex.def Info: /Users/christophercrawford/Google Drive/_Projects/Zamb
 ia/agroEcoTradeoff/external/plots/ms_v5/SI_fig_jac_w_b.png  used on input line 
-538.
+543.
 (pdftex.def)             Requested size: 375.78044pt x 250.5203pt.
 </Users/christophercrawford/Google Drive/_Projects/Zambia/agroEcoTradeoff/exter
-nal/plots/ms_v5/SI_fig_jac_w_by.png, id=535, 2409.0pt x 1606.0pt>
+nal/plots/ms_v5/SI_fig_jac_w_by.png, id=541, 2409.0pt x 1606.0pt>
 File: /Users/christophercrawford/Google Drive/_Projects/Zambia/agroEcoTradeoff/
 external/plots/ms_v5/SI_fig_jac_w_by.png Graphic file (type png)
 <use /Users/christophercrawford/Google Drive/_Projects/Zambia/agroEcoTradeoff/e
 xternal/plots/ms_v5/SI_fig_jac_w_by.png>
 Package pdftex.def Info: /Users/christophercrawford/Google Drive/_Projects/Zamb
 ia/agroEcoTradeoff/external/plots/ms_v5/SI_fig_jac_w_by.png  used on input line
- 542.
+ 547.
 (pdftex.def)             Requested size: 375.78044pt x 250.5203pt.
 </Users/christophercrawford/Google Drive/_Projects/Zambia/agroEcoTradeoff/exter
-nal/plots/ms_v5/SI_fig_jac_w_bc.png, id=536, 2409.0pt x 1606.0pt>
+nal/plots/ms_v5/SI_fig_jac_w_bc.png, id=542, 2409.0pt x 1606.0pt>
 File: /Users/christophercrawford/Google Drive/_Projects/Zambia/agroEcoTradeoff/
 external/plots/ms_v5/SI_fig_jac_w_bc.png Graphic file (type png)
 <use /Users/christophercrawford/Google Drive/_Projects/Zambia/agroEcoTradeoff/e
 xternal/plots/ms_v5/SI_fig_jac_w_bc.png>
 Package pdftex.def Info: /Users/christophercrawford/Google Drive/_Projects/Zamb
 ia/agroEcoTradeoff/external/plots/ms_v5/SI_fig_jac_w_bc.png  used on input line
- 546.
+ 551.
 (pdftex.def)             Requested size: 375.78044pt x 250.5203pt.
 </Users/christophercrawford/Google Drive/_Projects/Zambia/agroEcoTradeoff/exter
-nal/plots/ms_v5/SI_fig_jac_w_bt.png, id=537, 2409.0pt x 1606.0pt>
+nal/plots/ms_v5/SI_fig_jac_w_bt.png, id=543, 2409.0pt x 1606.0pt>
 File: /Users/christophercrawford/Google Drive/_Projects/Zambia/agroEcoTradeoff/
 external/plots/ms_v5/SI_fig_jac_w_bt.png Graphic file (type png)
 <use /Users/christophercrawford/Google Drive/_Projects/Zambia/agroEcoTradeoff/e
 xternal/plots/ms_v5/SI_fig_jac_w_bt.png>
 Package pdftex.def Info: /Users/christophercrawford/Google Drive/_Projects/Zamb
 ia/agroEcoTradeoff/external/plots/ms_v5/SI_fig_jac_w_bt.png  used on input line
- 550.
+ 555.
 (pdftex.def)             Requested size: 375.78044pt x 250.5203pt.
 </Users/christophercrawford/Google Drive/_Projects/Zambia/agroEcoTradeoff/exter
-nal/plots/ms_v5/SI_fig_jac_w_byct.png, id=538, 2409.0pt x 1606.0pt>
+nal/plots/ms_v5/SI_fig_jac_w_byct.png, id=544, 2409.0pt x 1606.0pt>
 File: /Users/christophercrawford/Google Drive/_Projects/Zambia/agroEcoTradeoff/
 external/plots/ms_v5/SI_fig_jac_w_byct.png Graphic file (type png)
 <use /Users/christophercrawford/Google Drive/_Projects/Zambia/agroEcoTradeoff/e
 xternal/plots/ms_v5/SI_fig_jac_w_byct.png>
 Package pdftex.def Info: /Users/christophercrawford/Google Drive/_Projects/Zamb
 ia/agroEcoTradeoff/external/plots/ms_v5/SI_fig_jac_w_byct.png  used on input li
-ne 554.
+ne 559.
 (pdftex.def)             Requested size: 375.78044pt x 250.5203pt.
 [26] [27pdfTeX warning (ext4): destination with the same identifier (name{figur
 e.16}) has been already used, duplicate ignored
 
 \AtBegShi@Output ...ipout \box \AtBeginShipoutBox 
                                                   \fi \fi 
-l.565 
+l.570 
        </Users/christophercrawford/Google Drive/_Projects/Zambia/agroEcoTradeof
 f/external/plots/ms_v5/SI_fig_jac_w_all.png>] [28pdfTeX warning (ext4): destina
 tion with the same identifier (name{figure.17}) has been already used, duplicat
@@ -1155,13 +1155,13 @@ e ignored
 
 \AtBegShi@Output ...ipout \box \AtBeginShipoutBox 
                                                   \fi \fi 
-l.565 
+l.570 
       pdfTeX warning (ext4): destination with the same identifier (name{figure.
 18}) has been already used, duplicate ignored
 
 \AtBegShi@Output ...ipout \box \AtBeginShipoutBox 
                                                   \fi \fi 
-l.565 
+l.570 
        </Users/christophercrawford/Google Drive/_Projects/Zambia/agroEcoTradeof
 f/external/plots/ms_v5/SI_fig_jac_w_b.png> </Users/christophercrawford/Google D
 rive/_Projects/Zambia/agroEcoTradeoff/external/plots/ms_v5/SI_fig_jac_w_by.png>
@@ -1170,19 +1170,19 @@ rive/_Projects/Zambia/agroEcoTradeoff/external/plots/ms_v5/SI_fig_jac_w_by.png>
 
 \AtBegShi@Output ...ipout \box \AtBeginShipoutBox 
                                                   \fi \fi 
-l.565 
+l.570 
       pdfTeX warning (ext4): destination with the same identifier (name{figure.
 20}) has been already used, duplicate ignored
 
 \AtBegShi@Output ...ipout \box \AtBeginShipoutBox 
                                                   \fi \fi 
-l.565 
+l.570 
        </Users/christophercrawford/Google Drive/_Projects/Zambia/agroEcoTradeof
 f/external/plots/ms_v5/SI_fig_jac_w_bc.png> </Users/christophercrawford/Google 
 Drive/_Projects/Zambia/agroEcoTradeoff/external/plots/ms_v5/SI_fig_jac_w_bt.png
 >]
 </Users/christophercrawford/Google Drive/_Projects/Zambia/agroEcoTradeoff/exter
-nal/plots/ms_v5/SI_fig_facet_r_threat_combo.png, id=565, 1505.625pt x 1806.75pt
+nal/plots/ms_v5/SI_fig_facet_r_threat_combo.png, id=571, 1505.625pt x 1806.75pt
 >
 File: /Users/christophercrawford/Google Drive/_Projects/Zambia/agroEcoTradeoff/
 external/plots/ms_v5/SI_fig_facet_r_threat_combo.png Graphic file (type png)
@@ -1190,14 +1190,14 @@ external/plots/ms_v5/SI_fig_facet_r_threat_combo.png Graphic file (type png)
 xternal/plots/ms_v5/SI_fig_facet_r_threat_combo.png>
 Package pdftex.def Info: /Users/christophercrawford/Google Drive/_Projects/Zamb
 ia/agroEcoTradeoff/external/plots/ms_v5/SI_fig_facet_r_threat_combo.png  used o
-n input line 574.
+n input line 579.
 (pdftex.def)             Requested size: 328.82626pt x 394.5915pt.
 [30pdfTeX warning (ext4): destination with the same identifier (name{figure.21}
 ) has been already used, duplicate ignored
 
 \AtBegShi@Output ...ipout \box \AtBeginShipoutBox 
                                                   \fi \fi 
-l.599   T
+l.604   T
          he World Wildlife Fund's Global 200 Ecoregions (Olson and Dinerstei...
  </Users/christophercrawford/Google Drive/_Projects/Zambia/agroEcoTradeoff/exte
 rnal/plots/ms_v5/SI_fig_jac_w_byct.png>] [31pdfTeX warning (ext4): destination 
@@ -1206,12 +1206,12 @@ ored
 
 \AtBegShi@Output ...ipout \box \AtBeginShipoutBox 
                                                   \fi \fi 
-l.599   T
+l.604   T
          he World Wildlife Fund's Global 200 Ecoregions (Olson and Dinerstei...
  </Users/christophercrawford/Google Drive/_Projects/Zambia/agroEcoTradeoff/exte
 rnal/plots/ms_v5/SI_fig_facet_r_threat_combo.png>]
 </Users/christophercrawford/Google Drive/_Projects/Zambia/agroEcoTradeoff/exter
-nal/plots/ms_v5/SI_fig_facet_r_extra_composites.png, id=579, 2409.0pt x 2107.87
+nal/plots/ms_v5/SI_fig_facet_r_extra_composites.png, id=585, 2409.0pt x 2107.87
 5pt>
 File: /Users/christophercrawford/Google Drive/_Projects/Zambia/agroEcoTradeoff/
 external/plots/ms_v5/SI_fig_facet_r_extra_composites.png Graphic file (type png
@@ -1220,29 +1220,29 @@ external/plots/ms_v5/SI_fig_facet_r_extra_composites.png Graphic file (type png
 xternal/plots/ms_v5/SI_fig_facet_r_extra_composites.png>
 Package pdftex.def Info: /Users/christophercrawford/Google Drive/_Projects/Zamb
 ia/agroEcoTradeoff/external/plots/ms_v5/SI_fig_facet_r_extra_composites.png  us
-ed on input line 617.
+ed on input line 622.
 (pdftex.def)             Requested size: 469.73474pt x 411.0179pt.
 
-Underfull \hbox (badness 10000) in paragraph at lines 617--617
+Underfull \hbox (badness 10000) in paragraph at lines 622--622
 [][]
  []
 
 </Users/christophercrawford/Google Drive/_Projects/Zambia/agroEcoTradeoff/exter
-nal/plots/ms_v5/SI_norm_order_plots.png, id=582, 1204.5pt x 1505.625pt>
+nal/plots/ms_v5/SI_norm_order_plots.png, id=588, 1204.5pt x 1505.625pt>
 File: /Users/christophercrawford/Google Drive/_Projects/Zambia/agroEcoTradeoff/
 external/plots/ms_v5/SI_norm_order_plots.png Graphic file (type png)
 <use /Users/christophercrawford/Google Drive/_Projects/Zambia/agroEcoTradeoff/e
 xternal/plots/ms_v5/SI_norm_order_plots.png>
 Package pdftex.def Info: /Users/christophercrawford/Google Drive/_Projects/Zamb
 ia/agroEcoTradeoff/external/plots/ms_v5/SI_norm_order_plots.png  used on input 
-line 635.
+line 640.
 (pdftex.def)             Requested size: 328.82167pt x 411.02708pt.
 [32] [33pdfTeX warning (ext4): destination with the same identifier (name{figur
 e.23}) has been already used, duplicate ignored
 
 \AtBegShi@Output ...ipout \box \AtBeginShipoutBox 
                                                   \fi \fi 
-l.642 \newpage
+l.647 \newpage
                </Users/christophercrawford/Google Drive/_Projects/Zambia/agroEc
 oTradeoff/external/plots/ms_v5/SI_fig_facet_r_extra_composites.png>] [34pdfTeX 
 warning (ext4): destination with the same identifier (name{figure.24}) has been
@@ -1250,11 +1250,11 @@ warning (ext4): destination with the same identifier (name{figure.24}) has been
 
 \AtBegShi@Output ...ipout \box \AtBeginShipoutBox 
                                                   \fi \fi 
-l.642 \newpage
+l.647 \newpage
                </Users/christophercrawford/Google Drive/_Projects/Zambia/agroEc
 oTradeoff/external/plots/ms_v5/SI_norm_order_plots.png>]
 </Users/christophercrawford/Google Drive/_Projects/Zambia/agroEcoTradeoff/exter
-nal/plots/ms_v5/conv_maps/basic_conv_maps_b_1.png, id=602, 3613.5pt x 3914.625p
+nal/plots/ms_v5/conv_maps/basic_conv_maps_b_1.png, id=608, 3613.5pt x 3914.625p
 t>
 File: /Users/christophercrawford/Google Drive/_Projects/Zambia/agroEcoTradeoff/
 external/plots/ms_v5/conv_maps/basic_conv_maps_b_1.png Graphic file (type png)
@@ -1262,15 +1262,15 @@ external/plots/ms_v5/conv_maps/basic_conv_maps_b_1.png Graphic file (type png)
 xternal/plots/ms_v5/conv_maps/basic_conv_maps_b_1.png>
 Package pdftex.def Info: /Users/christophercrawford/Google Drive/_Projects/Zamb
 ia/agroEcoTradeoff/external/plots/ms_v5/conv_maps/basic_conv_maps_b_1.png  used
- on input line 665.
+ on input line 670.
 (pdftex.def)             Requested size: 469.71635pt x 508.85939pt.
 
-Underfull \hbox (badness 10000) in paragraph at lines 665--665
+Underfull \hbox (badness 10000) in paragraph at lines 670--670
 [][]
  []
 
 </Users/christophercrawford/Google Drive/_Projects/Zambia/agroEcoTradeoff/exter
-nal/plots/ms_v5/conv_maps/basic_conv_maps_by_1.png, id=605, 3613.5pt x 3914.625
+nal/plots/ms_v5/conv_maps/basic_conv_maps_by_1.png, id=611, 3613.5pt x 3914.625
 pt>
 File: /Users/christophercrawford/Google Drive/_Projects/Zambia/agroEcoTradeoff/
 external/plots/ms_v5/conv_maps/basic_conv_maps_by_1.png Graphic file (type png)
@@ -1279,15 +1279,15 @@ external/plots/ms_v5/conv_maps/basic_conv_maps_by_1.png Graphic file (type png)
 xternal/plots/ms_v5/conv_maps/basic_conv_maps_by_1.png>
 Package pdftex.def Info: /Users/christophercrawford/Google Drive/_Projects/Zamb
 ia/agroEcoTradeoff/external/plots/ms_v5/conv_maps/basic_conv_maps_by_1.png  use
-d on input line 669.
+d on input line 674.
 (pdftex.def)             Requested size: 469.71635pt x 508.85939pt.
 
-Underfull \hbox (badness 10000) in paragraph at lines 669--669
+Underfull \hbox (badness 10000) in paragraph at lines 674--674
 [][]
  []
 
 </Users/christophercrawford/Google Drive/_Projects/Zambia/agroEcoTradeoff/exter
-nal/plots/ms_v5/conv_maps/basic_conv_maps_bc_1.png, id=608, 3613.5pt x 3914.625
+nal/plots/ms_v5/conv_maps/basic_conv_maps_bc_1.png, id=614, 3613.5pt x 3914.625
 pt>
 File: /Users/christophercrawford/Google Drive/_Projects/Zambia/agroEcoTradeoff/
 external/plots/ms_v5/conv_maps/basic_conv_maps_bc_1.png Graphic file (type png)
@@ -1296,15 +1296,15 @@ external/plots/ms_v5/conv_maps/basic_conv_maps_bc_1.png Graphic file (type png)
 xternal/plots/ms_v5/conv_maps/basic_conv_maps_bc_1.png>
 Package pdftex.def Info: /Users/christophercrawford/Google Drive/_Projects/Zamb
 ia/agroEcoTradeoff/external/plots/ms_v5/conv_maps/basic_conv_maps_bc_1.png  use
-d on input line 673.
+d on input line 678.
 (pdftex.def)             Requested size: 469.71635pt x 508.85939pt.
 
-Underfull \hbox (badness 10000) in paragraph at lines 673--673
+Underfull \hbox (badness 10000) in paragraph at lines 678--678
 [][]
  []
 
 </Users/christophercrawford/Google Drive/_Projects/Zambia/agroEcoTradeoff/exter
-nal/plots/ms_v5/conv_maps/basic_conv_maps_bt_1.png, id=611, 3613.5pt x 3914.625
+nal/plots/ms_v5/conv_maps/basic_conv_maps_bt_1.png, id=617, 3613.5pt x 3914.625
 pt>
 File: /Users/christophercrawford/Google Drive/_Projects/Zambia/agroEcoTradeoff/
 external/plots/ms_v5/conv_maps/basic_conv_maps_bt_1.png Graphic file (type png)
@@ -1313,15 +1313,15 @@ external/plots/ms_v5/conv_maps/basic_conv_maps_bt_1.png Graphic file (type png)
 xternal/plots/ms_v5/conv_maps/basic_conv_maps_bt_1.png>
 Package pdftex.def Info: /Users/christophercrawford/Google Drive/_Projects/Zamb
 ia/agroEcoTradeoff/external/plots/ms_v5/conv_maps/basic_conv_maps_bt_1.png  use
-d on input line 677.
+d on input line 682.
 (pdftex.def)             Requested size: 469.71635pt x 508.85939pt.
 
-Underfull \hbox (badness 10000) in paragraph at lines 677--677
+Underfull \hbox (badness 10000) in paragraph at lines 682--682
 [][]
  []
 
 </Users/christophercrawford/Google Drive/_Projects/Zambia/agroEcoTradeoff/exter
-nal/plots/ms_v5/conv_maps/basic_conv_maps_byct_1.png, id=614, 3613.5pt x 3914.6
+nal/plots/ms_v5/conv_maps/basic_conv_maps_byct_1.png, id=620, 3613.5pt x 3914.6
 25pt>
 File: /Users/christophercrawford/Google Drive/_Projects/Zambia/agroEcoTradeoff/
 external/plots/ms_v5/conv_maps/basic_conv_maps_byct_1.png Graphic file (type pn
@@ -1330,15 +1330,15 @@ g)
 xternal/plots/ms_v5/conv_maps/basic_conv_maps_byct_1.png>
 Package pdftex.def Info: /Users/christophercrawford/Google Drive/_Projects/Zamb
 ia/agroEcoTradeoff/external/plots/ms_v5/conv_maps/basic_conv_maps_byct_1.png  u
-sed on input line 681.
+sed on input line 686.
 (pdftex.def)             Requested size: 469.71635pt x 508.85939pt.
 
-Underfull \hbox (badness 10000) in paragraph at lines 681--681
+Underfull \hbox (badness 10000) in paragraph at lines 686--686
 [][]
  []
 
 </Users/christophercrawford/Google Drive/_Projects/Zambia/agroEcoTradeoff/exter
-nal/plots/ms_v5/conv_maps/basic_conv_maps_z50_1.png, id=617, 3613.5pt x 3914.62
+nal/plots/ms_v5/conv_maps/basic_conv_maps_z50_1.png, id=623, 3613.5pt x 3914.62
 5pt>
 File: /Users/christophercrawford/Google Drive/_Projects/Zambia/agroEcoTradeoff/
 external/plots/ms_v5/conv_maps/basic_conv_maps_z50_1.png Graphic file (type png
@@ -1347,10 +1347,10 @@ external/plots/ms_v5/conv_maps/basic_conv_maps_z50_1.png Graphic file (type png
 xternal/plots/ms_v5/conv_maps/basic_conv_maps_z50_1.png>
 Package pdftex.def Info: /Users/christophercrawford/Google Drive/_Projects/Zamb
 ia/agroEcoTradeoff/external/plots/ms_v5/conv_maps/basic_conv_maps_z50_1.png  us
-ed on input line 685.
+ed on input line 690.
 (pdftex.def)             Requested size: 469.71635pt x 508.85939pt.
 
-Underfull \hbox (badness 10000) in paragraph at lines 685--685
+Underfull \hbox (badness 10000) in paragraph at lines 690--690
 [][]
  []
 
@@ -1359,7 +1359,7 @@ e.25}) has been already used, duplicate ignored
 
 \AtBegShi@Output ...ipout \box \AtBeginShipoutBox 
                                                   \fi \fi 
-l.688 \newpage
+l.693 \newpage
                </Users/christophercrawford/Google Drive/_Projects/Zambia/agroEc
 oTradeoff/external/plots/ms_v5/conv_maps/basic_conv_maps_b_1.png>] [37pdfTeX wa
 rning (ext4): destination with the same identifier (name{figure.26}) has been a
@@ -1367,7 +1367,7 @@ lready used, duplicate ignored
 
 \AtBegShi@Output ...ipout \box \AtBeginShipoutBox 
                                                   \fi \fi 
-l.688 \newpage
+l.693 \newpage
                </Users/christophercrawford/Google Drive/_Projects/Zambia/agroEc
 oTradeoff/external/plots/ms_v5/conv_maps/basic_conv_maps_by_1.png>] [38pdfTeX w
 arning (ext4): destination with the same identifier (name{figure.27}) has been 
@@ -1375,7 +1375,7 @@ already used, duplicate ignored
 
 \AtBegShi@Output ...ipout \box \AtBeginShipoutBox 
                                                   \fi \fi 
-l.688 \newpage
+l.693 \newpage
                </Users/christophercrawford/Google Drive/_Projects/Zambia/agroEc
 oTradeoff/external/plots/ms_v5/conv_maps/basic_conv_maps_bc_1.png>] [39pdfTeX w
 arning (ext4): destination with the same identifier (name{figure.28}) has been 
@@ -1383,7 +1383,7 @@ already used, duplicate ignored
 
 \AtBegShi@Output ...ipout \box \AtBeginShipoutBox 
                                                   \fi \fi 
-l.688 \newpage
+l.693 \newpage
                </Users/christophercrawford/Google Drive/_Projects/Zambia/agroEc
 oTradeoff/external/plots/ms_v5/conv_maps/basic_conv_maps_bt_1.png>] [40pdfTeX w
 arning (ext4): destination with the same identifier (name{figure.29}) has been 
@@ -1391,7 +1391,7 @@ already used, duplicate ignored
 
 \AtBegShi@Output ...ipout \box \AtBeginShipoutBox 
                                                   \fi \fi 
-l.688 \newpage
+l.693 \newpage
                </Users/christophercrawford/Google Drive/_Projects/Zambia/agroEc
 oTradeoff/external/plots/ms_v5/conv_maps/basic_conv_maps_byct_1.png>] [41pdfTeX
  warning (ext4): destination with the same identifier (name{figure.30}) has bee
@@ -1399,11 +1399,11 @@ n already used, duplicate ignored
 
 \AtBegShi@Output ...ipout \box \AtBeginShipoutBox 
                                                   \fi \fi 
-l.688 \newpage
+l.693 \newpage
                </Users/christophercrawford/Google Drive/_Projects/Zambia/agroEc
 oTradeoff/external/plots/ms_v5/conv_maps/basic_conv_maps_z50_1.png>]
 </Users/christophercrawford/Google Drive/_Projects/Zambia/agroEcoTradeoff/exter
-nal/plots/ms_v5/conv_maps_by_ensemble/composites_1_conv_maps.png, id=657, 3011.
+nal/plots/ms_v5/conv_maps_by_ensemble/composites_1_conv_maps.png, id=663, 3011.
 25pt x 2710.125pt>
 File: /Users/christophercrawford/Google Drive/_Projects/Zambia/agroEcoTradeoff/
 external/plots/ms_v5/conv_maps_by_ensemble/composites_1_conv_maps.png Graphic f
@@ -1412,15 +1412,15 @@ ile (type png)
 xternal/plots/ms_v5/conv_maps_by_ensemble/composites_1_conv_maps.png>
 Package pdftex.def Info: /Users/christophercrawford/Google Drive/_Projects/Zamb
 ia/agroEcoTradeoff/external/plots/ms_v5/conv_maps_by_ensemble/composites_1_conv
-_maps.png  used on input line 712.
+_maps.png  used on input line 717.
 (pdftex.def)             Requested size: 469.72556pt x 422.75299pt.
 
-Underfull \hbox (badness 10000) in paragraph at lines 712--712
+Underfull \hbox (badness 10000) in paragraph at lines 717--717
 [][]
  []
 
 </Users/christophercrawford/Google Drive/_Projects/Zambia/agroEcoTradeoff/exter
-nal/plots/ms_v5/conv_maps_by_ensemble/types_1_conv_maps.png, id=658, 2107.875pt
+nal/plots/ms_v5/conv_maps_by_ensemble/types_1_conv_maps.png, id=664, 2107.875pt
  x 3011.25pt>
 File: /Users/christophercrawford/Google Drive/_Projects/Zambia/agroEcoTradeoff/
 external/plots/ms_v5/conv_maps_by_ensemble/types_1_conv_maps.png Graphic file (
@@ -1429,13 +1429,13 @@ type png)
 xternal/plots/ms_v5/conv_maps_by_ensemble/types_1_conv_maps.png>
 Package pdftex.def Info: /Users/christophercrawford/Google Drive/_Projects/Zamb
 ia/agroEcoTradeoff/external/plots/ms_v5/conv_maps_by_ensemble/types_1_conv_maps
-.png  used on input line 716.
+.png  used on input line 721.
 (pdftex.def)             Requested size: 409.76352pt x 585.37645pt.
 
-LaTeX Warning: Float too large for page by 6.89087pt on input line 717.
+LaTeX Warning: Float too large for page by 6.89087pt on input line 722.
 
 </Users/christophercrawford/Google Drive/_Projects/Zambia/agroEcoTradeoff/exter
-nal/plots/ms_v5/conv_maps_by_ensemble/taxa_all_1_conv_maps.png, id=661, 2107.87
+nal/plots/ms_v5/conv_maps_by_ensemble/taxa_all_1_conv_maps.png, id=667, 2107.87
 5pt x 3011.25pt>
 File: /Users/christophercrawford/Google Drive/_Projects/Zambia/agroEcoTradeoff/
 external/plots/ms_v5/conv_maps_by_ensemble/taxa_all_1_conv_maps.png Graphic fil
@@ -1444,10 +1444,10 @@ e (type png)
 xternal/plots/ms_v5/conv_maps_by_ensemble/taxa_all_1_conv_maps.png>
 Package pdftex.def Info: /Users/christophercrawford/Google Drive/_Projects/Zamb
 ia/agroEcoTradeoff/external/plots/ms_v5/conv_maps_by_ensemble/taxa_all_1_conv_m
-aps.png  used on input line 720.
+aps.png  used on input line 725.
 (pdftex.def)             Requested size: 409.76352pt x 585.37645pt.
 </Users/christophercrawford/Google Drive/_Projects/Zambia/agroEcoTradeoff/exter
-nal/plots/ms_v5/conv_maps_by_ensemble/taxa_endemism_1_conv_maps.png, id=662, 21
+nal/plots/ms_v5/conv_maps_by_ensemble/taxa_endemism_1_conv_maps.png, id=668, 21
 07.875pt x 3011.25pt>
 File: /Users/christophercrawford/Google Drive/_Projects/Zambia/agroEcoTradeoff/
 external/plots/ms_v5/conv_maps_by_ensemble/taxa_endemism_1_conv_maps.png Graphi
@@ -1456,10 +1456,10 @@ c file (type png)
 xternal/plots/ms_v5/conv_maps_by_ensemble/taxa_endemism_1_conv_maps.png>
 Package pdftex.def Info: /Users/christophercrawford/Google Drive/_Projects/Zamb
 ia/agroEcoTradeoff/external/plots/ms_v5/conv_maps_by_ensemble/taxa_endemism_1_c
-onv_maps.png  used on input line 724.
+onv_maps.png  used on input line 729.
 (pdftex.def)             Requested size: 409.76352pt x 585.37645pt.
 </Users/christophercrawford/Google Drive/_Projects/Zambia/agroEcoTradeoff/exter
-nal/plots/ms_v5/conv_maps_by_ensemble/taxa_small_1_conv_maps.png, id=663, 2107.
+nal/plots/ms_v5/conv_maps_by_ensemble/taxa_small_1_conv_maps.png, id=669, 2107.
 875pt x 3011.25pt>
 File: /Users/christophercrawford/Google Drive/_Projects/Zambia/agroEcoTradeoff/
 external/plots/ms_v5/conv_maps_by_ensemble/taxa_small_1_conv_maps.png Graphic f
@@ -1468,10 +1468,10 @@ ile (type png)
 xternal/plots/ms_v5/conv_maps_by_ensemble/taxa_small_1_conv_maps.png>
 Package pdftex.def Info: /Users/christophercrawford/Google Drive/_Projects/Zamb
 ia/agroEcoTradeoff/external/plots/ms_v5/conv_maps_by_ensemble/taxa_small_1_conv
-_maps.png  used on input line 728.
+_maps.png  used on input line 733.
 (pdftex.def)             Requested size: 409.76352pt x 585.37645pt.
 </Users/christophercrawford/Google Drive/_Projects/Zambia/agroEcoTradeoff/exter
-nal/plots/ms_v5/conv_maps_by_ensemble/methods_mb_1_conv_maps.png, id=664, 2107.
+nal/plots/ms_v5/conv_maps_by_ensemble/methods_mb_1_conv_maps.png, id=670, 2107.
 875pt x 3011.25pt>
 File: /Users/christophercrawford/Google Drive/_Projects/Zambia/agroEcoTradeoff/
 external/plots/ms_v5/conv_maps_by_ensemble/methods_mb_1_conv_maps.png Graphic f
@@ -1480,10 +1480,10 @@ ile (type png)
 xternal/plots/ms_v5/conv_maps_by_ensemble/methods_mb_1_conv_maps.png>
 Package pdftex.def Info: /Users/christophercrawford/Google Drive/_Projects/Zamb
 ia/agroEcoTradeoff/external/plots/ms_v5/conv_maps_by_ensemble/methods_mb_1_conv
-_maps.png  used on input line 732.
+_maps.png  used on input line 737.
 (pdftex.def)             Requested size: 409.76352pt x 585.37645pt.
 </Users/christophercrawford/Google Drive/_Projects/Zambia/agroEcoTradeoff/exter
-nal/plots/ms_v5/conv_maps_by_ensemble/methods_vp_1_conv_maps.png, id=665, 2107.
+nal/plots/ms_v5/conv_maps_by_ensemble/methods_vp_1_conv_maps.png, id=671, 2107.
 875pt x 3011.25pt>
 File: /Users/christophercrawford/Google Drive/_Projects/Zambia/agroEcoTradeoff/
 external/plots/ms_v5/conv_maps_by_ensemble/methods_vp_1_conv_maps.png Graphic f
@@ -1492,10 +1492,10 @@ ile (type png)
 xternal/plots/ms_v5/conv_maps_by_ensemble/methods_vp_1_conv_maps.png>
 Package pdftex.def Info: /Users/christophercrawford/Google Drive/_Projects/Zamb
 ia/agroEcoTradeoff/external/plots/ms_v5/conv_maps_by_ensemble/methods_vp_1_conv
-_maps.png  used on input line 736.
+_maps.png  used on input line 741.
 (pdftex.def)             Requested size: 409.76352pt x 585.37645pt.
 </Users/christophercrawford/Google Drive/_Projects/Zambia/agroEcoTradeoff/exter
-nal/plots/ms_v5/conv_maps_by_ensemble/methods_ae_1_conv_maps.png, id=666, 2107.
+nal/plots/ms_v5/conv_maps_by_ensemble/methods_ae_1_conv_maps.png, id=672, 2107.
 875pt x 3011.25pt>
 File: /Users/christophercrawford/Google Drive/_Projects/Zambia/agroEcoTradeoff/
 external/plots/ms_v5/conv_maps_by_ensemble/methods_ae_1_conv_maps.png Graphic f
@@ -1504,14 +1504,14 @@ ile (type png)
 xternal/plots/ms_v5/conv_maps_by_ensemble/methods_ae_1_conv_maps.png>
 Package pdftex.def Info: /Users/christophercrawford/Google Drive/_Projects/Zamb
 ia/agroEcoTradeoff/external/plots/ms_v5/conv_maps_by_ensemble/methods_ae_1_conv
-_maps.png  used on input line 740.
+_maps.png  used on input line 745.
 (pdftex.def)             Requested size: 409.76352pt x 585.37645pt.
 [42pdfTeX warning (ext4): destination with the same identifier (name{figure.31}
 ) has been already used, duplicate ignored
 
 \AtBegShi@Output ...ipout \box \AtBeginShipoutBox 
                                                   \fi \fi 
-l.743 \newpage
+l.748 \newpage
                </Users/christophercrawford/Google Drive/_Projects/Zambia/agroEc
 oTradeoff/external/plots/ms_v5/conv_maps_by_ensemble/composites_1_conv_maps.png
 >] [43pdfTeX warning (ext4): destination with the same identifier (name{figure.
@@ -1519,7 +1519,7 @@ oTradeoff/external/plots/ms_v5/conv_maps_by_ensemble/composites_1_conv_maps.png
 
 \AtBegShi@Output ...ipout \box \AtBeginShipoutBox 
                                                   \fi \fi 
-l.743 \newpage
+l.748 \newpage
                </Users/christophercrawford/Google Drive/_Projects/Zambia/agroEc
 oTradeoff/external/plots/ms_v5/conv_maps_by_ensemble/types_1_conv_maps.png>] [4
 4pdfTeX warning (ext4): destination with the same identifier (name{figure.33}) 
@@ -1527,7 +1527,7 @@ has been already used, duplicate ignored
 
 \AtBegShi@Output ...ipout \box \AtBeginShipoutBox 
                                                   \fi \fi 
-l.743 \newpage
+l.748 \newpage
                </Users/christophercrawford/Google Drive/_Projects/Zambia/agroEc
 oTradeoff/external/plots/ms_v5/conv_maps_by_ensemble/taxa_all_1_conv_maps.png>]
 [45pdfTeX warning (ext4): destination with the same identifier (name{figure.34}
@@ -1535,7 +1535,7 @@ oTradeoff/external/plots/ms_v5/conv_maps_by_ensemble/taxa_all_1_conv_maps.png>]
 
 \AtBegShi@Output ...ipout \box \AtBeginShipoutBox 
                                                   \fi \fi 
-l.743 \newpage
+l.748 \newpage
                </Users/christophercrawford/Google Drive/_Projects/Zambia/agroEc
 oTradeoff/external/plots/ms_v5/conv_maps_by_ensemble/taxa_endemism_1_conv_maps.
 png>] [46pdfTeX warning (ext4): destination with the same identifier (name{figu
@@ -1543,7 +1543,7 @@ re.35}) has been already used, duplicate ignored
 
 \AtBegShi@Output ...ipout \box \AtBeginShipoutBox 
                                                   \fi \fi 
-l.743 \newpage
+l.748 \newpage
                </Users/christophercrawford/Google Drive/_Projects/Zambia/agroEc
 oTradeoff/external/plots/ms_v5/conv_maps_by_ensemble/taxa_small_1_conv_maps.png
 >] [47pdfTeX warning (ext4): destination with the same identifier (name{figure.
@@ -1551,7 +1551,7 @@ oTradeoff/external/plots/ms_v5/conv_maps_by_ensemble/taxa_small_1_conv_maps.png
 
 \AtBegShi@Output ...ipout \box \AtBeginShipoutBox 
                                                   \fi \fi 
-l.743 \newpage
+l.748 \newpage
                </Users/christophercrawford/Google Drive/_Projects/Zambia/agroEc
 oTradeoff/external/plots/ms_v5/conv_maps_by_ensemble/methods_mb_1_conv_maps.png
 >] [48pdfTeX warning (ext4): destination with the same identifier (name{figure.
@@ -1559,7 +1559,7 @@ oTradeoff/external/plots/ms_v5/conv_maps_by_ensemble/methods_mb_1_conv_maps.png
 
 \AtBegShi@Output ...ipout \box \AtBeginShipoutBox 
                                                   \fi \fi 
-l.743 \newpage
+l.748 \newpage
                </Users/christophercrawford/Google Drive/_Projects/Zambia/agroEc
 oTradeoff/external/plots/ms_v5/conv_maps_by_ensemble/methods_vp_1_conv_maps.png
 >] [49pdfTeX warning (ext4): destination with the same identifier (name{figure.
@@ -1567,25 +1567,25 @@ oTradeoff/external/plots/ms_v5/conv_maps_by_ensemble/methods_vp_1_conv_maps.png
 
 \AtBegShi@Output ...ipout \box \AtBeginShipoutBox 
                                                   \fi \fi 
-l.743 \newpage
+l.748 \newpage
                </Users/christophercrawford/Google Drive/_Projects/Zambia/agroEc
 oTradeoff/external/plots/ms_v5/conv_maps_by_ensemble/methods_ae_1_conv_maps.png
 >] [50] [51]
-Package atveryend Info: Empty hook `BeforeClearDocument' on input line 879.
+Package atveryend Info: Empty hook `BeforeClearDocument' on input line 884.
 [52]
-Package atveryend Info: Empty hook `AfterLastShipout' on input line 879.
+Package atveryend Info: Empty hook `AfterLastShipout' on input line 884.
 (./5_SI.aux)
-Package atveryend Info: Executing hook `AtVeryEndDocument' on input line 879.
-Package atveryend Info: Executing hook `AtEndAfterFileList' on input line 879.
+Package atveryend Info: Executing hook `AtVeryEndDocument' on input line 884.
+Package atveryend Info: Executing hook `AtEndAfterFileList' on input line 884.
 Package rerunfilecheck Info: File `5_SI.out' has not changed.
 (rerunfilecheck)             Checksum: 088FFD84DB9F7EB0BE1D07086287E77D;4537.
-Package atveryend Info: Empty hook `AtVeryVeryEnd' on input line 879.
+Package atveryend Info: Empty hook `AtVeryVeryEnd' on input line 884.
  ) 
 Here is how much of TeX's memory you used:
- 13029 strings out of 482426
- 216886 string characters out of 5946214
- 466533 words of memory out of 5000000
- 28264 multiletter control sequences out of 15000+600000
+ 13032 strings out of 482426
+ 216999 string characters out of 5946214
+ 465616 words of memory out of 5000000
+ 28265 multiletter control sequences out of 15000+600000
  593668 words of font info for 71 fonts, out of 8000000 for 9000
  14 hyphenation exceptions out of 8191
  34i,12n,37p,2075b,404s stack positions out of 5000i,500n,10000p,200000b,80000s
@@ -1615,10 +1615,10 @@ fb></Users/christophercrawford/Library/TinyTeX/texmf-dist/fonts/type1/public/lm
 /lmsy10.pfb></Users/christophercrawford/Library/TinyTeX/texmf-dist/fonts/type1/
 public/lm/lmsy7.pfb></Users/christophercrawford/Library/TinyTeX/texmf-dist/font
 s/type1/public/lm/lmtt10.pfb>
-Output written on 5_SI.pdf (52 pages, 23079738 bytes).
+Output written on 5_SI.pdf (52 pages, 23302363 bytes).
 PDF statistics:
- 938 PDF objects out of 1000 (max. 8388607)
- 776 compressed objects within 8 object streams
- 229 named destinations out of 1000 (max. 500000)
+ 944 PDF objects out of 1000 (max. 8388607)
+ 782 compressed objects within 8 object streams
+ 231 named destinations out of 1000 (max. 500000)
  351 words of extra memory for PDF output out of 10000 (max. 10000000)
 

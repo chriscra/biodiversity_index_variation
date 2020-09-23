@@ -2028,6 +2028,161 @@ fwrite(facet_stats_order_protect, file = fp(p_mod_output, "facet_stats_order_pro
 
 # --------------------------------------------------------
 # --------------------------------------------------------
+# reload files
+order_jac_w_melt_conv <- read_csv(file = fp(p_mod_output, "order_jac_w_melt_conv.csv")) %>%
+  mutate(facet = fct_relevel(facet, grep("bird_composite|habitats|plants", facet_names_distill, 
+                                         value = TRUE, invert = TRUE)),
+         comparison = fct_relevel(comparison, c("indices", "taxa", "richness", "methods", "resolution")),
+  )
+
+order_jac_w_melt_protect <- read_csv(file = fp(p_mod_output, "order_jac_w_melt_protect.csv")) %>%
+  mutate(facet = fct_relevel(facet, grep("bird_composite|habitats|plants", facet_names_distill, 
+                                         value = TRUE, invert = TRUE)),
+         comparison = fct_relevel(comparison, c("indices", "taxa", "richness", "methods", "resolution")),
+  )
+
+facet_stats_order_conv <- read_csv(file = fp(p_mod_output, "facet_stats_order_conv.csv")) %>%
+    mutate(facet = fct_relevel(facet, grep("bird_composite|habitats|plants", facet_names_distill, 
+                                         value = TRUE, invert = TRUE)),
+           comparison = fct_relevel(comparison, c("indices", "taxa", "richness", "methods", "resolution")),
+  )
+facet_stats_order_protect <- read_csv(file = fp(p_mod_output, "facet_stats_order_protect.csv")) %>%
+  mutate(facet = fct_relevel(facet, grep("bird_composite|habitats|plants", facet_names_distill, 
+                                         value = TRUE, invert = TRUE)),
+         comparison = fct_relevel(comparison, c("indices", "taxa", "richness", "methods", "resolution")),
+  )
+
+# update names:
+facet_stats_order_protect <- facet_stats_order_protect %>%
+  mutate(facet = 
+           fct_recode(facet,
+                      "all sp."        = "all",
+                      "endemism"       = "endemism",
+                      "small-ranged sp."      = "small",
+                      "mammals"        = "mam",
+                      "birds"          = "bird",
+                      "amphibians"     = "amp", 
+                      "reptiles"       = "rep",
+                      "arith. mean"    = "average",
+                      "geom. mean"     = "geometric",
+                      "maximum"        = "max",
+                      "multiply"       = "multi",
+                      "1 km grid"      = "res1",
+                      "10 km grid"     = "res10",
+                      "110 km grid"    = "res110",
+                      "vert. endemism" = "vert_endemism",
+                      "estes"          = "estes",
+                      "laurance"       = "laurance",
+                      "damania"        = "damania"
+                      ))
+
+facet_stats_order_conv <- facet_stats_order_conv %>%
+  mutate(facet = 
+           fct_recode(facet,
+                      "all sp."        = "all",
+                      "endemism"       = "endemism",
+                      "small-ranged sp."      = "small",
+                      "mammals"        = "mam",
+                      "birds"          = "bird",
+                      "amphibians"     = "amp", 
+                      "reptiles"       = "rep",
+                      "arith. mean"    = "average",
+                      "geom. mean"     = "geometric",
+                      "maximum"        = "max",
+                      "multiply"       = "multi",
+                      "1 km grid"      = "res1",
+                      "10 km grid"     = "res10",
+                      "110 km grid"    = "res110",
+                      "vert. endemism" = "vert_endemism",
+                      "estes"          = "estes",
+                      "laurance"       = "laurance",
+                      "damania"        = "damania"
+                      ))
+
+order_jac_w_melt_protect <- order_jac_w_melt_protect %>%
+  mutate(facet = fct_recode(facet,
+            "all sp."        = "all",
+            "endemism"       = "endemism",
+            "small-ranged sp."      = "small",
+            "mammals"        = "mam",
+            "birds"          = "bird",
+            "amphibians"     = "amp", 
+            "reptiles"       = "rep",
+            "arith. mean"    = "average",
+            "geom. mean"     = "geometric",
+            "maximum"        = "max",
+            "multiply"       = "multi",
+            "1 km grid"      = "res1",
+            "10 km grid"     = "res10",
+            "110 km grid"    = "res110",
+            "vert. endemism" = "vert_endemism",
+            "estes"          = "estes",
+            "laurance"       = "laurance",
+            "damania"        = "damania"),
+         
+         pair = fct_recode(pair,
+            "all sp."        = "all",
+            "endemism"       = "endemism",
+            "small-ranged sp."      = "small",
+            "mammals"        = "mam",
+            "birds"          = "bird",
+            "amphibians"     = "amp", 
+            "reptiles"       = "rep",
+            "arith. mean"    = "average",
+            "geom. mean"     = "geometric",
+            "maximum"        = "max",
+            "multiply"       = "multi",
+            "1 km grid"      = "res1",
+            "10 km grid"     = "res10",
+            "110 km grid"    = "res110",
+            "vert. endemism" = "vert_endemism",
+            "estes"          = "estes",
+            "laurance"       = "laurance",
+            "damania"        = "damania")
+         )
+
+order_jac_w_melt_conv <- order_jac_w_melt_conv %>%
+  mutate(facet = fct_recode(facet,
+            "all sp."        = "all",
+            "endemism"       = "endemism",
+            "small-ranged sp."      = "small",
+            "mammals"        = "mam",
+            "birds"          = "bird",
+            "amphibians"     = "amp", 
+            "reptiles"       = "rep",
+            "arith. mean"    = "average",
+            "geom. mean"     = "geometric",
+            "maximum"        = "max",
+            "multiply"       = "multi",
+            "1 km grid"      = "res1",
+            "10 km grid"     = "res10",
+            "110 km grid"    = "res110",
+            "vert. endemism" = "vert_endemism",
+            "estes"          = "estes",
+            "laurance"       = "laurance",
+            "damania"        = "damania"),
+         
+         pair = fct_recode(pair,
+            "all sp."        = "all",
+            "endemism"       = "endemism",
+            "small-ranged sp."      = "small",
+            "mammals"        = "mam",
+            "birds"          = "bird",
+            "amphibians"     = "amp", 
+            "reptiles"       = "rep",
+            "arith. mean"    = "average",
+            "geom. mean"     = "geometric",
+            "maximum"        = "max",
+            "multiply"       = "multi",
+            "1 km grid"      = "res1",
+            "10 km grid"     = "res10",
+            "110 km grid"    = "res110",
+            "vert. endemism" = "vert_endemism",
+            "estes"          = "estes",
+            "laurance"       = "laurance",
+            "damania"        = "damania")
+         )
+
 # condensed plot - order of conversion
 SI_fig_jac_w_order_conv <- ggplot() +
   theme_classic() + 
@@ -2057,7 +2212,7 @@ print(
       labs(title = "Similarity of Conversion Order") + 
       coord_cartesian(ylim=c(0.4, 1.0)) + 
       theme(legend.position = "none", 
-            plot.margin = unit(c(0.4, 0.5, 0.2, 0.2), "cm"))
+            plot.margin = unit(c(0.4, 0.9, 0.2, 0.2), "cm"))
   )
 dev.off()
 
@@ -2091,7 +2246,7 @@ print(
       labs(title = "Similarity of Protection Order") + 
       coord_cartesian(ylim=c(0.4, 1.0)) + 
       theme(legend.position = "none", 
-            plot.margin = unit(c(0.4, 0.5, 0.2, 0.2), "cm"))
+            plot.margin = unit(c(0.4, 0.9, 0.2, 0.2), "cm"))
   )
 dev.off()
 
@@ -2607,6 +2762,7 @@ nndat <- nndat_full %>%
 
 as_tibble(nndat)
 
+
 # calculate mean distance for each facet
 # facet_stats_order
 nndat_facet_stats <- nndat %>%
@@ -2620,10 +2776,95 @@ nndat_facet_stats <- nndat %>%
     weight = unique(weight),
     facet_mean_dist = mean(adj_mean_dist, na.rm = TRUE))
 
+
+# rename layers:
+nndat <- nndat %>% 
+  mutate(facet = fct_recode(facet,
+            "all sp."        = "all",
+            "endemism"       = "endemism",
+            "small-ranged sp."      = "small",
+            "mammals"        = "mam",
+            "birds"          = "bird",
+            "amphibians"     = "amp", 
+            "reptiles"       = "rep",
+            "arith. mean"    = "average",
+            "geom. mean"     = "geometric",
+            "maximum"        = "max",
+            "multiply"       = "multi",
+            "1 km grid"      = "res1",
+            "10 km grid"     = "res10",
+            "110 km grid"    = "res110",
+            "vert. endemism" = "vert_endemism",
+            "estes"          = "estes",
+            "laurance"       = "laurance",
+            "damania"        = "damania"),
+         pair = fct_recode(pair,
+            "all sp."        = "all",
+            "endemism"       = "endemism",
+            "small-ranged sp."      = "small",
+            "mammals"        = "mam",
+            "birds"          = "bird",
+            "amphibians"     = "amp", 
+            "reptiles"       = "rep",
+            "arith. mean"    = "average",
+            "geom. mean"     = "geometric",
+            "maximum"        = "max",
+            "multiply"       = "multi",
+            "1 km grid"      = "res1",
+            "10 km grid"     = "res10",
+            "110 km grid"    = "res110",
+            "vert. endemism" = "vert_endemism",
+            "estes"          = "estes",
+            "laurance"       = "laurance",
+            "damania"        = "damania")
+         )
+
+nndat_facet_stats <- nndat_facet_stats %>%
+  mutate(facet = fct_recode(facet,
+            "all sp."        = "all",
+            "endemism"       = "endemism",
+            "small-ranged sp."      = "small",
+            "mammals"        = "mam",
+            "birds"          = "bird",
+            "amphibians"     = "amp", 
+            "reptiles"       = "rep",
+            "arith. mean"    = "average",
+            "geom. mean"     = "geometric",
+            "maximum"        = "max",
+            "multiply"       = "multi",
+            "1 km grid"      = "res1",
+            "10 km grid"     = "res10",
+            "110 km grid"    = "res110",
+            "vert. endemism" = "vert_endemism",
+            "estes"          = "estes",
+            "laurance"       = "laurance",
+            "damania"        = "damania"),
+         pair = fct_recode(pair,
+            "all sp."        = "all",
+            "endemism"       = "endemism",
+            "small-ranged sp."      = "small",
+            "mammals"        = "mam",
+            "birds"          = "bird",
+            "amphibians"     = "amp", 
+            "reptiles"       = "rep",
+            "arith. mean"    = "average",
+            "geom. mean"     = "geometric",
+            "maximum"        = "max",
+            "multiply"       = "multi",
+            "1 km grid"      = "res1",
+            "10 km grid"     = "res10",
+            "110 km grid"    = "res110",
+            "vert. endemism" = "vert_endemism",
+            "estes"          = "estes",
+            "laurance"       = "laurance",
+            "damania"        = "damania")
+         )
+
 nndat_facet_stats
 
 object_size(nndat, nnl, nnl_sums, nndat_facet_stats)
 save(nndat, nnl, nnl_sums, nndat_facet_stats, file = fp(p_mod_output, "nnd_files.RData"))
+load(file = fp(p_mod_output, "nnd_files.RData"), verbose = TRUE)
 
 # --------------------------------------------------------------------------
 # plot ---------------------------------------------------------------------
@@ -2650,8 +2891,6 @@ gg_nnd <- ggplot() +
              alpha = 0.15) + 
   facet_grid(cols = vars(comparison), scales = "free_x", switch = "x", 
              space = "free_x") #+ theme(legend.title = element_text("Mean Value"))
-gg_nnd0
-gg_nnd02
 gg_nnd
 
 
@@ -2663,7 +2902,7 @@ print(
       #ggtitle("Pure biodiversity (100% weight on bd, with average yields)") +
       #coord_cartesian(ylim=c(0, 1.0)) + 
       theme(legend.position = "none", 
-            plot.margin = unit(c(0.4, 0.5, 0.2, 0.2), "cm"))
+            plot.margin = unit(c(0.4, 1, 0.2, 0.2), "cm"))
   )
 dev.off()
 
@@ -2964,6 +3203,7 @@ jac_w_threat_melt <- jac_w_threat %>%
   arrange(facet)
 
 fwrite(jac_w_threat_melt, file = fp(p_mod_output, "jac_w_threat_melt.csv"))
+jac_w_threat_melt <- read_csv(file = fp(p_mod_output, "jac_w_threat_melt.csv"))
 
 
 # ------------------------------------------------------------------
@@ -2978,7 +3218,44 @@ facet_stats_threat <- jac_w_threat_melt %>%
     se_jac_w = sqrt(var(jac_w, na.rm = TRUE) / sum(!is.na(jac_w))))
 
 fwrite(facet_stats_threat, file = fp(p_mod_output, "facet_stats_threat.csv"))
+facet_stats_threat <- read_csv(file = fp(p_mod_output, "facet_stats_threat.csv"))
 
+
+# rename:
+
+facet_stats_threat <- facet_stats_threat %>%
+  mutate(facet = 
+           fct_recode(facet,
+                      "all sp."        = "all",
+                      "endemism"       = "endemism",
+                      "threatened sp." = "threat",
+                      "small-ranged sp."      = "small",
+                      "mammals"        = "mam",
+                      "birds"          = "bird",
+                      "amphibians"     = "amp", 
+                      "reptiles"       = "rep"))
+
+jac_w_threat_melt <- jac_w_threat_melt %>%
+  mutate(facet = fct_recode(facet,
+            "all sp."        = "all",
+            "endemism"       = "endemism",
+            "threatened sp." = "threat",
+            "small-ranged sp."      = "small",
+            "mammals"        = "mam",
+            "birds"          = "bird",
+            "amphibians"     = "amp", 
+            "reptiles"       = "rep"),
+        
+         pair = fct_recode(pair,
+            "all sp."        = "all",
+            "endemism"       = "endemism",
+            "threatened sp." = "threat",
+            "small-ranged sp."      = "small",
+            "mammals"        = "mam",
+            "birds"          = "bird",
+            "amphibians"     = "amp", 
+            "reptiles"       = "rep")
+      )
 # --------------------------------------------------------
 # --------------------------------------------------------
 # condensed plot
@@ -3013,8 +3290,6 @@ dev.off()
 
 
 # maps:
-
-
 facet_r_threat <- writeRaster(
   dt_to_raster(dt_bp_threat_m_convertible, CRSobj),
   overwrite=TRUE, fp(p_mod_output,"facet_r_threat.tif"))
@@ -3027,7 +3302,7 @@ pixels <- 5000000
   
 p1 <- gplot(facet_r_threat[[c("mam", "bird", "amp")]], maxpixels = pixels) + 
       geom_raster(aes(fill = value)) +
-      facet_wrap(~ variable, nrow = 1) + 
+      facet_wrap(~ variable, nrow = 1, labeller = labeller(variable = new_labels_lookup)) + 
       scale_fill_gradientn(colors = terrain.colors(50, rev = TRUE), na.value = "white", limits = c(0, 1)) + 
       labs(y = "Taxonomic Groups", x = NULL) + 
       theme(rect = element_blank(), line = element_blank(), 
@@ -3039,7 +3314,7 @@ p1 <- gplot(facet_r_threat[[c("mam", "bird", "amp")]], maxpixels = pixels) +
 
 p2 <- gplot(facet_r_threat[[c("all", "endemism", "threat", "small")]], maxpixels = pixels) + # or facet_r[[comparison_names$types]] for just the four ensemble means
       geom_raster(aes(fill = value)) +
-      facet_wrap(~ variable, nrow = 1) + 
+      facet_wrap(~ variable, nrow = 1, labeller = labeller(variable = new_labels_lookup)) + 
       scale_fill_gradientn(colors = terrain.colors(50, rev = TRUE), na.value = "white", limits = c(0, 1)) + 
       labs(y = "Richness Types", x = NULL) + 
       theme(rect = element_blank(), line = element_blank(), 
@@ -3259,7 +3534,91 @@ max(vert_r$endemism_richness$rep[vert_r$endemism_richness$rep < 0.09]) # 0.00053
 
 
 # plots
-```{r *primary_plots}
+Figure 1 - ppt methods schematic
+Figure 2 - ensemble rasters (chunk: "*ms_fig_2_raster_bp")
+Figure 3 - jaccard similarity (chunk: "*ms_fig_jac_w_bp")
+Figure 4 - comparing production levels (5_SI.rmd, chunk: "z50-bp-comparison", file called robustness check)
+
+```{r new-labels}
+
+facet_stats %>% 
+  filter(weight == "bp") %>%
+  select(facet, comparison)
+
+levels(facet_stats$comparison)
+levels(facet_stats$facet)
+
+facet_stats <- facet_stats %>%
+  mutate(facet = 
+           fct_recode(facet,
+                      "all sp."        = "all",
+                      "endemism"       = "endemism",
+                      "small-ranged sp."      = "small",
+                      "mammals"        = "mam",
+                      "birds"          = "bird",
+                      "amphibians"     = "amp", 
+                      "reptiles"       = "rep",
+                      "arith. mean"    = "average",
+                      "geom. mean"     = "geometric",
+                      "maximum"        = "max",
+                      "multiply"       = "multi",
+                      "1 km grid"      = "res1",
+                      "10 km grid"     = "res10",
+                      "110 km grid"    = "res110",
+                      "vert. endemism" = "vert_endemism",
+                      "estes"          = "estes",
+                      "laurance"       = "laurance",
+                      "damania"        = "damania"
+                      ))
+
+jac_w_melt <- jac_w_melt %>%
+  mutate(facet = fct_recode(facet,
+            "all sp."        = "all",
+            "endemism"       = "endemism",
+            "small-ranged sp."      = "small",
+            "mammals"        = "mam",
+            "birds"          = "bird",
+            "amphibians"     = "amp", 
+            "reptiles"       = "rep",
+            "arith. mean"    = "average",
+            "geom. mean"     = "geometric",
+            "maximum"        = "max",
+            "multiply"       = "multi",
+            "1 km grid"      = "res1",
+            "10 km grid"     = "res10",
+            "110 km grid"    = "res110",
+            "vert. endemism" = "vert_endemism",
+            "estes"          = "estes",
+            "laurance"       = "laurance",
+            "damania"        = "damania"),
+        
+         pair = fct_recode(pair,
+            "all sp."        = "all",
+            "endemism"       = "endemism",
+            "small-ranged sp."      = "small",
+            "mammals"        = "mam",
+            "birds"          = "bird",
+            "amphibians"     = "amp", 
+            "reptiles"       = "rep",
+            "arith. mean"    = "average",
+            "geom. mean"     = "geometric",
+            "maximum"        = "max",
+            "multiply"       = "multi",
+            "1 km grid"      = "res1",
+            "10 km grid"     = "res10",
+            "110 km grid"    = "res110",
+            "vert. endemism" = "vert_endemism",
+            "estes"          = "estes",
+            "laurance"       = "laurance",
+            "damania"        = "damania")
+      )
+
+
+
+```
+
+
+```{r *ms_fig_3_primary_plots}
 ms_fig_jac_w_bp <- ggplot() +
   theme_classic() + 
   theme(axis.text.x = element_text(angle = 320, vjust = 1, hjust = 0)) +
@@ -3271,9 +3630,9 @@ ms_fig_jac_w_bp <- ggplot() +
              mapping = aes(x = facet, y = jac_w), #color = "black", show.legend = FALSE,
              alpha = 0.15) + 
   facet_grid(cols = vars(comparison), scales = "free_x", switch = "x", 
-             space = "free_x") + 
+             space = "free_x",
+             labeller = labeller(new_labels_lookup)) + 
   scale_colour_discrete("Mean Values") #+ theme(legend.text = element_text("1", "2", "3", "4", "5"))
-
 
 
 ms_fig_jac_w_bp + ggtitle("Pure biodiversity (100% weight on bd, with average yields)")
@@ -3289,7 +3648,7 @@ gg_jac_w_bp_pairs <- ggplot(filter(jac_w_melt, weight == "bp"),
 
 
 # save:
-png(paste0(p_plots, "/ms_v5/", "ms_fig_jac_w_bp", ".png"), 
+png(paste0(p_plots, "/ms_v5/", "ms_fig_3_jac_w_bp", ".png"), 
     width = 7, height = 4, units = "in", res = 400)
 print(
     ms_fig_jac_w_bp + 
@@ -3301,6 +3660,7 @@ print(
 dev.off()
 
 
+# ------------------- #
 # combo jac_w & nnd:
 png(paste0(p_plots, "/ms_v5/", "ms_fig_combo_jac_w_nnd_bp", ".png"), 
     width = 7, height = 6, units = "in", res = 400)
@@ -3350,7 +3710,7 @@ print(
       ggtitle("100% weight on biodiversity, accurate (dynamic) yields") +
       coord_cartesian(ylim=c(0, 1.0)) + 
       theme(legend.position = "none", 
-            plot.margin = unit(c(0.4, 0.5, 0.2, 0.2), "cm"))
+            plot.margin = unit(c(0.4, 0.9, 0.2, 0.2), "cm"))
   )
 dev.off()
 
@@ -3381,7 +3741,7 @@ print(
        subtitle = "100% weight on biodiversity, mean yields") +
       coord_cartesian(ylim=c(0, 1.0)) + 
       theme(legend.position = "none", 
-            plot.margin = unit(c(0.4, 0.5, 0.2, 0.2), "cm"))
+            plot.margin = unit(c(0.4, 0.9, 0.2, 0.2), "cm"))
   )
 dev.off()
 
@@ -3411,7 +3771,7 @@ print(
        subtitle = "50% weight on yield, 50% on biodiversity") +
       coord_cartesian(ylim=c(0, 1.0)) + 
       theme(legend.position = "none", 
-            plot.margin = unit(c(0.4, 0.5, 0.2, 0.2), "cm"))
+            plot.margin = unit(c(0.4, 0.9, 0.2, 0.2), "cm"))
   )
 dev.off()
 
@@ -3440,7 +3800,7 @@ print(
        subtitle = "50% weight on carbon loss, 50% on biodiversity") +
       coord_cartesian(ylim=c(0, 1.0)) + 
       theme(legend.position = "none", 
-            plot.margin = unit(c(0.4, 0.5, 0.2, 0.2), "cm"))
+            plot.margin = unit(c(0.4, 0.9, 0.2, 0.2), "cm"))
   )
 dev.off()
 
@@ -3469,7 +3829,7 @@ print(
        subtitle = "50% weight on Travel Cost, 50% on biodiversity") +
       coord_cartesian(ylim=c(0, 1.0)) + 
       theme(legend.position = "none", 
-            plot.margin = unit(c(0.4, 0.5, 0.2, 0.2), "cm"))
+            plot.margin = unit(c(0.4, 0.9, 0.2, 0.2), "cm"))
   )
 dev.off()
 
@@ -3499,7 +3859,7 @@ print(
       ggtitle("Equal weights on biodiversity, yield, carbon, and travel cost") +
       coord_cartesian(ylim=c(0, 1.0)) + 
       theme(legend.position = "none", 
-            plot.margin = unit(c(0.4, 0.5, 0.2, 0.2), "cm"))
+            plot.margin = unit(c(0.4, 0.9, 0.2, 0.2), "cm"))
   )
 dev.off()
 
@@ -3527,7 +3887,7 @@ print(
       ggtitle("Similarity between facets, averaged across all model weights") +
       coord_cartesian(ylim=c(0, 1.0)) + 
       theme(legend.position = "none", 
-            plot.margin = unit(c(0.4, 0.5, 0.2, 0.2), "cm"))
+            plot.margin = unit(c(0.4, 0.9, 0.2, 0.2), "cm"))
   )
 dev.off()
 
@@ -4891,7 +5251,7 @@ save_basic_conv_plots_all(i = 1, runs = runs_1, tag = "_1")
 ```
 
 
-```{r *ms_figure_raster_bp}
+```{r *ms_fig_2_raster_bp}
 facet_r_bp %>% names
 names(facet_r_bp) <- gsub("_bp", "", names(facet_r_bp))
 facet_r_bp <- dropLayer(facet_r_bp, 3)
@@ -4905,21 +5265,44 @@ eval(parse(text = paste0("facet_r_","bp")))[[1:3]]
 # ----------------------------------------
 # put the main figure together, for bp
 # ----------------------------------------
-# weight <- "bp"
+weight <- "bp"
 # weight <- "z50"
-weight <- "all"
+# weight <- "all"
 
 drop_threat <- TRUE
 brick <- eval(parse(text = paste0("facet_r_", weight)))
 names(brick) <- gsub(paste0("_", weight), "", names(brick))
 if (drop_threat) {brick <- dropLayer(brick, which(names(brick) == "threat"))}
 
+# new labels, in the format c(old = "new")
+new_labels_lookup <- c(
+  all = "all sp.",
+  endemism = "endemism",
+  threat = "threatened sp.",
+  small = "small-ranged sp.",
+  mam = "mammals",
+  bird = "birds",
+  amp = "amphibians",
+  rep = "reptiles",
+  average = "arith. mean",
+  geometric = "geom. mean" ,
+  max = "maximum",
+  multi = "multiply" ,
+  res1 = "1 km grid",
+  res10 = "10 km grid",
+  res110 = "110 km grid",
+  vert_endemism = "vert. endemism",
+  estes = "estes",
+  laurance = "laurance",
+  damania = "damania"
+  )
+
 pixels <- 5000000
 
   
 p1 <- gplot(brick[[c("mam", "bird", "amp", "rep")]], maxpixels = pixels) + 
       geom_raster(aes(fill = value)) +
-      facet_wrap(~ variable, nrow = 1) + 
+      facet_wrap(~ variable, nrow = 1, labeller = labeller(variable = new_labels_lookup)) + 
       scale_fill_gradientn(colors = terrain.colors(50, rev = TRUE), na.value = "white", limits = c(0, 1)) + 
       labs(y = "Taxonomic Groups", x = NULL) + 
       theme(rect = element_blank(), line = element_blank(), 
@@ -4931,9 +5314,9 @@ p1 <- gplot(brick[[c("mam", "bird", "amp", "rep")]], maxpixels = pixels) +
 
 p2 <- gplot(brick[[c("all", "endemism", "small")]], maxpixels = pixels) + # or facet_r[[comparison_names$types]] for just the four ensemble means
       geom_raster(aes(fill = value)) +
-      facet_wrap(~ variable, nrow = 1) + 
+      facet_wrap(~ variable, nrow = 1, labeller = labeller(variable = new_labels_lookup)) + 
       scale_fill_gradientn(colors = terrain.colors(50, rev = TRUE), na.value = "white", limits = c(0, 1)) + 
-      labs(y = "Richness Types", x = NULL) + 
+      labs(y = "Richness Metrics", x = NULL) + 
       theme(rect = element_blank(), line = element_blank(), 
             axis.line = element_blank(), axis.ticks = element_blank(), 
             axis.ticks.length = unit(0, "pt"), axis.text = element_blank(),
@@ -4942,7 +5325,7 @@ p2 <- gplot(brick[[c("all", "endemism", "small")]], maxpixels = pixels) + # or f
     
 p3 <- gplot(brick[[c("average", "geometric", "max", "multi")]], maxpixels = pixels) + 
       geom_raster(aes(fill = value)) +
-      facet_wrap(~ variable, nrow = 1) + 
+      facet_wrap(~ variable, nrow = 1, labeller = labeller(variable = new_labels_lookup)) + 
       scale_fill_gradientn(colors = terrain.colors(50, rev = TRUE), na.value = "white", limits = c(0, 1)) + 
       labs(y = "Methods", x = NULL) + 
       theme(rect = element_blank(), line = element_blank(), 
@@ -4953,7 +5336,7 @@ p3 <- gplot(brick[[c("average", "geometric", "max", "multi")]], maxpixels = pixe
     
 p4 <- gplot(brick[[c("res1", "res10", "res110")]], maxpixels = pixels) + 
       geom_raster(aes(fill = value)) +
-      facet_wrap(~ variable, nrow = 1) + 
+      facet_wrap(~ variable, nrow = 1, labeller = labeller(variable = new_labels_lookup)) + 
       scale_fill_gradientn(colors = terrain.colors(50, rev = TRUE), na.value = "white", limits = c(0, 1)
                            ) + 
       labs(y = "Resolution", x = NULL) + 
@@ -4968,7 +5351,7 @@ p5 <- gplot(brick[[c("vert_endemism", #"plants",
                      "damania")]], 
             maxpixels = pixels) + 
       geom_raster(aes(fill = value)) +
-      facet_wrap(~ variable, nrow = 1) + 
+      facet_wrap(~ variable, nrow = 1, labeller = labeller(variable = new_labels_lookup)) + 
       scale_fill_gradientn(colors = terrain.colors(50, rev = TRUE), na.value = "white", limits = c(0, 1)) + 
       labs(y = "Indices", x = NULL) + 
       theme(rect = element_blank(), line = element_blank(), 
@@ -4989,9 +5372,15 @@ p5 <- gplot(brick[[c("vert_endemism", #"plants",
 #       coord_equal()
 
 # start png call here. 
-png(paste0(p_plots, "/ms_v5/","ms_fig_facet_r_", weight, "_wide.png"),    
+# bp weights here:
+png(paste0(p_plots, "/ms_v5/","ms_fig_2_facet_r_", weight, "_wide.png"),
     width = 8, height = 5,
     units = "in", res = 300)
+
+# for z50, all
+# png(paste0(p_plots, "/ms_v5/","SI_fig_facet_r_", weight, "_wide.png"),    
+#     width = 8, height = 5,
+#     units = "in", res = 300)
 
 plot_grid(
   plot_grid(p5, nrow = 1, labels = c("a")),

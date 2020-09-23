@@ -19,11 +19,9 @@ date:
     \newline  
     \newline
     \today 
-
 editor_options:
-  chunk_output_type: inline
+  chunk_output_type: console
 bibliography: /Users/christophercrawford/Google Drive/Library/library.bib
-
 nocite: |
   @RStudioTeam2018, @R-agroEcoTradeoff, @Estes2015, @R-lmisc, @R-raster, @R-rasterVis, @R-rgdal, @R-sf, @R-sp, @R-gdalUtils, @R-rasterVis, @R-data.table, @R-tictoc, @fasterize, @lwgeom, @magrittr, @parallel, @reshape2, @cowplot, @tidyverse, @knitr, @spatstat, @rmarkdown, @bookdown, @pryr
 ---
@@ -68,16 +66,79 @@ jac_w_melt <- read_csv(file = fp(p_mod_output, "jac_w_melt.csv")) %>%
     comparison = fct_relevel(comparison, c("indices", "taxa", "types", "methods", "resolution", "weights")),
     comparison = fct_recode(comparison, #"indices" = "composites", 
                             "richness" = "types"),
+    facet = fct_recode(facet,
+      "all sp."        = "all",
+      "endemism"       = "endemism",
+      "small-ranged sp."      = "small",
+      "mammals"        = "mam",
+      "birds"          = "bird",
+      "amphibians"     = "amp",
+      "reptiles"       = "rep",
+      "arith. mean"    = "average",
+      "geom. mean"     = "geometric",
+      "maximum"        = "max",
+      "multiply"       = "multi",
+      "1 km grid"      = "res1",
+      "10 km grid"     = "res10",
+      "110 km grid"    = "res110",
+      "vert. endemism" = "vert_endemism",
+      "estes"          = "estes",
+      "laurance"       = "laurance",
+      "damania"        = "damania"
+      ),
 
-    weight = fct_relevel(weight, c("bp",   "b",    "by",   "bc",   "bt",   "byct", "z50",  "all"))) %>%
+    pair = fct_recode(pair,
+      "all sp."        = "all",
+      "endemism"       = "endemism",
+      "small-ranged sp."      = "small",
+      "mammals"        = "mam",
+      "birds"          = "bird",
+      "amphibians"     = "amp",
+      "reptiles"       = "rep",
+      "arith. mean"    = "average",
+      "geom. mean"     = "geometric",
+      "maximum"        = "max",
+      "multiply"       = "multi",
+      "1 km grid"      = "res1",
+      "10 km grid"     = "res10",
+      "110 km grid"    = "res110",
+      "vert. endemism" = "vert_endemism",
+      "estes"          = "estes",
+      "laurance"       = "laurance",
+      "damania"        = "damania"
+      ),
+
+    weight = fct_relevel(weight, c("bp",   "b",    "by",   "bc",   "bt",   "byct", "z50",  "all"))
+    ) %>%
   arrange(facet) %>%
   as_tibble()
+
 
 facet_stats <- read_csv(file = fp(p_mod_output, "facet_stats.csv")) %>%
   mutate(facet = fct_relevel(facet, grep("bird_composite|habitats|plants", facet_names_distill, value = TRUE, invert = TRUE)),
          comparison = fct_relevel(comparison, c("composites", "taxa", "types", "methods", "resolution", "weights")),
          comparison = fct_recode(comparison, "indices" = "composites", "richness" = "types"),
-         weight = fct_relevel(weight, c("bp",   "b",    "by",   "bc",   "bt",   "byct", "z50",  "all")))
+         weight = fct_relevel(weight, c("bp",   "b",    "by",   "bc",   "bt",   "byct", "z50",  "all")),
+         facet = fct_recode(facet,
+            "all sp."        = "all",
+            "endemism"       = "endemism",
+            "small-ranged sp."      = "small",
+            "mammals"        = "mam",
+            "birds"          = "bird",
+            "amphibians"     = "amp", 
+            "reptiles"       = "rep",
+            "arith. mean"    = "average",
+            "geom. mean"     = "geometric",
+            "maximum"        = "max",
+            "multiply"       = "multi",
+            "1 km grid"      = "res1",
+            "10 km grid"     = "res10",
+            "110 km grid"    = "res110",
+            "vert. endemism" = "vert_endemism",
+            "estes"          = "estes",
+            "laurance"       = "laurance",
+            "damania"        = "damania")
+      )
 
 facet_stats_order_conv <- read_csv(file = fp(p_mod_output, "facet_stats_order_conv.csv")) %>%
   mutate(facet = fct_relevel(facet, facet_names_distill),
@@ -85,7 +146,27 @@ facet_stats_order_conv <- read_csv(file = fp(p_mod_output, "facet_stats_order_co
            comparison,c("indices", "taxa", "types", "methods", "resolution", "weights")),
          comparison = fct_recode(comparison, #"indices" = "composites", 
                                  "richness" = "types"),
-         weight = fct_relevel(weight, c("bp",   "b",    "by",   "bc",   "bt",   "byct", "z50",  "all", "order")))
+         weight = fct_relevel(weight, c("bp",   "b",    "by",   "bc",   "bt",   "byct", "z50",  "all", "order")),
+         facet = fct_recode(facet,
+            "all sp."        = "all",
+            "endemism"       = "endemism",
+            "small-ranged sp."      = "small",
+            "mammals"        = "mam",
+            "birds"          = "bird",
+            "amphibians"     = "amp", 
+            "reptiles"       = "rep",
+            "arith. mean"    = "average",
+            "geom. mean"     = "geometric",
+            "maximum"        = "max",
+            "multiply"       = "multi",
+            "1 km grid"      = "res1",
+            "10 km grid"     = "res10",
+            "110 km grid"    = "res110",
+            "vert. endemism" = "vert_endemism",
+            "estes"          = "estes",
+            "laurance"       = "laurance",
+            "damania"        = "damania"
+      ))
   
 
 facet_stats_order_protect <- read_csv(file = fp(p_mod_output, "facet_stats_order_protect.csv")) %>%
@@ -93,7 +174,27 @@ facet_stats_order_protect <- read_csv(file = fp(p_mod_output, "facet_stats_order
          comparison = fct_relevel(comparison, c("composites", "taxa", "types", "methods", "resolution", "weights")),
          comparison = fct_recode(comparison, #"indices" = "composites", 
                                  "richness" = "types"),
-         weight = fct_relevel(weight, c("bp",   "b",    "by",   "bc",   "bt",   "byct", "z50",  "all", "order" )))
+         weight = fct_relevel(weight, c("bp",   "b",    "by",   "bc",   "bt",   "byct", "z50",  "all", "order" )),
+         facet = fct_recode(facet,
+      "all sp."        = "all",
+      "endemism"       = "endemism",
+      "small-ranged sp."      = "small",
+      "mammals"        = "mam",
+      "birds"          = "bird",
+      "amphibians"     = "amp", 
+      "reptiles"       = "rep",
+      "arith. mean"    = "average",
+      "geom. mean"     = "geometric",
+      "maximum"        = "max",
+      "multiply"       = "multi",
+      "1 km grid"      = "res1",
+      "10 km grid"     = "res10",
+      "110 km grid"    = "res110",
+      "vert. endemism" = "vert_endemism",
+      "estes"          = "estes",
+      "laurance"       = "laurance",
+      "damania"        = "damania"
+      ))
   
 
 species_occurrence_zambia <- data.frame(
@@ -115,7 +216,27 @@ jac_w_melt_full <- read_csv(file = fp(p_mod_output, "jac_w_melt_full.csv")) %>%
     pair = fct_relevel(pair, grep("bird_composite|habitats|plants", facet_names_distill, value = TRUE, invert = TRUE)),
     comparison = fct_relevel(comparison, c("composites", "taxa", "types", "methods", "resolution", "weights")),
     comparison = fct_recode(comparison, "indices" = "composites", "richness" = "types"),
-    weight = fct_relevel(weight, c("bp",   "b",    "by",   "bc",   "bt",   "byct", "z50",  "all"))) %>%
+    weight = fct_relevel(weight, c("bp",   "b",    "by",   "bc",   "bt",   "byct", "z50",  "all")),
+    facet = fct_recode(facet,
+      "all sp."        = "all",
+      "endemism"       = "endemism",
+      "small-ranged sp."      = "small",
+      "mammals"        = "mam",
+      "birds"          = "bird",
+      "amphibians"     = "amp", 
+      "reptiles"       = "rep",
+      "arith. mean"    = "average",
+      "geom. mean"     = "geometric",
+      "maximum"        = "max",
+      "multiply"       = "multi",
+      "1 km grid"      = "res1",
+      "10 km grid"     = "res10",
+      "110 km grid"    = "res110",
+      "vert. endemism" = "vert_endemism",
+      "estes"          = "estes",
+      "laurance"       = "laurance",
+      "damania"        = "damania"
+      )) %>%
   arrange(facet) %>%
   as_tibble()
 
@@ -123,7 +244,27 @@ facet_stats_full <- read_csv(file = fp(p_mod_output, "facet_stats_full.csv")) %>
   mutate(facet = fct_relevel(facet, grep("bird_composite|habitats|plants", facet_names_distill, value = TRUE, invert = TRUE)),
          comparison = fct_relevel(comparison, c("composites", "taxa", "types", "methods", "resolution", "weights")),
          comparison = fct_recode(comparison, "indices" = "composites", "richness" = "types"),
-         weight = fct_relevel(weight, c("bp",   "b",    "by",   "bc",   "bt",   "byct", "z50",  "all")))
+         weight = fct_relevel(weight, c("bp",   "b",    "by",   "bc",   "bt",   "byct", "z50",  "all")),
+         facet = fct_recode(facet,
+            "all sp."        = "all",
+            "endemism"       = "endemism",
+            "small-ranged sp."      = "small",
+            "mammals"        = "mam",
+            "birds"          = "bird",
+            "amphibians"     = "amp", 
+            "reptiles"       = "rep",
+            "arith. mean"    = "average",
+            "geom. mean"     = "geometric",
+            "maximum"        = "max",
+            "multiply"       = "multi",
+            "1 km grid"      = "res1",
+            "10 km grid"     = "res10",
+            "110 km grid"    = "res110",
+            "vert. endemism" = "vert_endemism",
+            "estes"          = "estes",
+            "laurance"       = "laurance",
+            "damania"        = "damania"
+            ))
 
 
 ```
@@ -201,18 +342,18 @@ In order to capture the variation in how biodiversity can be represented in prio
 
 \[ Index = \frac{vert_{threat} + plants}{2} + \frac{hotspots + ecoregions + IBAs/EBAs + HBWA}{4} \]
 
-(@) *vert_endemism*: Endemism richness, alternatively known as range area-weighted or rarity-weighted species richness, following @Kier2009,  @Williams1996, and @Soto-Navarro2020. Endemism richness is the sum, for all species present in a cell, of the proportion of each species’ range contained in that cell (i.e. the summed inverse of range size). This effectively weights species richness by each species’ global range size, giving species with smaller ranges greater weight, combining elements of both endemism and species richness. Endemism richness is calculated for each taxa first, normalizing each taxa individually before averaging across all taxa into a composite for all vertebrate species combined [@Brancalion2019]. This approach treats each taxonomic group equally, but in doing so gives individual species in more speciose groups relatively less weight. We assess the impact of the order in which these layers are normalized and combined in Section \@ref(section-norm-order).
+(@) *vert_endemism*: Endemism richness, alternatively known as rarity-weighted richness, range area-weighted species richness, or rarity-weighted species endemism richness, following @Kier2009,  @Williams1996, and @Soto-Navarro2020. Endemism richness is the sum, for all species present in a cell, of the proportion of each species’ range contained in that cell (i.e. the summed inverse of range size). This effectively weights species richness by each species’ global range size, giving species with smaller ranges greater weight, combining elements of both endemism and species richness. Endemism richness is calculated for each taxa first, normalizing each taxa individually before averaging across all taxa into a composite for all vertebrate species combined [@Brancalion2019]. This approach treats each taxonomic group equally, but in doing so gives individual species in more speciose groups relatively less weight. We assess the impact of the order in which these layers are normalized and combined in Section \@ref(section-norm-order).
 
 
-### Types of Richness and Taxonomic Groups 
+### Different Species Richness Metrics across different Taxonomic Groups 
 
 Derived from IUCN [@IUCN2017], BirdLife International [@BirdLife2018], and GARD range map data [@Roll2017].
 
 **Richness for all vertebrate species combined:**
 Note: values are calculated by first calculating richness within each taxonomic group, normalizing to between 0-1, then averaging across all four taxonomic groups, following @Brancalion2019. See Section \@ref(section-norm-order) for a detailed comparison of this approach with the opposite (summing across all taxonomic groups without normalizing first), as taken by @Laurance2014a.
 
-(@) *vert_all*: All vertebreate species richness
-(@) *vert_endemism* vertebrate endemism richness is also included (see above)
+(@) *vert_all*: All vertebrate species richness
+(@) *vert_endemism*: Rarity-weighted vertebrate species endemism richness (see above)
 (@) *vert_small*: Small-ranged vertebrate species richness
 (@) *vert_threat*: Threatened vertebrate species richness was also run, but not included in the main analysis, because reptiles have not been comprehensively assessed. 
 
@@ -232,14 +373,14 @@ This is calculated as the sum, for all species present in a cell, of the proport
 (@) *rep_endemism*: Reptile endemism richness
 
 **Threatened species richness per taxonomic group:** 
-(*Note*: this richness type was not used in primary analysis, because reptiles have not been comprehensively assessed by the IUCN. See Section \@ref(section-threat) for an extended comparison of threatened species richness to the other types, using only mammals, birds, and amphibians.)
+(*Note*: this richness type was not used in our primary analysis, because reptiles have not been comprehensively assessed by the IUCN. See Section \@ref(section-threat) for an extended comparison of threatened species richness to the other richness metrics, using only mammals, birds, and amphibians.)
 
-(@) *mammal_threat*: Threatened mammal richness
+(@) *mam_threat*: Threatened mammal richness
 (@) *bird_threat*: Threatened bird richness
 (@) *amp_threat*: Threatened amphibian richness
-(@) *rep_threat*: Threatened reptile richness (not comprehensive, only 37 out of 226 species that occur in Zambia have been assessed, see Table \@ref(tab:species-occurrence))
+(@) *rep_threat*: Threatened reptile richness (not comprehensive: only 37 out of 226 species that occur in Zambia have been assessed by the IUCN, see Table \@ref(tab:species-occurrence))
 
-**Small-ranged species richness per taxonomic group:** small-ranged species are defined as those with ranges smaller than the global median within each taxon, following @Jenkins2013.
+**Small-ranged species richness per taxonomic group:** small-ranged species are defined as those with ranges smaller than the global median within each group, following @Jenkins2013.
 
 (@) *mam_small*: Small-ranged mammal richness
 (@) *bird_small*: Small-ranged bird richness
@@ -272,9 +413,15 @@ Different methods for combining multiple layers, for three pairs of layers: 1) t
 (@) *max_ae*: Maximum of vertebrate species richness & endemism richness 
 (@) *multi_ae*: Multiplying vertebrate species richness & endemism richness
 
-We produced 90 unique indices to cover the full range of permutations in the five groups above. This included the four existing biodiversity indices (n = 4), three richness types for four taxonomic groups and all vertebrates combined (n = 15, including one of the existing indices, vertebrate endemism richness), four methods for three pairs of layers (n = 12), yielding 30 combinations. These were then calculated for three resolutions, yielding 90 unique model runs.
+
+### Input Resolution
+We calculated each input raster at three resolutions: 1 km grid (1 km$^2$), 10 km grid (100 km$^2$), and 110 km grid (12,100 km$^2$, or roughly 1$^{\circ}$ latitude at the equator). We downscaled raster cell values to the desired resolution using the mean value of the cells (via `raster::aggregate()`). Because the `agroEcoTradeoff` model requires inputs to have a 1 km grid resolution, we then disaggregated these larger cells back down to 1 km grid (using the `raster` package's `disaggregate()` function), but assigning the smaller cells the same value as the coarser input raster's cell values, rather than interpolating values.
+
+In order to compare different resolutions, we first aggregated inputs to coarse resolutions (using mean values), and then downscaled these layers to 1 km$^2$ without any interpolation (because `agroEcoTradeoff` requires input data at 1 km$^2$ resolution).
 
 ### Processing spatial data and producing biodiversity indices
+
+In total, we produced 90 unique indices to cover the full range of permutations in the groups above. This included the three existing biodiversity composite indices (n = 3), three richness metrics for four taxonomic groups as well as all vertebrates combined (n = 3 x 5 = 15, including vertebrate endemism richness, which we compare to the existing composite indices), four methods for three pairs of layers (n = 4 x 3 = 12), yielding 30 distinct combinations. Each of these 30 layers was calculated at three resolutions (1 km grid, 10 km grid, and 110 km grid), yielding 90 unique model runs.
 
 Prior to analysis, species range maps were filtered prior to the calculation of species richness in order to: exclude marine species; exclude species classified as “Extinct” (EX) or “Extinct in the Wild” (EW); include only ranges where species were considered “extant;” include only ranges where species are considered “native” or “reintroduced;” and include only portions of the range where species are “resident,” “breeding,” or “non-breeding” (i.e. wintering, excluding “passage” areas for migratory species).
 
@@ -286,9 +433,7 @@ knitr::write_bib(x = c(pkgs, lyndon_pkgs, "RStudio"), file = 'packages_2020.bib'
 ```
 
 
-Before running the `agroEcoTradeoff` model, each biodiversity index was cropped and masked to the outline of Zambia, removing large bodies of water, then rescaled to between 0-1, setting a given index’s maximum value to 1 and the minimum to 0. This involved taking the value of each cell, subtracting the index’s global minimum value, then dividing this value by the difference between the global maximum and the global minimum. All inputs were run through the model at three resolutions: 1 km grid, 10 km grid, and 110 km grid. We downscaled raster values to the desired resolution using the mean value of the cells (via `raster::aggregate()`). Because the `agroEcoTradeoff` model requires inputs at a 1 km grid resolution, we then disaggregated these larger cells back down to 1 km grid (via `raster::disaggregate()`), but keeping the same values as the coarser rasters rather than interpolating values.
-
-In order to compare different resolutions, we first aggregated inputs to coarse resolutions (using mean values), and then downscaled these layers to 1 km$^2$ without any interpolation (because `agroEcoTradeoff` requires input data at 1 km$^2$ resolution).
+Before running the `agroEcoTradeoff` model, each biodiversity index was cropped and masked to the outline of Zambia, removing large bodies of water, then rescaled to between 0-1, setting a given index’s maximum value to 1 and the minimum to 0. This involved taking the value of each cell, subtracting the index’s global minimum value, then dividing this value by the difference between the global maximum and the global minimum. 
 
 ### Maps of Biodiversity Inputs {#bd-input-maps}
 
@@ -420,19 +565,33 @@ See Figure \@ref(fig:jac-w-z50) for in depth results including mean and pairwise
 # add in this line to the caption, if I add order back in...
 # *order* refers to similarity of the order in which cells are selected for conversion (or protection) based on biodiversity value.
 
-# png(paste0(p_plots, "/ms_v5/", "ms_fig_robustness", ".png"),
-#     width = 7, height = 3.4, units = "in", res = 400)
+# png(paste0(p_plots, "/ms_v5/", "ms_fig_4_robustness", ".png"),
+#     width = 7, height = 4, units = "in", res = 400)
 
 ggplot() +
   theme_classic() +
   theme(axis.text.x = element_text(angle = 320, vjust = 1, hjust = 0)) +
   xlab("Facet") + ylab("Mean Jaccard Similarity") +
-  geom_line(data = filter(facet_stats, weight == "bp"),
-             mapping = aes(x = facet, y = mean_jac_w, group = comparison, color = weight), size = 1) +
-  geom_line(data = filter(facet_stats, weight == "z50"),
-             mapping = aes(x = facet, y = mean_jac_w, group = comparison, color = weight), size = 1) +
-  # geom_line(data = facet_stats_order_conv,
+  geom_point(data = filter(facet_stats, weight == "bp"),
+             mapping = aes(x = facet, y = mean_jac_w, 
+                           group = comparison, color = weight), 
+             size = 2) +
+  geom_point(data = filter(jac_w_melt, weight == "bp"), 
+             mapping = aes(x = facet, y = jac_w, color = weight), 
+             #color = "black",
+             #show.legend = FALSE,
+             alpha = 0.25) + 
+  
+  geom_point(data = filter(facet_stats, weight == "z50"),
+             mapping = aes(x = facet, y = mean_jac_w, 
+                           group = comparison, color = weight), size = 2) +
+  geom_point(data = filter(jac_w_melt, weight == "z50"), 
+             mapping = aes(x = facet, y = jac_w, color = weight), #color = "black", show.legend = FALSE,
+             alpha = 0.25) + 
+  
+  # geom_point(data = facet_stats_order_conv,
   #            mapping = aes(x = facet, y = mean_jac_w, group = comparison, color = weight), size = 1) +
+  
   facet_grid(cols = vars(comparison), scales = "free_x", switch = "x",
              space = "free_x") +
   scale_color_manual(name = "Production \nTarget",
@@ -446,10 +605,11 @@ ggplot() +
                      labels = c("bp" = "\n5% of Zambia \n(100% bd, \nmean yield, bp) \n ",
                                 "order" = "\nConversion \nOrder (order) \n ",
                                 "z50" = "\n50% of Zambia \n(100% bd, \nmean yield, z50) \n "),
+
                      values = c("bp" = hue_pal()(3)[1], # "red"
                                 "order" = hue_pal()(3)[2], #"green"
-                                "z50" = hue_pal()(3)[3])
-                     ) + #"blue"
+                                "z50" = hue_pal()(3)[3]) #"blue"
+                     ) + 
   coord_cartesian(ylim=c(0, 1.0)) #+ theme(legend.position = "bottom") #plot.margin = unit(c(0.4, 0.5, 0.2, 0.2), "cm"))
 
 # dev.off()
@@ -465,7 +625,7 @@ knitr::include_graphics(fp(p_plots, "ms_v5/SI_fig_jac_w_z50.png"))
 (ref:caption-facet-r-z50) Mean conversion priorities assuming a production target that results in the conversion of ~50% of Zambia (*z50*), placing 100% weight in biodiversity and using average and constant yields across Zambia (compare with Main Text Figure 2). The panels show biodiversity indices within five categories of variation: a) existing biodiversity indices (vertebrate endemism richness, plant species richness, Estes et al. 2016, Laurance et al. 2014, four habitat priorities, threatened bird richness combined with IBAs and EBAs, and Damania & Wheeler 2015); b) taxonomic groups (mammals, birds, amphibians, and reptiles); c) types of species richness (all species richness, endemism richness, and small-ranged species richness); d) index calculation methods (average, geometric mean, maximum, and multiplication); and e) input resolutions (1 km, 10 km, and 110 km grids). Cell values correspond to the proportion of model runs using that particular factor that select a given cell for conversion. Blank areas within Zambia correspond to currently protected, cultivated, or settled areas.
 
 ```{r facet-r-z50, fig.cap = '(ref:caption-facet-r-z50)', out.width = "1\\textwidth"}
-knitr::include_graphics(fp(p_plots, "ms_v5/ms_fig_facet_r_z50_wide.png"))
+knitr::include_graphics(fp(p_plots, "ms_v5/SI_fig_facet_r_z50_wide.png"))
 ```
 
 ## Directly Comparing the Order of Conversion {#section-order}

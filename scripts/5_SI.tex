@@ -175,11 +175,11 @@ Laurance et al. (2014) produced an ``environmental values layer'' on three equal
 \setcounter{enumi}{3}
 \tightlist
 \item
-  \emph{vert\_endemism}: Endemism richness, alternatively known as range area-weighted or rarity-weighted species richness, following Kier et al. (2009), Williams et al. (1996), and Soto-Navarro et al. (2020). Endemism richness is the sum, for all species present in a cell, of the proportion of each species' range contained in that cell (i.e.~the summed inverse of range size). This effectively weights species richness by each species' global range size, giving species with smaller ranges greater weight, combining elements of both endemism and species richness. Endemism richness is calculated for each taxa first, normalizing each taxa individually before averaging across all taxa into a composite for all vertebrate species combined (Brancalion et al. 2019). This approach treats each taxonomic group equally, but in doing so gives individual species in more speciose groups relatively less weight. We assess the impact of the order in which these layers are normalized and combined in Section \ref{section-norm-order}.
+  \emph{vert\_endemism}: Endemism richness, alternatively known as rarity-weighted richness, range area-weighted species richness, or rarity-weighted species endemism richness, following Kier et al. (2009), Williams et al. (1996), and Soto-Navarro et al. (2020). Endemism richness is the sum, for all species present in a cell, of the proportion of each species' range contained in that cell (i.e.~the summed inverse of range size). This effectively weights species richness by each species' global range size, giving species with smaller ranges greater weight, combining elements of both endemism and species richness. Endemism richness is calculated for each taxa first, normalizing each taxa individually before averaging across all taxa into a composite for all vertebrate species combined (Brancalion et al. 2019). This approach treats each taxonomic group equally, but in doing so gives individual species in more speciose groups relatively less weight. We assess the impact of the order in which these layers are normalized and combined in Section \ref{section-norm-order}.
 \end{enumerate}
 
-\hypertarget{types-of-richness-and-taxonomic-groups}{%
-\subsubsection{Types of Richness and Taxonomic Groups}\label{types-of-richness-and-taxonomic-groups}}
+\hypertarget{different-species-richness-metrics-across-different-taxonomic-groups}{%
+\subsubsection{Different Species Richness Metrics across different Taxonomic Groups}\label{different-species-richness-metrics-across-different-taxonomic-groups}}
 
 Derived from IUCN (IUCN 2017), BirdLife International (BirdLife International and Handbook of the Birds of the World 2018), and GARD range map data (Roll et al. 2017).
 
@@ -191,9 +191,9 @@ Note: values are calculated by first calculating richness within each taxonomic 
 \setcounter{enumi}{4}
 \tightlist
 \item
-  \emph{vert\_all}: All vertebreate species richness
+  \emph{vert\_all}: All vertebrate species richness
 \item
-  \emph{vert\_endemism} vertebrate endemism richness is also included (see above)
+  \emph{vert\_endemism}: Rarity-weighted vertebrate species endemism richness (see above)
 \item
   \emph{vert\_small}: Small-ranged vertebrate species richness
 \item
@@ -234,23 +234,23 @@ This is calculated as the sum, for all species present in a cell, of the proport
 \end{enumerate}
 
 \textbf{Threatened species richness per taxonomic group:}
-(\emph{Note}: this richness type was not used in primary analysis, because reptiles have not been comprehensively assessed by the IUCN. See Section \ref{section-threat} for an extended comparison of threatened species richness to the other types, using only mammals, birds, and amphibians.)
+(\emph{Note}: this richness type was not used in our primary analysis, because reptiles have not been comprehensively assessed by the IUCN. See Section \ref{section-threat} for an extended comparison of threatened species richness to the other richness metrics, using only mammals, birds, and amphibians.)
 
 \begin{enumerate}
 \def\labelenumi{(\arabic{enumi})}
 \setcounter{enumi}{16}
 \tightlist
 \item
-  \emph{mammal\_threat}: Threatened mammal richness
+  \emph{mam\_threat}: Threatened mammal richness
 \item
   \emph{bird\_threat}: Threatened bird richness
 \item
   \emph{amp\_threat}: Threatened amphibian richness
 \item
-  \emph{rep\_threat}: Threatened reptile richness (not comprehensive, only 37 out of 226 species that occur in Zambia have been assessed, see Table \ref{tab:species-occurrence})
+  \emph{rep\_threat}: Threatened reptile richness (not comprehensive: only 37 out of 226 species that occur in Zambia have been assessed by the IUCN, see Table \ref{tab:species-occurrence})
 \end{enumerate}
 
-\textbf{Small-ranged species richness per taxonomic group:} small-ranged species are defined as those with ranges smaller than the global median within each taxon, following Jenkins, Pimm, and Joppa (2013).
+\textbf{Small-ranged species richness per taxonomic group:} small-ranged species are defined as those with ranges smaller than the global median within each group, following Jenkins, Pimm, and Joppa (2013).
 
 \begin{enumerate}
 \def\labelenumi{(\arabic{enumi})}
@@ -319,18 +319,23 @@ Different methods for combining multiple layers, for three pairs of layers: 1) t
   \emph{multi\_ae}: Multiplying vertebrate species richness \& endemism richness
 \end{enumerate}
 
-We produced 90 unique indices to cover the full range of permutations in the five groups above. This included the four existing biodiversity indices (n = 4), three richness types for four taxonomic groups and all vertebrates combined (n = 15, including one of the existing indices, vertebrate endemism richness), four methods for three pairs of layers (n = 12), yielding 30 combinations. These were then calculated for three resolutions, yielding 90 unique model runs.
+\hypertarget{input-resolution}{%
+\subsubsection{Input Resolution}\label{input-resolution}}
+
+We calculated each input raster at three resolutions: 1 km grid (1 km\(^2\)), 10 km grid (100 km\(^2\)), and 110 km grid (12,100 km\(^2\), or roughly 1\(^{\circ}\) latitude at the equator). We downscaled raster cell values to the desired resolution using the mean value of the cells (via \texttt{raster::aggregate()}). Because the \texttt{agroEcoTradeoff} model requires inputs to have a 1 km grid resolution, we then disaggregated these larger cells back down to 1 km grid (using the \texttt{raster} package's \texttt{disaggregate()} function), but assigning the smaller cells the same value as the coarser input raster's cell values, rather than interpolating values.
+
+In order to compare different resolutions, we first aggregated inputs to coarse resolutions (using mean values), and then downscaled these layers to 1 km\(^2\) without any interpolation (because \texttt{agroEcoTradeoff} requires input data at 1 km\(^2\) resolution).
 
 \hypertarget{processing-spatial-data-and-producing-biodiversity-indices}{%
 \subsubsection{Processing spatial data and producing biodiversity indices}\label{processing-spatial-data-and-producing-biodiversity-indices}}
+
+In total, we produced 90 unique indices to cover the full range of permutations in the groups above. This included the three existing biodiversity composite indices (n = 3), three richness metrics for four taxonomic groups as well as all vertebrates combined (n = 3 x 5 = 15, including vertebrate endemism richness, which we compare to the existing composite indices), four methods for three pairs of layers (n = 4 x 3 = 12), yielding 30 distinct combinations. Each of these 30 layers was calculated at three resolutions (1 km grid, 10 km grid, and 110 km grid), yielding 90 unique model runs.
 
 Prior to analysis, species range maps were filtered prior to the calculation of species richness in order to: exclude marine species; exclude species classified as ``Extinct'' (EX) or ``Extinct in the Wild'' (EW); include only ranges where species were considered ``extant;'' include only ranges where species are considered ``native'' or ``reintroduced;'' and include only portions of the range where species are ``resident,'' ``breeding,'' or ``non-breeding'' (i.e.~wintering, excluding ``passage'' areas for migratory species).
 
 Range maps, species richness maps, and biodiversity indices were processed and calculated in RStudio using R version 3.6.0 (2019-04-26), using the \texttt{agroEcoTradeoff}, \texttt{dtraster}, \texttt{lmisc}, \texttt{raster}, \texttt{rgdal}, \texttt{sf}, \texttt{sp}, \texttt{gdalUtils}, \texttt{rasterVis}, \texttt{data.table}, \texttt{tictoc}, \texttt{fasterize}, \texttt{lwgeom}, \texttt{magrittr}, \texttt{parallel}, \texttt{reshape2}, \texttt{cowplot}, \texttt{tidyverse}, \texttt{knitr}, \texttt{spatstat}, \texttt{rmarkdown}, \texttt{bookdown}, and \texttt{pryr} packages.
 
-Before running the \texttt{agroEcoTradeoff} model, each biodiversity index was cropped and masked to the outline of Zambia, removing large bodies of water, then rescaled to between 0-1, setting a given index's maximum value to 1 and the minimum to 0. This involved taking the value of each cell, subtracting the index's global minimum value, then dividing this value by the difference between the global maximum and the global minimum. All inputs were run through the model at three resolutions: 1 km grid, 10 km grid, and 110 km grid. We downscaled raster values to the desired resolution using the mean value of the cells (via \texttt{raster::aggregate()}). Because the \texttt{agroEcoTradeoff} model requires inputs at a 1 km grid resolution, we then disaggregated these larger cells back down to 1 km grid (via \texttt{raster::disaggregate()}), but keeping the same values as the coarser rasters rather than interpolating values.
-
-In order to compare different resolutions, we first aggregated inputs to coarse resolutions (using mean values), and then downscaled these layers to 1 km\(^2\) without any interpolation (because \texttt{agroEcoTradeoff} requires input data at 1 km\(^2\) resolution).
+Before running the \texttt{agroEcoTradeoff} model, each biodiversity index was cropped and masked to the outline of Zambia, removing large bodies of water, then rescaled to between 0-1, setting a given index's maximum value to 1 and the minimum to 0. This involved taking the value of each cell, subtracting the index's global minimum value, then dividing this value by the difference between the global maximum and the global minimum.
 
 \hypertarget{bd-input-maps}{%
 \subsubsection{Maps of Biodiversity Inputs}\label{bd-input-maps}}
@@ -463,7 +468,7 @@ See Figure \ref{fig:jac-w-z50} for in depth results including mean and pairwise 
 
 
 \begin{figure}
-\includegraphics[width=1\textwidth]{/Users/christophercrawford/Google Drive/_Projects/Zambia/agroEcoTradeoff/external/plots/ms_v5/ms_fig_facet_r_z50_wide} \caption{Mean conversion priorities assuming a production target that results in the conversion of \textasciitilde50\% of Zambia (\emph{z50}), placing 100\% weight in biodiversity and using average and constant yields across Zambia (compare with Main Text Figure 2). The panels show biodiversity indices within five categories of variation: a) existing biodiversity indices (vertebrate endemism richness, plant species richness, Estes et al.~2016, Laurance et al.~2014, four habitat priorities, threatened bird richness combined with IBAs and EBAs, and Damania \& Wheeler 2015); b) taxonomic groups (mammals, birds, amphibians, and reptiles); c) types of species richness (all species richness, endemism richness, and small-ranged species richness); d) index calculation methods (average, geometric mean, maximum, and multiplication); and e) input resolutions (1 km, 10 km, and 110 km grids). Cell values correspond to the proportion of model runs using that particular factor that select a given cell for conversion. Blank areas within Zambia correspond to currently protected, cultivated, or settled areas.}\label{fig:facet-r-z50}
+\includegraphics[width=1\textwidth]{/Users/christophercrawford/Google Drive/_Projects/Zambia/agroEcoTradeoff/external/plots/ms_v5/SI_fig_facet_r_z50_wide} \caption{Mean conversion priorities assuming a production target that results in the conversion of \textasciitilde50\% of Zambia (\emph{z50}), placing 100\% weight in biodiversity and using average and constant yields across Zambia (compare with Main Text Figure 2). The panels show biodiversity indices within five categories of variation: a) existing biodiversity indices (vertebrate endemism richness, plant species richness, Estes et al.~2016, Laurance et al.~2014, four habitat priorities, threatened bird richness combined with IBAs and EBAs, and Damania \& Wheeler 2015); b) taxonomic groups (mammals, birds, amphibians, and reptiles); c) types of species richness (all species richness, endemism richness, and small-ranged species richness); d) index calculation methods (average, geometric mean, maximum, and multiplication); and e) input resolutions (1 km, 10 km, and 110 km grids). Cell values correspond to the proportion of model runs using that particular factor that select a given cell for conversion. Blank areas within Zambia correspond to currently protected, cultivated, or settled areas.}\label{fig:facet-r-z50}
 \end{figure}
 
 \hypertarget{section-order}{%
@@ -757,7 +762,7 @@ Baccini, A., S. J. Goetz, W. S. Walker, N. T. Laporte, M. Sun, D. Sulla-Menashe,
 BirdLife International and Handbook of the Birds of the World. 2018. ``Bird species distribution maps of the world.'' Cambridge, United Kingdom: BirdLife International. \url{http://datazone.birdlife.org/species/requestdis}.
 
 \leavevmode\hypertarget{ref-R-rgdal}{}%
-Bivand, Roger, Tim Keitt, and Barry Rowlingson. 2019. \emph{rgdal: Bindings for the 'Geospatial' Data Abstraction Library}. \url{https://cran.r-project.org/package=rgdal}.
+Bivand, Roger, Tim Keitt, and Barry Rowlingson. 2020. \emph{rgdal: Bindings for the 'Geospatial' Data Abstraction Library}. \url{https://cran.r-project.org/package=rgdal}.
 
 \leavevmode\hypertarget{ref-Brancalion2019}{}%
 Brancalion, Pedro H S, Aidin Niamir, Eben Broadbent, Renato Crouzeilles, Felipe S M Barros, Angelica M. Almeyda Zambrano, Alessandro Baccini, et al. 2019. ``Global restoration opportunities in tropical rainforest landscapes.'' \emph{Science Advances} 5 (7): eaav3223. \url{https://doi.org/10.1126/sciadv.aav3223}.
@@ -790,7 +795,7 @@ Estes, Lyndon, and Marcus Spiegel. 26AD. \emph{agroEcoTradeoff: Landuse Tradeoff
 Field, Christopher R, and Chris S Elphick. 2019. ``Quantifying the return on investment of social and ecological data for conservation planning.'' \emph{Environmental Research Letters} 14 (12): 124081. \url{https://doi.org/10.1088/1748-9326/ab5cae}.
 
 \leavevmode\hypertarget{ref-R-gdalUtils}{}%
-Greenberg, Jonathan Asher, and Matteo Mattiuzzi. 2018. \emph{gdalUtils: Wrappers for the Geospatial Data Abstraction Library (GDAL) Utilities}. \url{https://cran.r-project.org/package=gdalUtils}.
+Greenberg, Jonathan Asher, and Matteo Mattiuzzi. 2020. \emph{gdalUtils: Wrappers for the Geospatial Data Abstraction Library (GDAL) Utilities}. \url{https://cran.r-project.org/package=gdalUtils}.
 
 \leavevmode\hypertarget{ref-R-raster}{}%
 Hijmans, Robert J. 2020. \emph{raster: Geographic Data Analysis and Modeling}. \url{https://cran.r-project.org/package=raster}.
@@ -841,7 +846,7 @@ Myers, Norman, Russell A. Mittermeier, Cristina G. Mittermeier, Gustavo A. B. da
 Olson, David M., and Eric Dinerstein. 2002. ``The Global 200: Priority ecoregions for global conservation.'' \emph{Annals of the Missouri Botanical Garden} 89 (2): 199--224.
 
 \leavevmode\hypertarget{ref-R-sf}{}%
-Pebesma, Edzer. 2020. \emph{sf: Simple Features for R}. \url{https://cran.r-project.org/package=sf}.
+Pebesma, Edzer. 2019. \emph{sf: Simple Features for R}. \url{https://cran.r-project.org/package=sf}.
 
 \leavevmode\hypertarget{ref-R-sp}{}%
 Pebesma, Edzer, and Roger Bivand. 2020. \emph{sp: Classes and Methods for Spatial Data}. \url{https://cran.r-project.org/package=sp}.
