@@ -3684,6 +3684,64 @@ plot_grid(
 dev.off()
 ```
 
+```{r *ms_fig_4_z50-bp-comp, fig.cap = '(ref:caption-z50-bp-comparison)', fig.width = 7, fig.height = 4, out.width  = "1\\textwidth"}
+# caption from when this was in the SI:
+# (ref:caption-z50-bp-comparison) Comparing the effect of production target on similarity results. Our main analysis (*bp*) assumes a production target of ~5% of Zambia. For comparison, we show model results assuming a much larger production target (*z50*), which converts ~50% of Zambia. Both model runs place 100% model weight on biodiversity and using average, constant yields.
+
+# add in this line to the caption, if I add order back in...
+# *order* refers to similarity of the order in which cells are selected for conversion (or protection) based on biodiversity value.
+
+png(paste0(p_plots, "/ms_v5/", "ms_fig_4_robustness", ".png"),
+    width = 7, height = 4, units = "in", res = 400)
+
+ggplot() +
+  theme_classic() +
+  theme(axis.text.x = element_text(angle = 320, vjust = 1, hjust = 0)) +
+  xlab("Facet") + ylab("Jaccard Similarity") +
+  geom_point(data = filter(facet_stats, weight == "bp"),
+             mapping = aes(x = facet, y = mean_jac_w, 
+                           group = comparison, color = weight), 
+             size = 2) +
+  geom_point(data = filter(jac_w_melt, weight == "bp"), 
+             mapping = aes(x = facet, y = jac_w, color = weight), 
+             #color = "black",
+             #show.legend = FALSE,
+             alpha = 0.25) + 
+  
+  geom_point(data = filter(facet_stats, weight == "z50"),
+             mapping = aes(x = facet, y = mean_jac_w, 
+                           group = comparison, color = weight), size = 2) +
+  geom_point(data = filter(jac_w_melt, weight == "z50"), 
+             mapping = aes(x = facet, y = jac_w, color = weight), #color = "black", show.legend = FALSE,
+             alpha = 0.25) + 
+  
+  # geom_point(data = facet_stats_order_conv,
+  #            mapping = aes(x = facet, y = mean_jac_w, group = comparison, color = weight), size = 1) +
+  
+  facet_grid(cols = vars(comparison), scales = "free_x", switch = "x",
+             space = "free_x") +
+  scale_color_manual(name = "Production \nTarget",
+                     
+                     # labels for main text
+                     # labels = c("bp" = "5% of Zambia",
+                     #            "order" = "\nConversion \nOrder (order) \n ",
+                     #            "z50" = "50% of Zambia"),
+                     
+                     # labels for SI
+                     labels = c("bp" = "\n5% of Zambia \n(100% bd, \nmean yield, bp) \n ",
+                                "order" = "\nConversion \nOrder (order) \n ",
+                                "z50" = "\n50% of Zambia \n(100% bd, \nmean yield, z50) \n "),
+
+                     values = c("bp" = hue_pal()(3)[1], # "red"
+                                "order" = hue_pal()(3)[2], #"green"
+                                "z50" = hue_pal()(3)[3]) #"blue"
+                     ) + 
+  coord_cartesian(ylim=c(0, 1.0)) #+ theme(legend.position = "bottom") #plot.margin = unit(c(0.4, 0.5, 0.2, 0.2), "cm"))
+
+dev.off()
+
+```
+
 ```{r *si_jac_w}
 
 # --------------------------------------------------------
