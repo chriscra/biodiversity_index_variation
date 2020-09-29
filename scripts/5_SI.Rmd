@@ -583,7 +583,7 @@ The relative similarity between these two production targets is shown in Figure 
 # add in this line to the caption, if I add order back in...
 # *order* refers to similarity of the order in which cells are selected for conversion (or protection) based on biodiversity value.
 
-knitr::include_graphics(fp(p_plots, "ms_v5/ms_fig_4_robustness.png"))
+knitr::include_graphics(fp(p_plots, "ms_v5/ms_fig_4_robustness_SI.png"))
 
 # other, unused:
 

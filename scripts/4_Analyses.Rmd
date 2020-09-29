@@ -1540,6 +1540,11 @@ filter(facet_stats, weight == "bp") %>% group_by(comparison) %>%
             min = min(mean_jac_w, na.rm = TRUE),
             max = max(mean_jac_w, na.rm = TRUE))
 
+filter(facet_stats, weight == "byct") %>% group_by(comparison) %>% 
+  summarise(mean = mean(mean_jac_w, na.rm = TRUE),
+            min = min(mean_jac_w, na.rm = TRUE),
+            max = max(mean_jac_w, na.rm = TRUE))
+
 # with threat:
 facet_stats_threat %>% group_by(comparison) %>% 
   summarise(mean = mean(mean_jac_w, na.rm = TRUE),
@@ -3691,7 +3696,7 @@ dev.off()
 # add in this line to the caption, if I add order back in...
 # *order* refers to similarity of the order in which cells are selected for conversion (or protection) based on biodiversity value.
 
-png(paste0(p_plots, "/ms_v5/", "ms_fig_4_robustness", ".png"),
+png(paste0(p_plots, "/ms_v5/", "ms_fig_4_robustness_SI", ".png"),
     width = 7, height = 4, units = "in", res = 400)
 
 ggplot() +
