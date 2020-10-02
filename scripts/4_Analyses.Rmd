@@ -1530,20 +1530,29 @@ filter(facet_stats, weight == "all", comparison == "weights") %>% select(facet, 
   #summary()
   #summarise(mean_mean = mean(mean_jac_w))
   
-
 filter(facet_stats, weight == "byct", comparison == "indices") %>% select(mean_jac_w) %>% summary
 filter(facet_stats, weight == "bp", comparison == "indices") %>% select(mean_jac_w) %>% summary
 filter(facet_stats, weight == "z50", comparison == "indices") %>% select(mean_jac_w) %>% summary
 
 filter(facet_stats, weight == "bp") %>% group_by(comparison) %>% 
-  summarise(mean = mean(mean_jac_w, na.rm = TRUE),
-            min = min(mean_jac_w, na.rm = TRUE),
-            max = max(mean_jac_w, na.rm = TRUE))
+  summarise(mean = round(mean(mean_jac_w, na.rm = TRUE)*100, 1),
+            min = round(min(mean_jac_w, na.rm = TRUE)*100, 1),
+            max = round(max(mean_jac_w, na.rm = TRUE)*100, 1))
+
+
+jac_w_melt %>%
+  filter(weight == "bp",
+         comparison == "resolution")
+
+filter(facet_stats, weight == "z50") %>% group_by(comparison) %>% 
+  summarise(mean = round(mean(mean_jac_w, na.rm = TRUE)*100, 1),
+            min = round(min(mean_jac_w, na.rm = TRUE)*100, 1),
+            max = round(max(mean_jac_w, na.rm = TRUE)*100, 1))
 
 filter(facet_stats, weight == "byct") %>% group_by(comparison) %>% 
-  summarise(mean = mean(mean_jac_w, na.rm = TRUE),
-            min = min(mean_jac_w, na.rm = TRUE),
-            max = max(mean_jac_w, na.rm = TRUE))
+  summarise(mean = round(mean(mean_jac_w, na.rm = TRUE)*100, 1),
+            min = round(min(mean_jac_w, na.rm = TRUE)*100, 1),
+            max = round(max(mean_jac_w, na.rm = TRUE)*100, 1))
 
 # with threat:
 facet_stats_threat %>% group_by(comparison) %>% 
