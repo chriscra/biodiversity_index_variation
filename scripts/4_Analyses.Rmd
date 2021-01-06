@@ -1868,7 +1868,7 @@ dev.off()
 SI_fig_jac_w_bd <- ggplot() +
   theme_classic() + 
   theme(axis.text.x = element_text(angle = 320, vjust = 1, hjust = 0)) +
-  xlab("Facet") + ylab("Jaccard Similarity") +
+  xlab("Factor") + ylab("Jaccard Similarity") +
   geom_point(data = facet_stats_bd, 
              mapping = aes(x = facet, y = mean_jac_w, color = comparison),
              size = 2) +
@@ -2201,7 +2201,7 @@ order_jac_w_melt_conv <- order_jac_w_melt_conv %>%
 SI_fig_jac_w_order_conv <- ggplot() +
   theme_classic() + 
   theme(axis.text.x = element_text(angle = 320, vjust = 1, hjust = 0)) +
-  xlab("Facet") + ylab("Jaccard Similarity") +
+  xlab("Factor") + ylab("Jaccard Similarity") +
   geom_point(data = facet_stats_order_conv,
              mapping = aes(x = facet, y = mean_jac_w, color = comparison),
              size = 2) +
@@ -2235,7 +2235,7 @@ dev.off()
 SI_fig_jac_w_order_protect <- ggplot() +
   theme_classic() + 
   theme(axis.text.x = element_text(angle = 320, vjust = 1, hjust = 0)) +
-  xlab("Facet") + ylab("Jaccard Similarity") +
+  xlab("Factor") + ylab("Jaccard Similarity") +
   geom_point(data = facet_stats_order_protect,
              mapping = aes(x = facet, y = mean_jac_w, color = comparison),
              size = 2) +
@@ -2388,7 +2388,7 @@ gg_jac_w_inverse <- ggplot(data = filter(facet_stats_inverse#, comparison != "co
                                         )) +
   theme_classic() + 
   theme(axis.text.x = element_text(angle = 320, vjust = 1, hjust = 0)) +
-  xlab("Facet") + ylab("Mean Weighted \nJaccard Similarity") +
+  xlab("Factor") + ylab("Mean Weighted \nJaccard Similarity") +
   geom_point(mapping = aes(x = facet, y = mean_jac_w, color = comparison)) +
   geom_errorbar(mapping = aes(x = facet, color = comparison,
                               ymin = mean_jac_w - 1.96*se_jac_w, 
@@ -2460,7 +2460,7 @@ dev.off()
 SI_fig_jac_w_inverse <- ggplot() +
   theme_classic() + 
   theme(axis.text.x = element_text(angle = 320, vjust = 1, hjust = 0)) +
-  xlab("Facet") + ylab("Jaccard Similarity") +
+  xlab("Factor") + ylab("Jaccard Similarity") +
   geom_point(data = facet_stats_inverse,
              mapping = aes(x = facet, y = mean_jac_w, color = comparison),
              size = 2) +
@@ -2895,7 +2895,7 @@ gg_nnd_pairs
 gg_nnd <- ggplot() +
   theme_classic() + 
   theme(axis.text.x = element_text(angle = 320, vjust = 1, hjust = 0)) +
-  xlab("Facet") + 
+  xlab("Factor") + 
   ylab("Mean Distance to Nearest Neighbor (km)") + #fct_relevel(facet, facet_names_distill)
   geom_point(data = nndat_facet_stats,
              mapping = aes(x = facet, y = facet_mean_dist / 1000, color = comparison),
@@ -3077,7 +3077,7 @@ facet_stats_norm <- norm_jac_w_melt %>%
 SI_fig_jac_w_norm <- ggplot() +
   theme_classic() + 
   theme(axis.text.x = element_text(angle = 320, vjust = 1, hjust = 0)) +
-  xlab("Facet") + ylab("Jaccard Similarity") +
+  xlab("Factor") + ylab("Jaccard Similarity") +
   geom_point(data = facet_stats_norm,
              mapping = aes(x = facet, y = mean_jac_w, color = comparison),
              size = 2) +
@@ -3276,7 +3276,7 @@ jac_w_threat_melt <- jac_w_threat_melt %>%
 SI_fig_jac_w_threat <- ggplot() +
   theme_classic() + 
   theme(axis.text.x = element_text(angle = 320, vjust = 1, hjust = 0)) +
-  xlab("Facet") + ylab("Jaccard Similarity") +
+  xlab("Factor") + ylab("Jaccard Similarity") +
   geom_point(data = facet_stats_threat,
              mapping = aes(x = facet, y = mean_jac_w, color = comparison),
              size = 2) +
@@ -3636,7 +3636,7 @@ jac_w_melt <- jac_w_melt %>%
 ms_fig_jac_w_bp <- ggplot() +
   theme_classic() + 
   theme(axis.text.x = element_text(angle = 320, vjust = 1, hjust = 0)) +
-  xlab("Facet") + ylab("Jaccard Similarity") +
+  xlab("Factor") + ylab("Jaccard Similarity") +
   geom_point(data = filter(facet_stats, weight == "bp"),
              mapping = aes(x = facet, y = mean_jac_w, color = comparison),
              size = 2) +
@@ -3662,7 +3662,7 @@ gg_jac_w_bp_pairs <- ggplot(filter(jac_w_melt, weight == "bp"),
 
 
 # save:
-png(paste0(p_plots, "/ms_v5/", "ms_fig_3_jac_w_bp", ".png"), 
+png(paste0(p_plots, "/ms_final/", "ms_fig_3_jac_w_bp", ".png"), 
     width = 7, height = 4, units = "in", res = 400)
 print(
     ms_fig_jac_w_bp + 
@@ -3676,7 +3676,7 @@ dev.off()
 
 # ------------------- #
 # combo jac_w & nnd:
-png(paste0(p_plots, "/ms_v5/", "ms_fig_combo_jac_w_nnd_bp", ".png"), 
+png(paste0(p_plots, "/ms_final/", "ms_fig_combo_jac_w_nnd_bp", ".png"), 
     width = 7, height = 6, units = "in", res = 400)
 
 plot_grid(
@@ -3705,13 +3705,15 @@ dev.off()
 # add in this line to the caption, if I add order back in...
 # *order* refers to similarity of the order in which cells are selected for conversion (or protection) based on biodiversity value.
 
-png(paste0(p_plots, "/ms_v5/", "ms_fig_4_robustness_SI", ".png"),
+png(paste0(p_plots, "/ms_final/", "ms_fig_4_robustness", ".png"),
     width = 7, height = 4, units = "in", res = 400)
+# png(paste0(p_plots, "/ms_final/", "ms_fig_4_robustness_SI", ".png"), # for SI
+#     width = 7, height = 4, units = "in", res = 400)
 
 ggplot() +
   theme_classic() +
   theme(axis.text.x = element_text(angle = 320, vjust = 1, hjust = 0)) +
-  xlab("Facet") + ylab("Jaccard Similarity") +
+  xlab("Factor") + ylab("Jaccard Similarity") +
   geom_point(data = filter(facet_stats, weight == "bp"),
              mapping = aes(x = facet, y = mean_jac_w, 
                            group = comparison, color = weight), 
@@ -3737,14 +3739,14 @@ ggplot() +
   scale_color_manual(name = "Production \nTarget",
                      
                      # labels for main text
-                     # labels = c("bp" = "5% of Zambia",
-                     #            "order" = "\nConversion \nOrder (order) \n ",
-                     #            "z50" = "50% of Zambia"),
-                     
-                     # labels for SI
-                     labels = c("bp" = "\n5% of Zambia \n(100% bd, \nmean yield, bp) \n ",
+                     labels = c("bp" = "5% of Zambia",
                                 "order" = "\nConversion \nOrder (order) \n ",
-                                "z50" = "\n50% of Zambia \n(100% bd, \nmean yield, z50) \n "),
+                                "z50" = "50% of Zambia"),
+
+                     # labels for SI
+                     # labels = c("bp" = "\n5% of Zambia \n(100% bd, \nmean yield, bp) \n ",
+                     #            "order" = "\nConversion \nOrder (order) \n ",
+                     #            "z50" = "\n50% of Zambia \n(100% bd, \nmean yield, z50) \n "),
 
                      values = c("bp" = hue_pal()(3)[1], # "red"
                                 "order" = hue_pal()(3)[2], #"green"
@@ -3764,7 +3766,7 @@ dev.off()
 SI_fig_jac_w_b <- ggplot() +
   theme_classic() + 
   theme(axis.text.x = element_text(angle = 320, vjust = 1, hjust = 0)) +
-  xlab("Facet") + ylab("Jaccard Similarity") +
+  xlab("Factor") + ylab("Jaccard Similarity") +
   geom_point(data = filter(facet_stats, weight == "b"),
              mapping = aes(x = facet, y = mean_jac_w, color = comparison),
              size = 2) +
@@ -3794,7 +3796,7 @@ dev.off()
 SI_fig_jac_w_z50 <- ggplot() +
   theme_classic() + 
   theme(axis.text.x = element_text(angle = 320, vjust = 1, hjust = 0)) +
-  xlab("Facet") + ylab("Jaccard Similarity") +
+  xlab("Factor") + ylab("Jaccard Similarity") +
   geom_point(data = filter(facet_stats, weight == "z50"),
              mapping = aes(x = facet, y = mean_jac_w, color = comparison),
              size = 2) +
@@ -3824,7 +3826,7 @@ dev.off()
 SI_fig_jac_w_by <- ggplot() +
   theme_classic() + 
   theme(axis.text.x = element_text(angle = 320, vjust = 1, hjust = 0)) +
-  xlab("Facet") + ylab("Jaccard Similarity") +
+  xlab("Factor") + ylab("Jaccard Similarity") +
   geom_point(data = filter(facet_stats, weight == "by"),
              mapping = aes(x = facet, y = mean_jac_w, color = comparison),
              size = 2) +
@@ -3853,7 +3855,7 @@ dev.off()
 SI_fig_jac_w_bc <- ggplot() +
   theme_classic() + 
   theme(axis.text.x = element_text(angle = 320, vjust = 1, hjust = 0)) +
-  xlab("Facet") + ylab("Jaccard Similarity") +
+  xlab("Factor") + ylab("Jaccard Similarity") +
   geom_point(data = filter(facet_stats, weight == "bc"),
              mapping = aes(x = facet, y = mean_jac_w, color = comparison),
              size = 2) +
@@ -3882,7 +3884,7 @@ dev.off()
 SI_fig_jac_w_bt <- ggplot() +
   theme_classic() + 
   theme(axis.text.x = element_text(angle = 320, vjust = 1, hjust = 0)) +
-  xlab("Facet") + ylab("Jaccard Similarity") +
+  xlab("Factor") + ylab("Jaccard Similarity") +
   geom_point(data = filter(facet_stats, weight == "bt"),
              mapping = aes(x = facet, y = mean_jac_w, color = comparison),
              size = 2) +
@@ -3913,7 +3915,7 @@ dev.off()
 SI_fig_jac_w_byct <- ggplot() +
   theme_classic() + 
   theme(axis.text.x = element_text(angle = 320, vjust = 1, hjust = 0)) +
-  xlab("Facet") + ylab("Jaccard Similarity") +
+  xlab("Factor") + ylab("Jaccard Similarity") +
   geom_point(data = filter(facet_stats, weight == "byct"),
              mapping = aes(x = facet, y = mean_jac_w, color = comparison),
              size = 2) +
@@ -3941,7 +3943,7 @@ dev.off()
 SI_fig_jac_w_all <- ggplot() +
   theme_classic() + 
   theme(axis.text.x = element_text(angle = 320, vjust = 1, hjust = 0)) +
-  xlab("Facet") + ylab("Jaccard Similarity") +
+  xlab("Factor") + ylab("Jaccard Similarity") +
   geom_point(data = filter(facet_stats, weight == "all"),
              mapping = aes(x = facet, y = mean_jac_w, color = comparison),
              size = 2) +
@@ -4010,7 +4012,7 @@ names(facet_stats)
 gg_jac_w_base <- ggplot(data = facet_stats) +
   theme_classic() + 
   theme(axis.text.x = element_text(angle = 320, vjust = 1, hjust = 0)) +
-  xlab("Facet") + ylab("Weighted Jaccard Similarity \n(Mean Within Comparison)") + 
+  xlab("Factor") + ylab("Weighted Jaccard Similarity \n(Mean Within Comparison)") + 
   #ylim(0, 1.0) +
   #coord_cartesian(ylim=c(0, 1.0)) + #scale_y_continuous(breaks=seq(0, 0.25, 0.5, 0.75, 1.0)) +
   labs(title = "Mean Weighted \nJaccard Index", 
@@ -4050,7 +4052,7 @@ gg_jac_w_all_by_comp <- ggplot(data = filter(facet_stats, weight == "all"#, comp
                                              )) +
   theme_classic() + 
   theme(axis.text.x = element_text(angle = 320, vjust = 1, hjust = 0)) +
-  xlab("Facet") + ylab("Mean Weighted \nJaccard Similarity") +
+  xlab("Factor") + ylab("Mean Weighted \nJaccard Similarity") +
   geom_point(mapping = aes(x = facet, y = mean_jac_w, color = comparison)) +
   geom_errorbar(mapping = aes(x = facet, color = comparison,
                               ymin = mean_jac_w - 1.96*se_jac_w, ymax = mean_jac_w + 1.96*se_jac_w), width = 0.4) +
@@ -4071,7 +4073,7 @@ gg_jac_w_b_pure <- ggplot(data = filter(facet_stats, weight == "bp"#, comparison
                                         )) +
   theme_classic() + 
   theme(axis.text.x = element_text(angle = 320, vjust = 1, hjust = 0)) +
-  xlab("Facet") + ylab("Mean Weighted \nJaccard Similarity") +
+  xlab("Factor") + ylab("Mean Weighted \nJaccard Similarity") +
   geom_point(mapping = aes(x = facet, y = mean_jac_w, color = comparison)) +
   geom_errorbar(mapping = aes(x = facet, color = comparison,
                               ymin = mean_jac_w - 1.96*se_jac_w, 
@@ -4088,7 +4090,7 @@ gg_jac_w_bd100_by_comp <- ggplot(data = filter(facet_stats, weight == "b"# compa
                                                )) +
   theme_classic() + 
   theme(axis.text.x = element_text(angle = 320, vjust = 1, hjust = 0)) +
-  xlab("Facet") + ylab("Mean Weighted \nJaccard Similarity") +
+  xlab("Factor") + ylab("Mean Weighted \nJaccard Similarity") +
   geom_point(mapping = aes(x = facet, y = mean_jac_w, color = comparison)) +
   geom_errorbar(mapping = aes(x = facet, color = comparison,
                               ymin = mean_jac_w - 1.96*se_jac_w, 
@@ -4103,7 +4105,7 @@ gg_jac_w_by <- ggplot(data = filter(facet_stats, weight == "by"# comparison != "
                                                )) +
   theme_classic() + 
   theme(axis.text.x = element_text(angle = 320, vjust = 1, hjust = 0)) +
-  xlab("Facet") + ylab("Mean Weighted \nJaccard Similarity") +
+  xlab("Factor") + ylab("Mean Weighted \nJaccard Similarity") +
   geom_point(mapping = aes(x = facet, y = mean_jac_w, color = comparison)) +
   geom_errorbar(mapping = aes(x = facet, color = comparison,
                               ymin = mean_jac_w - 1.96*se_jac_w, 
@@ -4117,7 +4119,7 @@ gg_jac_w_z50 <- ggplot(data = filter(facet_stats, weight == "z50"#, comparison !
                                      )) +
   theme_classic() + 
   theme(axis.text.x = element_text(angle = 320, vjust = 1, hjust = 0)) +
-  xlab("Facet") + ylab("Mean Weighted \nJaccard Similarity") +
+  xlab("Factor") + ylab("Mean Weighted \nJaccard Similarity") +
   geom_point(mapping = aes(x = facet, y = mean_jac_w, color = comparison)) +
   geom_errorbar(mapping = aes(x = facet, color = comparison,
                               ymin = mean_jac_w - 1.96*se_jac_w, 
@@ -4721,7 +4723,7 @@ ggplot(data = filter(
 gg_agreement_base <- ggplot(data = facet_stats) +
   theme_classic() + 
   theme(axis.text.x = element_text(angle = 320, vjust = 1, hjust = 0)) +
-  xlab("Facet") + ylab("Mean Cell Value")
+  xlab("Factor") + ylab("Mean Cell Value")
 
 names(facet_stats)
 # ------------------------------------------------------------------------------------------------------------------------
@@ -5445,12 +5447,12 @@ p5 <- gplot(brick[[c("vert_endemism", #"plants",
 
 # start png call here. 
 # bp weights here:
-png(paste0(p_plots, "/ms_v5/","ms_fig_2_facet_r_", weight, "_wide.png"),
+png(paste0(p_plots, "/ms_final/","ms_fig_2_facet_r_", weight, "_wide.png"),
     width = 8, height = 5,
     units = "in", res = 300)
 
 # for z50, all
-# png(paste0(p_plots, "/ms_v5/","SI_fig_facet_r_", weight, "_wide.png"),    
+# png(paste0(p_plots, "/ms_final/","SI_fig_facet_r_", weight, "_wide.png"),    
 #     width = 8, height = 5,
 #     units = "in", res = 300)
 

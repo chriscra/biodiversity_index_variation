@@ -1,0 +1,28 @@
+---
+title: "Test rmd"
+header-includes: \usepackage[nottoc]{tocbibind}
+output: 
+  pdf_document:
+geometry: 
+  margin=1in
+author: 
+  - Christopher L. Crawford^[Corresponding Author, ccrawford@princeton.edu, Robertson Hall, Princeton University, Princeton, NJ] $^1$ 
+  - Lyndon D. Estes$^2$
+  - Timothy S. Searchinger$^1$
+  - David S. Wilcove$^{1, 3}$
+date:
+  $^1$Princeton School of Public and International Affairs, Princeton University, Princeton, NJ \newline
+    $^2$Graduate School of Geography, Clark University, Worcester, MA \newline
+    $^3$Department of Ecology & Evolutionary Biology, Princeton University, Princeton, NJ \newline
+    \newline  
+    \newline
+    \today 
+editor_options:
+  chunk_output_type: console
+bibliography: /Users/christophercrawford/Google Drive/Library/library.bib
+nocite: |
+  @RStudioTeam2018, @R-raster, @R-rasterVis, @R-rgdal, @R-sf, @R-sp, @R-gdalUtils, @R-rasterVis, @R-data.table, @R-tictoc, @fasterize, @lwgeom, @magrittr, @parallel, @reshape2, @cowplot, @tidyverse, @knitr, @spatstat, @rmarkdown, @bookdown, @pryr
+---
+Testing to see how the pdf compiles. Here's an in text citation: @Estes2016a did this.
+
+  

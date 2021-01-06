@@ -4,8 +4,8 @@
 %
 \documentclass[
 ]{article}
+\usepackage{amsmath,amssymb}
 \usepackage{lmodern}
-\usepackage{amssymb,amsmath}
 \usepackage{ifxetex,ifluatex}
 \ifnum 0\ifxetex 1\fi\ifluatex 1\fi=0 % if pdftex
   \usepackage[T1]{fontenc}
@@ -42,7 +42,8 @@
   pdfcreator={LaTeX via pandoc}}
 \urlstyle{same} % disable monospaced font for URLs
 \usepackage[margin=1in]{geometry}
-\usepackage{longtable,booktabs}
+\usepackage{longtable,booktabs,array}
+\usepackage{calc} % for calculating minipage widths
 % Correct order of tables after \paragraph or \subparagraph
 \usepackage{etoolbox}
 \makeatletter
@@ -51,7 +52,7 @@
 % Allow footnotes in longtable head/foot
 \IfFileExists{footnotehyper.sty}{\usepackage{footnotehyper}}{\usepackage{footnote}}
 \makesavenoteenv{longtable}
-\usepackage{graphicx,grffile}
+\usepackage{graphicx}
 \makeatletter
 \def\maxwidth{\ifdim\Gin@nat@width>\linewidth\linewidth\else\Gin@nat@width\fi}
 \def\maxheight{\ifdim\Gin@nat@height>\textheight\textheight\else\Gin@nat@height\fi}
@@ -82,6 +83,30 @@
 \usepackage{threeparttablex}
 \usepackage[normalem]{ulem}
 \usepackage{makecell}
+\usepackage{xcolor}
+\ifluatex
+  \usepackage{selnolig}  % disable illegal ligatures
+\fi
+\newlength{\cslhangindent}
+\setlength{\cslhangindent}{1.5em}
+\newlength{\csllabelwidth}
+\setlength{\csllabelwidth}{3em}
+\newenvironment{CSLReferences}[2] % #1 hanging-ident, #2 entry spacing
+ {% don't indent paragraphs
+  \setlength{\parindent}{0pt}
+  % turn on hanging indent if param 1 is 1
+  \ifodd #1 \everypar{\setlength{\hangindent}{\cslhangindent}}\ignorespaces\fi
+  % set entry spacing
+  \ifnum #2 > 0
+  \setlength{\parskip}{#2\baselineskip}
+  \fi
+ }%
+ {}
+\usepackage{calc}
+\newcommand{\CSLBlock}[1]{#1\hfill\break}
+\newcommand{\CSLLeftMargin}[1]{\parbox[t]{\csllabelwidth}{#1}}
+\newcommand{\CSLRightInline}[1]{\parbox[t]{\linewidth - \csllabelwidth}{#1}\break}
+\newcommand{\CSLIndent}[1]{\hspace{\cslhangindent}#1}
 
 \title{Supporting Information: Consequences of under-explored variation in biodiversity indices used for land-use prioritization}
 \author{Christopher L. Crawford\footnote{Corresponding Author, \href{mailto:ccrawford@princeton.edu}{\nolinkurl{ccrawford@princeton.edu}}, Robertson Hall, Princeton University, Princeton, NJ} \(^1\) \and Lyndon D. Estes\(^2\) \and Timothy S. Searchinger\(^1\) \and David S. Wilcove\(^{1, 3}\)}
@@ -407,7 +432,7 @@ Next, we show maps for only our primary model weighting specification, with 100\
 \hypertarget{calculation-of-weighted-jaccard-similarity-index}{%
 \subsection{Calculation of weighted Jaccard Similarity index}\label{calculation-of-weighted-jaccard-similarity-index}}
 
-As a measure of spatial consistency across model results, we calculated a weighted version of the Jaccard Similarity index (Ioffe 2010; Legendre and Legendre 2012) for all pairs of facets within each category of variation. The Jaccard Similarity is a pairwise similarity metric commonly used to assess similarity between two sets, and is defined as the proportion of elements in either set that are shared between the two, or the intersection of the two sets divided by the union of the two sets. \(J(a,b) = \frac{a\cap b}{a\cup b}\) (Legendre and Legendre 2012). In the context of the categorical conversion maps produced by the \texttt{agroEcoTradeoff} model, the Jaccard Similarity between two model runs is simply the number of cells selected for conversion in both model runs a and b divided by the number of cells selected for conversion by either model runs a or b. However, our ensemble averages have values that fall continuously between 0-1 and are no longer categorical in nature, instead representing the proportion of model runs that select that particular pixel for conversion. To account for this variation, we instead calculated an adapted Weighted Jaccard Similarity Index (Ioffe 2010), defined in Equation \eqref{eq:jac-w}.
+As a measure of spatial consistency across model results, we calculated a weighted version of the Jaccard Similarity index (Ioffe 2010; Legendre and Legendre 2012) for all pairs of factors within each category of variation. The Jaccard Similarity is a pairwise similarity metric commonly used to assess similarity between two sets, and is defined as the proportion of elements in either set that are shared between the two, or the intersection of the two sets divided by the union of the two sets. \(J(a,b) = \frac{a\cap b}{a\cup b}\) (Legendre and Legendre 2012). In the context of the categorical conversion maps produced by the \texttt{agroEcoTradeoff} model, the Jaccard Similarity between two model runs is simply the number of cells selected for conversion in both model runs a and b divided by the number of cells selected for conversion by either model runs a or b. However, our ensemble averages have values that fall continuously between 0-1 and are no longer categorical in nature, instead representing the proportion of model runs that select that particular pixel for conversion. To account for this variation, we instead calculated an adapted Weighted Jaccard Similarity Index (Ioffe 2010), defined in Equation \eqref{eq:jac-w}.
 
 \begin{equation}
 J_{w} (a,b) = \frac{\sum_{i=1}^n min(a_{i}, b_{i})}{\sum_{i=1}^n max(a_{i}, b_{i})} \label{eq:jac-w}
@@ -415,7 +440,7 @@ J_{w} (a,b) = \frac{\sum_{i=1}^n min(a_{i}, b_{i})}{\sum_{i=1}^n max(a_{i}, b_{i
 
 The weighted Jaccard Similarity allows us to compare non-categorical rasters and can be interpreted as a measure of congruence (how well two factors agree about the least costly areas to convert to agriculture). The lower the similarity value for a particular factor, the less similar it is to the other factors within a given category of variation. Low similarity values across an entire category of variation indicates that the choice represented by that category of variation (e.g.~which taxonomic group to use) has a large effect on the model recommendations.
 
-The Weighted Jaccard Similarity is a pairwise metric, so calculating the mean Jaccard Similarity for a given factor's ensemble mean required averaging across all possible pairs with that particular ensemble mean within each category of variation. We only calculate pairwise Jaccard Similarity between ensemble means within each category of variation to allow for consistent comparisons. For example, the mean \(J_w\) for mammals is the mean of three pairwise similarity values between mammals and the other three taxonomic groups: \(J_w(mammals, birds)\), \(J_w(mammals,amphibians)\), and \(J_w(mammals,reptiles)\). This metric gives us a sense of how similar the model's conversion recommendations are across the different taxonomic groups (and similarly across the facets of variation in the other categories of variation). A \(J_w\) = 0.70 means that two sets are 70\% similar to each other, or have an overlap of 70\%. The lower the value of a particular ensemble mean (i.e.~mammals, threatened species richness, 110 km grid resolution, etc.), the less similar it is to the other facets within a category of variation. Low values across an entire category of variation indicates that variation within that category of variation has a relatively larger effect on the model outcomes than that within other categories of variation.
+The Weighted Jaccard Similarity is a pairwise metric, so calculating the mean Jaccard Similarity for a given factor's ensemble mean required averaging across all possible pairs with that particular ensemble mean within each category of variation. We only calculate pairwise Jaccard Similarity between ensemble means within each category of variation to allow for consistent comparisons. For example, the mean \(J_w\) for mammals is the mean of three pairwise similarity values between mammals and the other three taxonomic groups: \(J_w(mammals, birds)\), \(J_w(mammals,amphibians)\), and \(J_w(mammals,reptiles)\). This metric gives us a sense of how similar the model's conversion recommendations are across the different taxonomic groups (and similarly across the factors of variation in the other categories of variation). A \(J_w\) = 0.70 means that two sets are 70\% similar to each other, or have an overlap of 70\%. The lower the value of a particular ensemble mean (i.e.~mammals, threatened species richness, 110 km grid resolution, etc.), the less similar it is to the other factors within a category of variation. Low values across an entire category of variation indicates that variation within that category of variation has a relatively larger effect on the model outcomes than that within other categories of variation.
 
 Figure \ref{fig:pairwise-jaccard} shows the pairwise Jaccard Similarity values for our primary analysis (\emph{bp}). While these values are included in Main Text Figure 3, this additional figure shows each pair more clearly.
 
@@ -438,7 +463,7 @@ We also avoid any prediction ``biodiversity loss'' resulting from various config
 \hypertarget{section-adjacency}{%
 \subsection{Adjacency -- nearest neighbor distance}\label{section-adjacency}}
 
-As an additional measure of spatial similarity, we calculate \textbf{adjacency}, as the average nearest neighbor distance for each factor ensemble mean (Figure \ref{fig:nnd-fig}). This represents the average distance between each cell in ensemble mean A and its nearest neighbor in ensemble mean B. Because these factor ensemble means are continuous between 0-1, not categorical, calculating adjacency required adjusting the distance based on the value of the cell in A and the value of its nearest nearest neighbor in B, by multiplying the distance by the average of those two values. We then took a weighted average of these adjusted distances, dividing by the sum of the averaged cell values (instead of the number of points). These results in generally accord with what we see in Main Text Figure 3. Types of richness and taxonomic groups have a much higher average distance to neighbor, meaning that the individual facets within richness types and taxa are less adjacent to each other. This matches with Main Text Figure 3, which shows that types and taxa are much less similar than methods and resolution. In contrast, methods and resolution show much lower distances, meaning that different factors are more similar to each other (matching Main Text Figure 3), but also, that when model recommendations do not match, they remain relatively close spatially within the country.
+As an additional measure of spatial similarity, we calculate \textbf{adjacency}, as the average nearest neighbor distance for each factor ensemble mean (Figure \ref{fig:nnd-fig}). This represents the average distance between each cell in ensemble mean A and its nearest neighbor in ensemble mean B. Because these factor ensemble means are continuous between 0-1, not categorical, calculating adjacency required adjusting the distance based on the value of the cell in A and the value of its nearest nearest neighbor in B, by multiplying the distance by the average of those two values. We then took a weighted average of these adjusted distances, dividing by the sum of the averaged cell values (instead of the number of points). These results in generally accord with what we see in Main Text Figure 3. Types of richness and taxonomic groups have a much higher average distance to neighbor, meaning that the individual factors within richness types and taxa are less adjacent to each other. This matches with Main Text Figure 3, which shows that types and taxa are much less similar than methods and resolution. In contrast, methods and resolution show much lower distances, meaning that different factors are more similar to each other (matching Main Text Figure 3), but also, that when model recommendations do not match, they remain relatively close spatially within the country.
 
 
 
@@ -482,7 +507,7 @@ The relative similarity between these two production targets is shown in Figure 
 
 
 \begin{figure}
-\includegraphics[width=1\textwidth]{/Users/christophercrawford/Google Drive/_Projects/Zambia/agroEcoTradeoff/external/plots/ms_v5/ms_fig_4_robustness_SI} \caption{Comparing the effect of production target on similarity results. Our main analysis (\emph{bp}) assumes a production target of \textasciitilde5\% of Zambia. For comparison, we show model results assuming a much larger production target (\emph{z50}), which converts \textasciitilde50\% of Zambia. Both model runs place 100\% model weight on biodiversity and using average, constant yields.}\label{fig:z50-bp-comparison}
+\includegraphics[width=1\textwidth]{/Users/christophercrawford/Google Drive/_Projects/Zambia/agroEcoTradeoff/external/plots/ms_final/ms_fig_4_robustness_SI} \caption{Comparing the effect of production target on similarity results. Our main analysis (\emph{bp}) assumes a production target of \textasciitilde5\% of Zambia. For comparison, we show model results assuming a much larger production target (\emph{z50}), which converts \textasciitilde50\% of Zambia. Both model runs place 100\% model weight on biodiversity and using average, constant yields.}\label{fig:z50-bp-comparison}
 \end{figure}
 
 
@@ -512,7 +537,7 @@ We found that ensemble averages of the conversion maps produced by the three ver
 
 }
 
-\caption{Overlap between ensemble mean conversion areas for two differing methods for combining vertebrate taxonomic groups, either normalizing within each taxon before combining (``norm\_first'', Brancalion et al. (2019)), or combining all taxonomic groups before normalizing (``sum\_first'', Laurance et al. (2014)). Positive values show areas selected only by the ``norm\_first'' method, and negative values show areas selected by only the ``sum\_first'' method. Areas with 0 value are areas where the two approaches agree (either to convert or not to convert).}\label{fig:norm-order}
+\caption{Overlap between ensemble mean conversion areas for two differing methods for combining vertebrate taxonomic groups, either normalizing within each taxon before combining (``norm\_first,'' Brancalion et al. (2019)), or combining all taxonomic groups before normalizing (``sum\_first,'' Laurance et al. (2014)). Positive values show areas selected only by the ``norm\_first'' method, and negative values show areas selected by only the ``sum\_first'' method. Areas with 0 value are areas where the two approaches agree (either to convert or not to convert).}\label{fig:norm-order}
 \end{figure}
 
 \newpage
@@ -627,23 +652,23 @@ The relative changes in similarity across the different weighting schemes are sh
 \end{figure}
 
 \begin{figure}
-\includegraphics[width=0.8\textwidth]{/Users/christophercrawford/Google Drive/_Projects/Zambia/agroEcoTradeoff/external/plots/ms_v5/SI_fig_jac_w_b} \caption{Jaccard Similarity between facets with 100\% weight on biodiversity, but incorporating accurate, spatially heterogeneous yields.}\label{fig:jac-w-b}
+\includegraphics[width=0.8\textwidth]{/Users/christophercrawford/Google Drive/_Projects/Zambia/agroEcoTradeoff/external/plots/ms_v5/SI_fig_jac_w_b} \caption{Jaccard Similarity between factors with 100\% weight on biodiversity, but incorporating accurate, spatially heterogeneous yields.}\label{fig:jac-w-b}
 \end{figure}
 
 \begin{figure}
-\includegraphics[width=0.8\textwidth]{/Users/christophercrawford/Google Drive/_Projects/Zambia/agroEcoTradeoff/external/plots/ms_v5/SI_fig_jac_w_by} \caption{Jaccard Similarity between facets with 50\% weight on biodiversity and yield.}\label{fig:jac-w-by}
+\includegraphics[width=0.8\textwidth]{/Users/christophercrawford/Google Drive/_Projects/Zambia/agroEcoTradeoff/external/plots/ms_v5/SI_fig_jac_w_by} \caption{Jaccard Similarity between factors with 50\% weight on biodiversity and yield.}\label{fig:jac-w-by}
 \end{figure}
 
 \begin{figure}
-\includegraphics[width=0.8\textwidth]{/Users/christophercrawford/Google Drive/_Projects/Zambia/agroEcoTradeoff/external/plots/ms_v5/SI_fig_jac_w_bc} \caption{Jaccard Similarity between facets with 50\% weight on biodiversity and carbon emissions due to conversion.}\label{fig:jac-w-bc}
+\includegraphics[width=0.8\textwidth]{/Users/christophercrawford/Google Drive/_Projects/Zambia/agroEcoTradeoff/external/plots/ms_v5/SI_fig_jac_w_bc} \caption{Jaccard Similarity between factors with 50\% weight on biodiversity and carbon emissions due to conversion.}\label{fig:jac-w-bc}
 \end{figure}
 
 \begin{figure}
-\includegraphics[width=0.8\textwidth]{/Users/christophercrawford/Google Drive/_Projects/Zambia/agroEcoTradeoff/external/plots/ms_v5/SI_fig_jac_w_bt} \caption{Jaccard Similarity between facets with 50\% weight on biodiversity and transportation costs.}\label{fig:jac-w-bt}
+\includegraphics[width=0.8\textwidth]{/Users/christophercrawford/Google Drive/_Projects/Zambia/agroEcoTradeoff/external/plots/ms_v5/SI_fig_jac_w_bt} \caption{Jaccard Similarity between factors with 50\% weight on biodiversity and transportation costs.}\label{fig:jac-w-bt}
 \end{figure}
 
 \begin{figure}
-\includegraphics[width=0.8\textwidth]{/Users/christophercrawford/Google Drive/_Projects/Zambia/agroEcoTradeoff/external/plots/ms_v5/SI_fig_jac_w_byct} \caption{Jaccard Similarity between facets with weight equally distributed among the four constraints (25\% weight on biodiversity, yield, carbon, and transportation costs).}\label{fig:jac-w-byct}
+\includegraphics[width=0.8\textwidth]{/Users/christophercrawford/Google Drive/_Projects/Zambia/agroEcoTradeoff/external/plots/ms_v5/SI_fig_jac_w_byct} \caption{Jaccard Similarity between factors with weight equally distributed among the four constraints (25\% weight on biodiversity, yield, carbon, and transportation costs).}\label{fig:jac-w-byct}
 \end{figure}
 
 In the real world, decision makers must consider factors other than biodiversity in making land-use decisions. When distributing weight from biodiversity to yield, carbon storage, and transportation costs, we found that the similarity between land-use recommendations increased overall, though the overall pattern of relative differences between factors in the different categories remained largely consistent. This is not so surprising, considering that we held these other three factors constant, so including them reduced the amount of variation between model runs. However, we also found that different model weighting specifications produced recommendations that differed from each other as much as different existing indices and taxonomic groups (see Figure \ref{fig:jac-w-all}). This signals a relative lack of congruence between the four constraints themselves: the least-cost areas for biodiversity do not necessarily overlap with those that maximize yields or minimize transportation cost, nor do those that minimize carbon emissions. This supports research that has shown that goals related to climate mitigation and adaptation and those related to biodiversity conservation are not always spatially aligned (Anderson et al. 2009; Thomas et al. 2013), and that variation in socioeconomic factors can have greater importance for determining land-use priorities than biodiversity (Field and Elphick 2019; Keeler et al. 2019). That such tradeoffs between social and environmental goals exist means that when factoring many constraints into a land-use prioritization model, variation in biodiversity may be dominated by variation between broad constraints. Of course, biodiversity is not the only aspect of land use prioritization that is subject to uncertainty. We held these other three factors constant, but they are surely subject to uncertainty and variation worthy of exploration, even though estimates of yields, carbon storage, and travel cost are not dependent on values judgments in the way that maps of biodiversity value are.
@@ -756,133 +781,136 @@ Each of the following figures shows, from top to bottom: the distribution of val
 \addcontentsline{toc}{section}{References}
 
 \hypertarget{refs}{}
+\begin{CSLReferences}{1}{0}
 \leavevmode\hypertarget{ref-Anderson2009}{}%
-Anderson, Barbara J., Paul R. Armsworth, Felix Eigenbrod, Chris D. Thomas, Simon Gillings, Andreas Heinemeyer, David B. Roy, and Kevin J. Gaston. 2009. ``Spatial covariance between biodiversity and other ecosystem service priorities.'' \emph{Journal of Applied Ecology} 46 (4): 888--96. \url{https://doi.org/10.1111/j.1365-2664.2009.01666.x}.
+Anderson, Barbara J., Paul R. Armsworth, Felix Eigenbrod, Chris D. Thomas, Simon Gillings, Andreas Heinemeyer, David B. Roy, and Kevin J. Gaston. 2009. {``{Spatial covariance between biodiversity and other ecosystem service priorities}.''} \emph{Journal of Applied Ecology} 46 (4): 888--96. \url{https://doi.org/10.1111/j.1365-2664.2009.01666.x}.
 
 \leavevmode\hypertarget{ref-Baccini2012}{}%
-Baccini, A., S. J. Goetz, W. S. Walker, N. T. Laporte, M. Sun, D. Sulla-Menashe, J. Hackler, et al. 2012. ``Estimated carbon dioxide emissions from tropical deforestation improved by carbon-density maps.'' \emph{Nature Climate Change} 2 (3): 182--85. \url{https://doi.org/10.1038/nclimate1354}.
+Baccini, A., S. J. Goetz, W. S. Walker, N. T. Laporte, M. Sun, D. Sulla-Menashe, J. Hackler, et al. 2012. {``{Estimated carbon dioxide emissions from tropical deforestation improved by carbon-density maps}.''} \emph{Nature Climate Change} 2 (3): 182--85. \url{https://doi.org/10.1038/nclimate1354}.
 
 \leavevmode\hypertarget{ref-BirdLife2018}{}%
-BirdLife International and Handbook of the Birds of the World. 2018. ``Bird species distribution maps of the world.'' Cambridge, United Kingdom: BirdLife International. \url{http://datazone.birdlife.org/species/requestdis}.
+BirdLife International and Handbook of the Birds of the World. 2018. {``{Bird species distribution maps of the world}.''} Cambridge, United Kingdom: BirdLife International. \url{http://datazone.birdlife.org/species/requestdis}.
 
 \leavevmode\hypertarget{ref-R-rgdal}{}%
-Bivand, Roger, Tim Keitt, and Barry Rowlingson. 2020. \emph{rgdal: Bindings for the 'Geospatial' Data Abstraction Library}. \url{https://cran.r-project.org/package=rgdal}.
+Bivand, Roger, Tim Keitt, and Barry Rowlingson. 2019. \emph{{rgdal: Bindings for the 'Geospatial' Data Abstraction Library}}. \url{https://cran.r-project.org/package=rgdal}.
 
 \leavevmode\hypertarget{ref-Brancalion2019}{}%
-Brancalion, Pedro H S, Aidin Niamir, Eben Broadbent, Renato Crouzeilles, Felipe S M Barros, Angelica M. Almeyda Zambrano, Alessandro Baccini, et al. 2019. ``Global restoration opportunities in tropical rainforest landscapes.'' \emph{Science Advances} 5 (7): eaav3223. \url{https://doi.org/10.1126/sciadv.aav3223}.
+Brancalion, Pedro H S, Aidin Niamir, Eben Broadbent, Renato Crouzeilles, Felipe S M Barros, Angelica M. Almeyda Zambrano, Alessandro Baccini, et al. 2019. {``{Global restoration opportunities in tropical rainforest landscapes}.''} \emph{Science Advances} 5 (7): eaav3223. \url{https://doi.org/10.1126/sciadv.aav3223}.
 
 \leavevmode\hypertarget{ref-Bryant1997}{}%
-Bryant, Dirk, Daniel Nielsen, and Laura Tangley. 1997. \emph{Last Frontier Forests: Ecosystems and Economies on the Edge}. \url{http://pdf.wri.org/lastfrontierforests.pdf}.
+Bryant, Dirk, Daniel Nielsen, and Laura Tangley. 1997. \emph{{Last Frontier Forests: Ecosystems and Economies on the Edge}}. \url{http://pdf.wri.org/lastfrontierforests.pdf}.
 
 \leavevmode\hypertarget{ref-Butchart2012}{}%
-Butchart, Stuart H. M., Jörn P. W. Scharlemann, Mike I. Evans, Suhel Quader, Salvatore Aricò, Julius Arinaitwe, Mark Balman, et al. 2012. ``Protecting important sites for biodiversity contributes to meeting global conservation targets.'' \emph{PLoS ONE} 7 (3). \url{https://doi.org/10.1371/journal.pone.0032529}.
+Butchart, Stuart H. M., Jörn P. W. Scharlemann, Mike I. Evans, Suhel Quader, Salvatore Aricò, Julius Arinaitwe, Mark Balman, et al. 2012. {``{Protecting important sites for biodiversity contributes to meeting global conservation targets}.''} \emph{PLoS ONE} 7 (3). \url{https://doi.org/10.1371/journal.pone.0032529}.
 
 \leavevmode\hypertarget{ref-Damania2015}{}%
-Damania, Richard, and David Wheeler. 2015. ``Road improvement and deforestation in the Congo Basin countries.'' \url{http://documents.worldbank.org/curated/en/762671467986281150/pdf/WPS7274.pdf}.
+Damania, Richard, and David Wheeler. 2015. {``{Road improvement and deforestation in the Congo Basin countries.}''} \url{http://documents.worldbank.org/curated/en/762671467986281150/pdf/WPS7274.pdf}.
 
 \leavevmode\hypertarget{ref-R-data.table}{}%
-Dowle, Matt, and Arun Srinivasan. 2019. \emph{data.table: Extension of `data.frame`}. \url{https://cran.r-project.org/package=data.table}.
-
-\leavevmode\hypertarget{ref-R-lmisc}{}%
-Estes, Lyndon. 2019. \emph{lmisc: Miscellaneous functions for plotting and performing various small tasks}.
+Dowle, Matt, and Arun Srinivasan. 2019. \emph{{data.table: Extension of `data.frame`}}. \url{https://cran.r-project.org/package=data.table}.
 
 \leavevmode\hypertarget{ref-Estes2015}{}%
-Estes, Lyndon D. 2015. ``dtraster: Raster operations with data.table.''
+Estes, Lyndon D. 2015. {``{dtraster: Raster operations with data.table}.''}
+
+\leavevmode\hypertarget{ref-R-lmisc}{}%
+---------. 2019. \emph{{lmisc: Miscellaneous functions for plotting and performing various small tasks}}.
 
 \leavevmode\hypertarget{ref-Estes2016a}{}%
-Estes, Lyndon D., Timothy D. Searchinger, Marcus Spiegel, D Tian, S Sichinga, M Mwale, Laura Kehoe, et al. 2016. ``Reconciling agriculture, carbon and biodiversity in a savannah transformation frontier.'' \emph{Philosophical Transactions of the Royal Society B: Biological Sciences} 371 (1703): 1--10. \url{https://doi.org/10.1098/rstb.2015.0316}.
+Estes, Lyndon D., Timothy D. Searchinger, Marcus Spiegel, D Tian, S Sichinga, M Mwale, Laura Kehoe, et al. 2016. {``{Reconciling agriculture, carbon and biodiversity in a savannah transformation frontier}.''} \emph{Philosophical Transactions of the Royal Society B: Biological Sciences} 371 (1703): 1--10. \url{https://doi.org/10.1098/rstb.2015.0316}.
 
 \leavevmode\hypertarget{ref-R-agroEcoTradeoff}{}%
-Estes, Lyndon, and Marcus Spiegel. 26AD. \emph{agroEcoTradeoff: Landuse Tradeoff analysis model}.
+Estes, Lyndon D., and Marcus Spiegel. 2016. \emph{{agroEcoTradeoff: Landuse Tradeoff analysis model}}.
 
 \leavevmode\hypertarget{ref-Field2019}{}%
-Field, Christopher R, and Chris S Elphick. 2019. ``Quantifying the return on investment of social and ecological data for conservation planning.'' \emph{Environmental Research Letters} 14 (12): 124081. \url{https://doi.org/10.1088/1748-9326/ab5cae}.
+Field, Christopher R, and Chris S Elphick. 2019. {``{Quantifying the return on investment of social and ecological data for conservation planning}.''} \emph{Environmental Research Letters} 14 (12): 124081. \url{https://doi.org/10.1088/1748-9326/ab5cae}.
 
 \leavevmode\hypertarget{ref-R-gdalUtils}{}%
-Greenberg, Jonathan Asher, and Matteo Mattiuzzi. 2018. \emph{gdalUtils: Wrappers for the Geospatial Data Abstraction Library (GDAL) Utilities}. \url{https://cran.r-project.org/package=gdalUtils}.
+Greenberg, Jonathan Asher, and Matteo Mattiuzzi. 2020. \emph{{gdalUtils: Wrappers for the Geospatial Data Abstraction Library (GDAL) Utilities}}. \url{https://cran.r-project.org/package=gdalUtils}.
 
 \leavevmode\hypertarget{ref-R-raster}{}%
-Hijmans, Robert J. 2020. \emph{raster: Geographic Data Analysis and Modeling}. \url{https://cran.r-project.org/package=raster}.
+Hijmans, Robert J. 2020. \emph{{raster: Geographic Data Analysis and Modeling}}. \url{https://cran.r-project.org/package=raster}.
 
 \leavevmode\hypertarget{ref-Ioffe2010}{}%
-Ioffe, Sergey. 2010. ``Improved consistent sampling, Weighted Minhash and L1 Sketching.'' \emph{Proceedings - IEEE International Conference on Data Mining, ICDM}, 246--55. \url{https://doi.org/10.1109/ICDM.2010.80}.
+Ioffe, Sergey. 2010. {``{Improved consistent sampling, Weighted Minhash and L1 Sketching}.''} \emph{Proceedings - IEEE International Conference on Data Mining, ICDM}, 246--55. \url{https://doi.org/10.1109/ICDM.2010.80}.
 
 \leavevmode\hypertarget{ref-IUCN2017}{}%
-IUCN. 2017. ``The IUCN Red List of Threatened Species. Version 2017-3.'' IUCN. \url{http://www.iucnredlist.org}.
+IUCN. 2017. {``{The IUCN Red List of Threatened Species. Version 2017-3}.''} IUCN. \url{http://www.iucnredlist.org}.
 
 \leavevmode\hypertarget{ref-R-tictoc}{}%
-Izrailev, Sergei. 2014. \emph{tictoc: Functions for timing R scripts, as well as implementations of Stack and List structures.} \url{https://cran.r-project.org/package=tictoc}.
+Izrailev, Sergei. 2014. \emph{{tictoc: Functions for timing R scripts, as well as implementations of Stack and List structures.}} \url{https://cran.r-project.org/package=tictoc}.
 
 \leavevmode\hypertarget{ref-Jenkins2013}{}%
-Jenkins, Clinton N., Stuart L Pimm, and Lucas N Joppa. 2013. ``Global patterns of terrestrial vertebrate diversity and conservation.'' \emph{Proceedings of the National Academy of Sciences} 110 (28): E2602--E2610. \url{https://doi.org/10.1073/pnas.1302251110}.
+Jenkins, Clinton N., Stuart L Pimm, and Lucas N Joppa. 2013. {``{Global patterns of terrestrial vertebrate diversity and conservation}.''} \emph{Proceedings of the National Academy of Sciences} 110 (28): E2602--10. \url{https://doi.org/10.1073/pnas.1302251110}.
 
 \leavevmode\hypertarget{ref-Jones2003}{}%
-Jones, J. W., G. Hoogenboom, C. H. Porter, K. J. Boote, W. D. Batchelor, L. A. Hunt, P. W. Wilkens, U. Singh, A. J. Gijsman, and J. T. Ritchie. 2003. ``The DSSAT cropping system model.'' \emph{European Journal of Agronomy} 18 (3-4): 235--65. \url{https://doi.org/10.1016/S1161-0301(02)00107-7}.
+Jones, J. W., G. Hoogenboom, C. H. Porter, K. J. Boote, W. D. Batchelor, L. A. Hunt, P. W. Wilkens, U. Singh, A. J. Gijsman, and J. T. Ritchie. 2003. {``{The DSSAT cropping system model}.''} \emph{European Journal of Agronomy} 18 (3-4): 235--65. \url{https://doi.org/10.1016/S1161-0301(02)00107-7}.
 
 \leavevmode\hypertarget{ref-Keeler2019}{}%
-Keeler, Bonnie L, Brent J Dalzell, Jesse D Gourevitch, Peter L Hawthorne, Kris A Johnson, and Ryan R Noe. 2019. ``Putting people on the map improves the prioritization of ecosystem services.'' \emph{Frontiers in Ecology and the Environment}, 1--6. \url{https://doi.org/10.1002/fee.2004}.
+Keeler, Bonnie L, Brent J Dalzell, Jesse D Gourevitch, Peter L Hawthorne, Kris A Johnson, and Ryan R Noe. 2019. {``{Putting people on the map improves the prioritization of ecosystem services}.''} \emph{Frontiers in Ecology and the Environment}, 1--6. \url{https://doi.org/10.1002/fee.2004}.
 
 \leavevmode\hypertarget{ref-Kier2009}{}%
-Kier, Gerold, Holger Kreft, Ming Lee Tien, Walter Jetz, Pierre L. Ibisch, Christoph Nowicki, Jens Mutke, and Wilhelm Barthlott. 2009. ``A global assessment of endemism and species richness across island and mainland regions.'' \emph{Proceedings of the National Academy of Sciences of the United States of America} 106 (23): 9322--7. \url{https://doi.org/10.1073/pnas.0810306106}.
+Kier, Gerold, Holger Kreft, Ming Lee Tien, Walter Jetz, Pierre L. Ibisch, Christoph Nowicki, Jens Mutke, and Wilhelm Barthlott. 2009. {``{A global assessment of endemism and species richness across island and mainland regions}.''} \emph{Proceedings of the National Academy of Sciences of the United States of America} 106 (23): 9322--27. \url{https://doi.org/10.1073/pnas.0810306106}.
 
 \leavevmode\hypertarget{ref-Kier2005}{}%
-Kier, Gerold, Jens Mutke, Eric Dinerstein, Taylor H. Ricketts, Wolfgang Küper, Holger Kreft, and Wilhelm Barthlott. 2005. ``Global patterns of plant diversity and floristic knowledge.'' \emph{Journal of Biogeography} 32 (7): 1107--16. \url{https://doi.org/10.1111/j.1365-2699.2005.01272.x}.
+Kier, Gerold, Jens Mutke, Eric Dinerstein, Taylor H. Ricketts, Wolfgang Küper, Holger Kreft, and Wilhelm Barthlott. 2005. {``{Global patterns of plant diversity and floristic knowledge}.''} \emph{Journal of Biogeography} 32 (7): 1107--16. \url{https://doi.org/10.1111/j.1365-2699.2005.01272.x}.
 
 \leavevmode\hypertarget{ref-Koh2010a}{}%
-Koh, Lian Pin, and J. Ghazoul. 2010. ``Spatially explicit scenario analysis for reconciling agricultural expansion, forest protection, and carbon conservation in Indonesia.'' \emph{Proceedings of the National Academy of Sciences} 107 (24): 11140--4. \url{https://doi.org/10.1073/pnas.1012681107}.
+Koh, Lian Pin, and J. Ghazoul. 2010. {``{Spatially explicit scenario analysis for reconciling agricultural expansion, forest protection, and carbon conservation in Indonesia}.''} \emph{Proceedings of the National Academy of Sciences} 107 (24): 11140--44. \url{https://doi.org/10.1073/pnas.1012681107}.
 
 \leavevmode\hypertarget{ref-Laurance2014a}{}%
-Laurance, William F., Gopalasamy Reuben Clements, Sean Sloan, Christine S. O'Connell, Nathan D. Mueller, Miriam Goosem, Oscar Venter, et al. 2014. ``A global strategy for road building.'' \emph{Nature} 513 (7517): 229--33. \url{https://doi.org/10.1038/nature13876}.
+Laurance, William F., Gopalasamy Reuben Clements, Sean Sloan, Christine S. O'Connell, Nathan D. Mueller, Miriam Goosem, Oscar Venter, et al. 2014. {``{A global strategy for road building}.''} \emph{Nature} 513 (7517): 229--33. \url{https://doi.org/10.1038/nature13876}.
 
 \leavevmode\hypertarget{ref-Legendre2012}{}%
-Legendre, Pierre, and Louis Legendre. 2012. \emph{Numerical ecology}. 3rd ed. Developments in Environmental Modelling ; 24. Boston: Elsevier.
+Legendre, Pierre, and Louis Legendre. 2012. \emph{{Numerical ecology}}. 3rd ed. Developments in Environmental Modelling ; 24. Boston: Elsevier.
 
 \leavevmode\hypertarget{ref-Lilburne2009}{}%
-Lilburne, Linda, and Stefano Tarantola. 2009. ``Sensitivity analysis of spatial models.'' \emph{International Journal of Geographical Information Science} 23 (2): 151--68. \url{https://doi.org/10.1080/13658810802094995}.
+Lilburne, Linda, and Stefano Tarantola. 2009. {``{Sensitivity analysis of spatial models}.''} \emph{International Journal of Geographical Information Science} 23 (2): 151--68. \url{https://doi.org/10.1080/13658810802094995}.
 
 \leavevmode\hypertarget{ref-Mittermeier2003}{}%
-Mittermeier, Russell A., C. G. Mittermeier, T. M. Brooks, J. D. Pilgrim, W. R. Konstant, G. A. B. da Fonseca, and C. Kormos. 2003. ``Wilderness and biodiversity conservation.'' \emph{Proceedings of the National Academy of Sciences} 100 (18): 10309--13. \url{https://doi.org/10.1073/pnas.1732458100}.
+Mittermeier, Russell A., C. G. Mittermeier, T. M. Brooks, J. D. Pilgrim, W. R. Konstant, G. A. B. da Fonseca, and C. Kormos. 2003. {``{Wilderness and biodiversity conservation}.''} \emph{Proceedings of the National Academy of Sciences} 100 (18): 10309--13. \url{https://doi.org/10.1073/pnas.1732458100}.
 
 \leavevmode\hypertarget{ref-Myers2000}{}%
-Myers, Norman, Russell A. Mittermeier, Cristina G. Mittermeier, Gustavo A. B. da Fonseca, and Jennifer Kent. 2000. ``Biodiversity hotspots for conservation priorities.'' \emph{Nature} 403 (6772): 853--58. \url{https://doi.org/10.1038/35002501}.
+Myers, Norman, Russell A. Mittermeier, Cristina G. Mittermeier, Gustavo A. B. da Fonseca, and Jennifer Kent. 2000. {``{Biodiversity hotspots for conservation priorities}.''} \emph{Nature} 403 (6772): 853--58. \url{https://doi.org/10.1038/35002501}.
 
 \leavevmode\hypertarget{ref-Olson2002}{}%
-Olson, David M., and Eric Dinerstein. 2002. ``The Global 200: Priority ecoregions for global conservation.'' \emph{Annals of the Missouri Botanical Garden} 89 (2): 199--224.
+Olson, David M., and Eric Dinerstein. 2002. {``{The Global 200: Priority ecoregions for global conservation}.''} \emph{Annals of the Missouri Botanical Garden} 89 (2): 199--224.
 
 \leavevmode\hypertarget{ref-R-sf}{}%
-Pebesma, Edzer. 2020. \emph{sf: Simple Features for R}. \url{https://cran.r-project.org/package=sf}.
+Pebesma, Edzer. 2020. \emph{{sf: Simple Features for R}}. \url{https://cran.r-project.org/package=sf}.
 
 \leavevmode\hypertarget{ref-R-sp}{}%
-Pebesma, Edzer, and Roger Bivand. 2020. \emph{sp: Classes and Methods for Spatial Data}. \url{https://cran.r-project.org/package=sp}.
+Pebesma, Edzer, and Roger Bivand. 2020. \emph{{sp: Classes and Methods for Spatial Data}}. \url{https://cran.r-project.org/package=sp}.
 
 \leavevmode\hypertarget{ref-R-rasterVis}{}%
-Perpinan Lamigueiro, Oscar, and Robert Hijmans. 2019. \emph{rasterVis: Visualization Methods for Raster Data}. \url{https://cran.r-project.org/package=rasterVis}.
+Perpinan Lamigueiro, Oscar, and Robert Hijmans. 2019. \emph{{rasterVis: Visualization Methods for Raster Data}}. \url{https://cran.r-project.org/package=rasterVis}.
 
 \leavevmode\hypertarget{ref-Roll2017}{}%
-Roll, Uri, Anat Feldman, Maria Novosolov, Allen Allison, Aaron M. Bauer, Rodolphe Bernard, Monika Böhm, et al. 2017. ``The global distribution of tetrapods reveals a need for targeted reptile conservation.'' \emph{Nature Ecology and Evolution} 1 (11): 1677--82. \url{https://doi.org/10.1038/s41559-017-0332-2}.
+Roll, Uri, Anat Feldman, Maria Novosolov, Allen Allison, Aaron M. Bauer, Rodolphe Bernard, Monika Böhm, et al. 2017. {``{The global distribution of tetrapods reveals a need for targeted reptile conservation}.''} \emph{Nature Ecology and Evolution} 1 (11): 1677--82. \url{https://doi.org/10.1038/s41559-017-0332-2}.
 
 \leavevmode\hypertarget{ref-RStudioTeam2018}{}%
-RStudio Team. 2018. ``RStudio: Integrated Development Environment for R.'' Boston, MA: RStudio, Inc. \url{http://www.rstudio.com/}.
+RStudio Team. 2018. {``{RStudio: Integrated Development Environment for R}.''} Boston, MA: RStudio, Inc. \url{http://www.rstudio.com/}.
 
 \leavevmode\hypertarget{ref-Soto-Navarro2020}{}%
-Soto-Navarro, C., C. Ravilious, A. Arnell, X. de Lamo, M. Harfoot, S. L. L. Hill, O. R. Wearn, et al. 2020. ``Mapping co-benefits for carbon storage and biodiversity to inform conservation policy and action.'' \emph{Philosophical Transactions of the Royal Society B: Biological Sciences} 375 (1794): 20190128. \url{https://doi.org/10.1098/rstb.2019.0128}.
+Soto-Navarro, C., C. Ravilious, A. Arnell, X. de Lamo, M. Harfoot, S. L. L. Hill, O. R. Wearn, et al. 2020. {``{Mapping co-benefits for carbon storage and biodiversity to inform conservation policy and action}.''} \emph{Philosophical Transactions of the Royal Society B: Biological Sciences} 375 (1794): 20190128. \url{https://doi.org/10.1098/rstb.2019.0128}.
 
 \leavevmode\hypertarget{ref-Stattersfield1998}{}%
-Stattersfield, A. J., M. J. Crosby, A. J. Long, and D C Wege. 1998. \emph{Endemic Bird Areas of the World: Priorities for Biodiversity Conservation}. Cambridge, United Kingdom: BirdLife International. \url{https://doi.org/10.1046/j.1365-2028.1999.00178.x}.
+Stattersfield, A. J., M. J. Crosby, A. J. Long, and D C Wege. 1998. \emph{{Endemic Bird Areas of the World: Priorities for Biodiversity Conservation}}. Cambridge, United Kingdom: BirdLife International. \url{https://doi.org/10.1046/j.1365-2028.1999.00178.x}.
 
 \leavevmode\hypertarget{ref-Thomas2013}{}%
-Thomas, Chris D., Barbara J. Anderson, Atte Moilanen, Felix Eigenbrod, Andreas Heinemeyer, Tristan Quaife, David B. Roy, Simon Gillings, Paul R. Armsworth, and Kevin J. Gaston. 2013. ``Reconciling biodiversity and carbon conservation.'' \emph{Ecology Letters} 16 (SUPPL.1): 39--47. \url{https://doi.org/10.1111/ele.12054}.
+Thomas, Chris D., Barbara J. Anderson, Atte Moilanen, Felix Eigenbrod, Andreas Heinemeyer, Tristan Quaife, David B. Roy, Simon Gillings, Paul R. Armsworth, and Kevin J. Gaston. 2013. {``{Reconciling biodiversity and carbon conservation}.''} \emph{Ecology Letters} 16 (SUPPL.1): 39--47. \url{https://doi.org/10.1111/ele.12054}.
 
 \leavevmode\hypertarget{ref-VanBreugel2015}{}%
-Van Breugel, Paulo, Roeland Kindt, Jens Peter Barnekow Lillesø, and Michiel Van Breugel. 2015. ``Environmental gap analysis to prioritize conservation efforts in eastern Africa.'' \emph{PLoS ONE} 10 (4): 1--26. \url{https://doi.org/10.1371/journal.pone.0121444}.
+Van Breugel, Paulo, Roeland Kindt, Jens Peter Barnekow Lillesø, and Michiel Van Breugel. 2015. {``{Environmental gap analysis to prioritize conservation efforts in eastern Africa}.''} \emph{PLoS ONE} 10 (4): 1--26. \url{https://doi.org/10.1371/journal.pone.0121444}.
 
 \leavevmode\hypertarget{ref-Waliczky2019}{}%
-Waliczky, Zoltan, Lincoln D. C. Fishpool, Stuart H. M. Butchart, David Thomas, Melanie F. Heath, Carolina Hazin, Paul F. Donald, Aida Kowalska, Maria P. Dias, and Tristram S. M. Allinson. 2019. ``Important Bird and Biodiversity Areas (IBAs): their impact on conservation policy, advocacy and action.'' \emph{Bird Conservation International} 29 (2): 199--215. \url{https://doi.org/10.1017/S0959270918000175}.
+Waliczky, Zoltan, Lincoln D. C. Fishpool, Stuart H. M. Butchart, David Thomas, Melanie F. Heath, Carolina Hazin, Paul F. Donald, Aida Kowalska, Maria P. Dias, and Tristram S. M. Allinson. 2019. {``{Important Bird and Biodiversity Areas (IBAs): their impact on conservation policy, advocacy and action}.''} \emph{Bird Conservation International} 29 (2): 199--215. \url{https://doi.org/10.1017/S0959270918000175}.
 
 \leavevmode\hypertarget{ref-Williams1996}{}%
-Williams, Paul, David Gibbons, Chris Margules, Anthony Rebelo, Chris Humphries, and Robert Pressey. 1996. ``A comparison of richness hotspots, rarity hotspots, and complementary areas for conserving diversity of British birds.'' \emph{Conservation Biology} 10 (1): 155--74. \url{https://doi.org/10.1046/j.1523-1739.1996.10010155.x}.
+Williams, Paul, David Gibbons, Chris Margules, Anthony Rebelo, Chris Humphries, and Robert Pressey. 1996. {``{A comparison of richness hotspots, rarity hotspots, and complementary areas for conserving diversity of British birds}.''} \emph{Conservation Biology} 10 (1): 155--74. \url{https://doi.org/10.1046/j.1523-1739.1996.10010155.x}.
 
 \leavevmode\hypertarget{ref-Zachos2011}{}%
-Zachos, Frank E, and Jan Christian Habel, eds. 2011. \emph{Biodiversity hotspots: distribution and protection of conservation priority areas}. New York: Springer. \url{http://dx.doi.org/10.1007/978-3-642-20992-5}.
+Zachos, Frank E, and Jan Christian Habel, eds. 2011. \emph{{Biodiversity hotspots: distribution and protection of conservation priority areas}}. New York: Springer. \url{http://dx.doi.org/10.1007/978-3-642-20992-5}.
+
+\end{CSLReferences}
 
 \end{document}

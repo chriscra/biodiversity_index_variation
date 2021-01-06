@@ -25,7 +25,6 @@ bibliography: /Users/christophercrawford/Google Drive/Library/library.bib
 nocite: |
   @RStudioTeam2018, @R-agroEcoTradeoff, @Estes2015, @R-lmisc, @R-raster, @R-rasterVis, @R-rgdal, @R-sf, @R-sp, @R-gdalUtils, @R-rasterVis, @R-data.table, @R-tictoc, @fasterize, @lwgeom, @magrittr, @parallel, @reshape2, @cowplot, @tidyverse, @knitr, @spatstat, @rmarkdown, @bookdown, @pryr
 ---
-
 ```{r misc, eval = FALSE, echo = FALSE}
 library(tinytex)
 tinytex::install_tinytex()
@@ -42,13 +41,11 @@ tinytex::install_tinytex()
 #   - David S. Wilcove^[Princeton University, Princeton, NJ]
 
 ```
-
 ```{r start, eval = TRUE, echo = FALSE, include = FALSE}
 source("cc_functions.R")
 source("cc_libraries.R")
 source("cc_pathnames.R")
 ```
-
 ```{r load-files, include = FALSE}
 # names 
 facet_names_distill <- c("all", "endemism", "small", "mam", "bird", "amp", "rep", "average", "geometric", "max", "multi", "res1", "res10", "res110", "vert_endemism", "plants", "estes", "laurance", "habitats", "bird_composite", "damania", "bp", "b", "by", "bc", "bt", "byct", "z50")
@@ -268,14 +265,12 @@ facet_stats_full <- read_csv(file = fp(p_mod_output, "facet_stats_full.csv")) %>
 
 
 ```
-
 ```{r set-chunk-opts, include = FALSE}
 # set default chunk options
 knitr::opts_chunk$set(out.width = "1\\textwidth", #comment=NA #fig.width=6, fig.height=6
                       echo = FALSE
                       )
 ```
-
 ```{r include-graphics, eval=FALSE, echo=FALSE, fig.cap="A caption", out.width = '100%'}
 # this is a chunk for including a pre-existing plot or graphic.
 #knitr::include_graphics("/Users/christophercrawford/Google Drive/_Projects/Zambia/agroEcoTradeoff/external/plots/Estes-plots_test.png")
@@ -502,7 +497,7 @@ knitr::include_graphics("/Users/christophercrawford/Google Drive/_Projects/Zambi
 
 ## Calculation of weighted Jaccard Similarity index
 
-As a measure of spatial consistency across model results, we calculated a weighted version of the Jaccard Similarity index [@Ioffe2010; @Legendre2012] for all pairs of facets within each category of variation. The Jaccard Similarity is a pairwise similarity metric commonly used to assess similarity between two sets, and is defined as the proportion of elements in either set that are shared between the two, or the intersection of the two sets divided by the union of the two sets. \( J(a,b) = \frac{a\cap b}{a\cup b} \) [@Legendre2012]. In the context of the categorical conversion maps produced by the `agroEcoTradeoff` model, the Jaccard Similarity between two model runs is simply the number of cells selected for conversion in both model runs a and b divided by the number of cells selected for conversion by either model runs a or b. However, our ensemble averages have values that fall continuously between 0-1 and are no longer categorical in nature, instead representing the proportion of model runs that select that particular pixel for conversion. To account for this variation, we instead calculated an adapted Weighted Jaccard Similarity Index [@Ioffe2010], defined in Equation \@ref(eq:jac-w).
+As a measure of spatial consistency across model results, we calculated a weighted version of the Jaccard Similarity index [@Ioffe2010; @Legendre2012] for all pairs of factors within each category of variation. The Jaccard Similarity is a pairwise similarity metric commonly used to assess similarity between two sets, and is defined as the proportion of elements in either set that are shared between the two, or the intersection of the two sets divided by the union of the two sets. \( J(a,b) = \frac{a\cap b}{a\cup b} \) [@Legendre2012]. In the context of the categorical conversion maps produced by the `agroEcoTradeoff` model, the Jaccard Similarity between two model runs is simply the number of cells selected for conversion in both model runs a and b divided by the number of cells selected for conversion by either model runs a or b. However, our ensemble averages have values that fall continuously between 0-1 and are no longer categorical in nature, instead representing the proportion of model runs that select that particular pixel for conversion. To account for this variation, we instead calculated an adapted Weighted Jaccard Similarity Index [@Ioffe2010], defined in Equation \@ref(eq:jac-w).
 
 \begin{equation}
 J_{w} (a,b) = \frac{\sum_{i=1}^n min(a_{i}, b_{i})}{\sum_{i=1}^n max(a_{i}, b_{i})} (\#eq:jac-w)
@@ -510,7 +505,7 @@ J_{w} (a,b) = \frac{\sum_{i=1}^n min(a_{i}, b_{i})}{\sum_{i=1}^n max(a_{i}, b_{i
 
 The weighted Jaccard Similarity allows us to compare non-categorical rasters and can be interpreted as a measure of congruence (how well two factors agree about the least costly areas to convert to agriculture). The lower the similarity value for a particular factor, the less similar it is to the other factors within a given category of variation. Low similarity values across an entire category of variation indicates that the choice represented by that category of variation (e.g. which taxonomic group to use) has a large effect on the model recommendations.
 
-The Weighted Jaccard Similarity is a pairwise metric, so calculating the mean Jaccard Similarity for a given factor's ensemble mean required averaging across all possible pairs with that particular ensemble mean within each category of variation.  We only calculate pairwise Jaccard Similarity between ensemble means within each category of variation to allow for consistent comparisons. For example, the mean $J_w$ for mammals is the mean of three pairwise similarity values between mammals and the other three taxonomic groups: $J_w(mammals, birds)$, $J_w(mammals,amphibians)$, and $J_w(mammals,reptiles)$. This metric gives us a sense of how similar the model’s conversion recommendations are across the different taxonomic groups (and similarly across the facets of variation in the other categories of variation). A $J_w$ = 0.70 means that two sets are 70% similar to each other, or have an overlap of 70%. The lower the value of a particular ensemble mean (i.e. mammals, threatened species richness, 110 km grid resolution, etc.), the less similar it is to the other facets within a category of variation. Low values across an entire category of variation indicates that variation within that category of variation has a relatively larger effect on the model outcomes than that within other categories of variation.
+The Weighted Jaccard Similarity is a pairwise metric, so calculating the mean Jaccard Similarity for a given factor's ensemble mean required averaging across all possible pairs with that particular ensemble mean within each category of variation.  We only calculate pairwise Jaccard Similarity between ensemble means within each category of variation to allow for consistent comparisons. For example, the mean $J_w$ for mammals is the mean of three pairwise similarity values between mammals and the other three taxonomic groups: $J_w(mammals, birds)$, $J_w(mammals,amphibians)$, and $J_w(mammals,reptiles)$. This metric gives us a sense of how similar the model’s conversion recommendations are across the different taxonomic groups (and similarly across the factors of variation in the other categories of variation). A $J_w$ = 0.70 means that two sets are 70% similar to each other, or have an overlap of 70%. The lower the value of a particular ensemble mean (i.e. mammals, threatened species richness, 110 km grid resolution, etc.), the less similar it is to the other factors within a category of variation. Low values across an entire category of variation indicates that variation within that category of variation has a relatively larger effect on the model outcomes than that within other categories of variation.
 
 Figure \@ref(fig:pairwise-jaccard) shows the pairwise Jaccard Similarity values for our primary analysis (*bp*). While these values are included in Main Text Figure 3, this additional figure shows each pair more clearly.
 
@@ -542,7 +537,7 @@ We also avoid any prediction “biodiversity loss” resulting from various conf
 
 ## Adjacency – nearest neighbor distance {#section-adjacency}
 
-As an additional measure of spatial similarity, we calculate **adjacency**, as the average nearest neighbor distance for each factor ensemble mean (Figure \@ref(fig:nnd-fig)). This represents the average distance between each cell in ensemble mean A and its nearest neighbor in ensemble mean B. Because these factor ensemble means are continuous between 0-1, not categorical, calculating adjacency required adjusting the distance based on the value of the cell in A and the value of its nearest nearest neighbor in B, by multiplying the distance by the average of those two values. We then took a weighted average of these adjusted distances, dividing by the sum of the averaged cell values (instead of the number of points). These results in generally accord with what we see in Main Text Figure 3. Types of richness and taxonomic groups have a much higher average distance to neighbor, meaning that the individual facets within richness types and taxa are less adjacent to each other. This matches with Main Text Figure 3, which shows that types and taxa are much less similar than methods and resolution. In contrast, methods and resolution show much lower distances, meaning that different factors are more similar to each other (matching Main Text Figure 3), but also, that when model recommendations do not match, they remain relatively close spatially within the country.
+As an additional measure of spatial similarity, we calculate **adjacency**, as the average nearest neighbor distance for each factor ensemble mean (Figure \@ref(fig:nnd-fig)). This represents the average distance between each cell in ensemble mean A and its nearest neighbor in ensemble mean B. Because these factor ensemble means are continuous between 0-1, not categorical, calculating adjacency required adjusting the distance based on the value of the cell in A and the value of its nearest nearest neighbor in B, by multiplying the distance by the average of those two values. We then took a weighted average of these adjusted distances, dividing by the sum of the averaged cell values (instead of the number of points). These results in generally accord with what we see in Main Text Figure 3. Types of richness and taxonomic groups have a much higher average distance to neighbor, meaning that the individual factors within richness types and taxa are less adjacent to each other. This matches with Main Text Figure 3, which shows that types and taxa are much less similar than methods and resolution. In contrast, methods and resolution show much lower distances, meaning that different factors are more similar to each other (matching Main Text Figure 3), but also, that when model recommendations do not match, they remain relatively close spatially within the country.
 
 (ref:caption-nnd-fig) Average distance to nearest neighbor (adjacency) for ensemble mean conversion areas across different categories of variation, assuming 100% weight on biodiversity and constant average yields throughout Zambia.
 
@@ -583,7 +578,7 @@ The relative similarity between these two production targets is shown in Figure 
 # add in this line to the caption, if I add order back in...
 # *order* refers to similarity of the order in which cells are selected for conversion (or protection) based on biodiversity value.
 
-knitr::include_graphics(fp(p_plots, "ms_v5/ms_fig_4_robustness_SI.png"))
+knitr::include_graphics(fp(p_plots, "ms_final/ms_fig_4_robustness_SI.png"))
 
 # other, unused:
 
@@ -691,7 +686,7 @@ p2 <- gplot(facet_r_bp[[c("plants", "habitats", "bird_composite")]],
 p3 <- ggplot() +
   theme_classic() + 
   theme(axis.text.x = element_text(angle = 320, vjust = 1, hjust = 0)) +
-  xlab("Facet") + ylab("Jaccard Similarity") +
+  xlab("Factor") + ylab("Jaccard Similarity") +
   geom_point(data = filter(facet_stats_full, weight == "bp", comparison == "indices"),
              mapping = aes(x = facet, y = mean_jac_w, color = facet
                            ),
@@ -732,15 +727,15 @@ In addition to our baseline scenario (*bp*, with 100% on biodiversity, assuming 
 
 First, we show the mean Jaccard Similarity for each model specification, together in Figure \@ref(fig:jac-w-weights-line). This shows that as weight is increasingly placed on non-biodiversity constraints, similarity increases overall, yet the pattern of relative similarity between categories of variation remains the same.
 
-(ref:caption-jac-w-b) Jaccard Similarity between facets with 100% weight on biodiversity, but incorporating accurate, spatially heterogeneous yields.
+(ref:caption-jac-w-b) Jaccard Similarity between factors with 100% weight on biodiversity, but incorporating accurate, spatially heterogeneous yields.
 
-(ref:caption-jac-w-by) Jaccard Similarity between facets with 50% weight on biodiversity and yield.
+(ref:caption-jac-w-by) Jaccard Similarity between factors with 50% weight on biodiversity and yield.
 
-(ref:caption-jac-w-bc) Jaccard Similarity between facets with 50% weight on biodiversity and carbon emissions due to conversion.
+(ref:caption-jac-w-bc) Jaccard Similarity between factors with 50% weight on biodiversity and carbon emissions due to conversion.
 
-(ref:caption-jac-w-bt) Jaccard Similarity between facets with 50% weight on biodiversity and transportation costs.
+(ref:caption-jac-w-bt) Jaccard Similarity between factors with 50% weight on biodiversity and transportation costs.
 
-(ref:caption-jac-w-byct) Jaccard Similarity between facets with weight equally distributed among the four constraints (25% weight on biodiversity, yield, carbon, and transportation costs).
+(ref:caption-jac-w-byct) Jaccard Similarity between factors with weight equally distributed among the four constraints (25% weight on biodiversity, yield, carbon, and transportation costs).
 
 (ref:caption-jac-w-all) Jaccard Similarities between ensemble means that average across all six weighting schemes (all assuming accurate, spatially heterogeneous yields except for *bp* and *z50*). *bp* = 100% biodiversity, average yields, *b* = 100% biodiversity, accurate, spatially heterogeneous yields, *by* = 50%/50% biodiversity/yield, *bc* = 50%/50% biodiversity/carbon, *bt* = 50%/50% biodiversity/transportation cost, and *byct* = 25% weight on biodiversity, yield, carbon, and transportation cost. For reference, we also show similarity with *z50*, representing a production target that converts a full 50% of Zambia (assuming constant, average yields throughout Zambia).
 
@@ -750,7 +745,7 @@ First, we show the mean Jaccard Similarity for each model specification, togethe
 ggplot() +
   theme_classic() +
   theme(axis.text.x = element_text(angle = 320, vjust = 1, hjust = 0)) +
-  xlab("Facet") + ylab("Jaccard Similarity") +
+  xlab("Factor") + ylab("Jaccard Similarity") +
   geom_line(data = filter(facet_stats, weight == "bp"),
              mapping = aes(x = facet, y = mean_jac_w,group = comparison, color = weight), size = 1) +
   geom_line(data = filter(facet_stats, weight == "all", comparison != "weights"),
