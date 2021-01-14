@@ -1,5 +1,6 @@
 ---
-title: "Supporting Information:  Consequences of under-explored variation in biodiversity indices used for land-use prioritization"
+title: "Appendix S1:  Consequences of under-explored variation in biodiversity indices used for land-use prioritization"
+subtitle: "Ecological Applications"
 header-includes: \usepackage[nottoc]{tocbibind}
 output: 
   bookdown::pdf_document2:
@@ -8,7 +9,7 @@ output:
 geometry: 
   margin=1in
 author: 
-  - Christopher L. Crawford^[Corresponding Author, ccrawford@princeton.edu, Robertson Hall, Princeton University, Princeton, NJ] $^1$ 
+  - Christopher L. Crawford^[Corresponding Author, ccrawford@princeton.edu, Robertson Hall, Princeton University, Princeton, NJ] $^1$
   - Lyndon D. Estes$^2$
   - Timothy S. Searchinger$^1$
   - David S. Wilcove$^{1, 3}$
@@ -25,6 +26,12 @@ bibliography: /Users/christophercrawford/Google Drive/Library/library.bib
 nocite: |
   @RStudioTeam2018, @R-agroEcoTradeoff, @Estes2015, @R-lmisc, @R-raster, @R-rasterVis, @R-rgdal, @R-sf, @R-sp, @R-gdalUtils, @R-rasterVis, @R-data.table, @R-tictoc, @fasterize, @lwgeom, @magrittr, @parallel, @reshape2, @cowplot, @tidyverse, @knitr, @spatstat, @rmarkdown, @bookdown, @pryr
 ---
+\renewcommand{\thefigure}{S\arabic{figure}}
+\renewcommand{\thesection}{S\arabic{section}}
+\renewcommand{\thetable}{S\arabic{table}}
+\renewcommand\theequation{S\arabic{equation}}
+
+
 ```{r misc, eval = FALSE, echo = FALSE}
 library(tinytex)
 tinytex::install_tinytex()
@@ -286,6 +293,7 @@ knitr::opts_chunk$set(out.width = "1\\textwidth", #comment=NA #fig.width=6, fig.
 ```
 
 \listoffigures
+\listoftables
 
 # Expanded Methods
 
@@ -294,7 +302,7 @@ knitr::opts_chunk$set(out.width = "1\\textwidth", #comment=NA #fig.width=6, fig.
 Our analysis builds on the `agroEcoTradeoff` land-use model described in @Estes2016a and applied to Zambia. The `agroEcoTradeoff` model is designed to prioritize areas for agricultural expansion in order to meet a set of crop-specific production targets while simultaneously minimizing four costs: the total area of land required (i.e. maximizing yields), transportation costs, carbon released through conversion of natural vegetation to agriculture, and biodiversity loss. The model requires spatially explicit inputs representing these four costs in the form of maps with pixel values ranging from 0-1. The model is structured to express these costs in terms of production efficiency, or cost per unit yield estimated to result from the conversion of a given cell. These constraints are then weighted according to user preferences and combined into a single map of “conversion priority.” Cells are then sequentially chosen for conversion until a user-specified production target is met, based on the expected yield in each cell and adjusted to account for the proportion of each pixel that is not currently cropped, settled, protected, or with slopes greater than 20%. 
 
 ### Non-biodiversity model inputs {#non-bd-inputs}
-In our analysis, we use this model to explore how a range of approaches for formulating biodiversity values affect land-use recommendations. We therefore use the same settings for non-biodiversity elements as applied in @Estes2016a, including representative future production targets for maize and soy (projecting a fourfold increase for maize and a 10-fold increase for soy by 2050, compared with 2009–2014 average), as well as the input yield, carbon density, and travel cost maps. Yield estimates are modeled using DSSAT [@Jones2003] based on weather station data and soil profiles, mapped to a 1 km$^2$ grid using a generalized additive model, and rescaled to match FAO yield-growth projections for Zambia by 2050 (see Figure \@ref(fig:yield)). Travel cost is based on travel time to the nearest market town. Carbon loss is based on estimates of aboveground and belowground biomass carbon stocks @Baccini2012. Additional detail on the model structure and how constraints were modeled can be found in @Estes2016a. The general structure of the model is illustrated in Main Text Figure 1b. See @Estes2016a for additional details. 
+In our analysis, we use this model to explore how a range of approaches for formulating biodiversity values affect land-use recommendations. We therefore use the same settings for non-biodiversity elements as applied in @Estes2016a, including representative future production targets for maize and soy (projecting a fourfold increase for maize and a 10-fold increase for soy by 2050, compared with 2009–2014 average), as well as the input yield, carbon density, and travel cost maps. Yield estimates are modeled using DSSAT [@Jones2003] based on weather station data and soil profiles, mapped to a 1 km$^2$ grid using a generalized additive model, and rescaled to match FAO yield-growth projections for Zambia by 2050 (see Figure \@ref(fig:yield)). Travel cost is based on travel time to the nearest market town. Carbon loss is based on estimates of aboveground and belowground biomass carbon stocks @Baccini2012. Additional detail on the model structure and how constraints were modeled can be found in @Estes2016a. The general structure of the model is illustrated in Fig. 1b. See @Estes2016a for additional details. 
 
 (ref:caption-yield) Estimated maize and soy yields across Zambia, in tons/ha (with different scales for each crop). Average yields, used in the pure biodiversity (*bp*) and 50% conversion (*z50*) model weighting specifications, are 5.30 tons/ha for maize and 3.38 tons/ha for soy. See @Estes2016a for details on how yields were modeled.
 
@@ -316,8 +324,9 @@ We ran the model through five additional scenarios that progressively shared wei
 - *bt* = 50%/50% biodiversity/transportation cost, and
 - *byct* = 25% weight on biodiversity, yield, carbon, and transportation cost
 
-Our baseline production target is based on current projections of future demand and yield increases, and converts to cropland an additional ~5% of Zambia's remaining unprotected, uncultivated, and undeveloped land area (approximately 22,000 km$^2$). In addition to these analyses, we also assessed the effect of increasing our production target so that ~50% of Zambia’s available land area would be converted, in order to assess scale dependence. This model specification (*z50*), also assumes constant, average yields throughout Zambia, just like the primary analysis (*bp*). See Section \@ref(section-prod-targ) for details and results. See full results for the additional weighting specifications in Section \@ref(weights-results).
+See full results for these additional weighting specifications in Section \@ref(weights-results).
 
+Our baseline production target is based on current projections of future demand and yield increases, and converts to cropland an additional ~5% of Zambia's remaining unprotected, uncultivated, and undeveloped land area (approximately 22,000 km$^2$). In addition to these analyses, we also assessed the effect of increasing our production target so that ~50% of Zambia’s available land area would be converted, in order to assess scale dependence. This model specification (*z50*), also assumes constant, average yields throughout Zambia, just like the primary analysis (*bp*). See Section \@ref(section-prod-targ) for details and results.
 
 ## Construction of biodiversity indices {#bd-inputs}
 
@@ -325,17 +334,24 @@ In order to capture the variation in how biodiversity can be represented in prio
 
 ### Existing biodiversity indices
 
-(@) *estes*: @Estes2016a’s composite incorporates threat, rarity, and intactness of potential natural vegetation (PNV) types of eastern and southern Africa, described by @VanBreugel2015. Rarity was calculated as the proportion of Zambia occupied by that vegetation type (these values were log transformed due to a highly skewed distribution). Threat was calculated as the proportion of vegetation falling within a protected area. Low values correspond to a rare, relatively unprotected vegetation class, one with high conservation priority. Intactness was then calculated based on the proportion of undisturbed vegetation existing in the surrounding 11 km $\times$ 11 km neighborhood. The final composite was calculated as follows:
+(@) *estes*: @Estes2016a’s composite incorporates threat, rarity, and intactness of potential natural vegetation (PNV) types of eastern and southern Africa, described by @VanBreugel2015. Rarity was calculated as the proportion of Zambia occupied by that vegetation type (these values were log transformed due to a highly skewed distribution). Threat was calculated as the proportion of vegetation falling within a protected area. Low values correspond to a rare, relatively unprotected vegetation class, one with high conservation priority. Intactness was then calculated based on the proportion of undisturbed vegetation existing in the surrounding 11 km $\times$ 11 km neighborhood. As shown in Equation \@ref(eq:estes-comp), the final composite was calculated as follows:
 
-\[ Index = \frac{(rarity \cdot threat) + intactness}{2} \]
+\begin{equation}
+Index = \frac{(rarity \cdot threat) + intactness}{2}
+(\#eq:estes-comp)
+\end{equation}
+
 
 (@) *damania*: @Damania2015’s composite combines two sublayers, 1) vertebrate species richness weighted by endemism and threat status, and 2) ecoregion rarity based on area. They use a unique approach that combines factors by taking the maximum value at each cell across multiple layers. They first calculate species richness weighted by both endemism (range-size rarity) and by extinction risk (assessed by IUCN threat status), for all four verebrate taxonomic groups. They then take the maximum across these eight layers at each pixel to calculate their first sublayer. They then calculate ecoregion rarity based on the inverse of ecoregion area. These two sublayers are then converted to percentiles. The final composite consists of the maximum of these two sublayers. Note: following @Damania2015, this includes threatened reptile species from IUCN, despite the fact that reptiles have not been comprehensively assessed.
 
-(@) *laurance*: the biodiversity-specific subset of @Laurance2014a’s environmental values index, combining two equally weighted sublayers: 1) equally weighted a) threatened vertebrate species richness and b) total plant species richness, and 2) four equally weighted pre-existing habitat prioritization layers, a) biodiversity hotspots (@Myers2000), b) global 200 ecoregions (@Olson2002), c) IBAs/EBAs (@Stattersfield1998; @Waliczky2019), and d) High Biodiversity Wilderness Areas (HBWA) combined with Frontier Forests (@Mittermeier2003; @Bryant1997).
+(@) *laurance*: the biodiversity-specific subset of @Laurance2014a’s environmental values index, combining two equally weighted sublayers: 1) equally weighted a) threatened vertebrate species richness and b) total plant species richness, and 2) four equally weighted pre-existing habitat prioritization layers, a) biodiversity hotspots (@Myers2000), b) global 200 ecoregions (@Olson2002), c) IBAs/EBAs (@Stattersfield1998; @Waliczky2019), and d) High Biodiversity Wilderness Areas (HBWA) combined with Frontier Forests (@Mittermeier2003; @Bryant1997). See Equation \@ref(eq:laurance-comp) below.
 
 @Laurance2014a produced an “environmental values layer” from three equally weighted sub-layers: 1) biodiversity, 2) key habitats, and 3) carbon and climate regulation ecosystem services (estimates of net carbon emissions from land use change and estimates of atmospheric temperature and moisture regulation). In order to prioritize areas for protection and roads development, this environmental values layer was then combined with a “road-benefits layer,” based on four equally weighted continuous agricultural metrics (1. areas with closing yield gaps, 2. existing agriculture, 3. distance to markets, 4. projected production increases] multiplied by a fifth metric (5. agroecological suitability). Given that the focus of this paper is on biodiversity, and specifically variation in different approaches to representing biodiversity in a single index, we extract only those parts of @Laurance2014a's index that specifically relate to biodiversity: 1) threatened vertebrate and plant species richness, and 2) the four habitat priorities. Climate related ecosystem service layers were excluded, along with economic factors. Frontier Forests do not occur within Zambia, so were also excluded from our analysis.  See more details in @Laurance2014a and https://www.global-roadmap.org/.
 
-\[ Index = \frac{vert_{threat} + plants}{2} + \frac{hotspots + ecoregions + IBAs/EBAs + HBWA}{4} \]
+\begin{equation}
+Index = \frac{vert_{threat} + plants}{2} + \frac{hotspots + ecoregions + IBAs/EBAs + HBWA}{4}
+(\#eq:laurance-comp)
+\end{equation}
 
 (@) *vert_endemism*: Endemism richness, alternatively known as rarity-weighted richness, range area-weighted species richness, or rarity-weighted species endemism richness, following @Kier2009,  @Williams1996, and @Soto-Navarro2020. Endemism richness is the sum, for all species present in a cell, of the proportion of each species’ range contained in that cell (i.e. the summed inverse of range size). This effectively weights species richness by each species’ global range size, giving species with smaller ranges greater weight, combining elements of both endemism and species richness. Endemism richness is calculated for each taxa first, normalizing each taxa individually before averaging across all taxa into a composite for all vertebrate species combined [@Brancalion2019]. This approach treats each taxonomic group equally, but in doing so gives individual species in more speciose groups relatively less weight. We assess the impact of the order in which these layers are normalized and combined in Section \@ref(section-norm-order).
 
@@ -379,12 +395,31 @@ Derived from IUCN [@IUCN2017], BirdLife International [@BirdLife2018], and GARD 
 (@) *amp_small*: Small-ranged amphibian richness
 (@) *rep_small*: Small-ranged reptile richness
 
+```{r species-occurrence}
+species_occurrence_zambia <- data.frame(
+  "Taxa" = c("Mammals", "Birds", "Amphibians", "Reptiles"),
+  "All species" = c("252", "738", "94", "226 (GARD)"),
+  "Threatened (CR, EN, VU)" = c("11", "20", "1", 
+                                "3 (out of 37 assessed 
+                                by IUCN in Zambia)"),
+  "Small-Ranged (50% smallest)" = c("17", "67", "3", "10 (GARD)"),
+  "Small-Ranged OR Threatened" = c("26", "82", "3", "13 (GARD + IUCN)"),
+  "Median global range size (km2)" = c("170,600", "471,000", "4,500", "31,500 (GARD)")
+)
+ 
+
+knitr::kable(species_occurrence_zambia, col.names = c("Taxa", "All species", "Threatened \n(CR, EN, VU)", "Small-Ranged \n(50% smallest)", "Small-Ranged \nOR Threatened", "Median global \nrange size (km2)"),
+             caption = "Species occurrence in Zambia.", booktabs = TRUE) %>%
+  column_spec(2, width = "6em") %>%
+  column_spec(3, width = "6em") %>%
+  column_spec(4, width = "6em") %>%
+  column_spec(5, width = "6em") %>%
+  column_spec(6, width = "6em")
+```
 
 ### Methods for combining layers
 
 Different methods for combining multiple layers, for three pairs of layers: 1) threatened mammal and bird species richness (*mb*), approximating an approach focused on the two vertebrate taxa for which we have the best data, and which also have relatively large numbers of threatened species within Zambia; 2) vertebrate species richness and plant species richness (*vp*), approximating the goal of treating all species as equally valuable; and 3) vertebrate species richness with endemism richness (*ae*), approximating a goal of compromising between aspects of richness, endemism, and rarity, following in part @Soto-Navarro2020.
-
-\newpage
 
 **Combining threatened mammal and bird richness:**
 
@@ -428,29 +463,7 @@ Before running the `agroEcoTradeoff` model, each biodiversity index was cropped 
 
 ## Maps of biodiversity inputs {#bd-input-maps}
 
-See Figures \@ref(fig:bd-inputs-1), \@ref(fig:bd-inputs-10), and \@ref(fig:bd-inputs-110) on the following pages. 
-
-```{r species-occurrence}
-species_occurrence_zambia <- data.frame(
-  "Taxa" = c("Mammals", "Birds", "Amphibians", "Reptiles"),
-  "All species" = c("252", "738", "94", "226 (GARD)"),
-  "Threatened (CR, EN, VU)" = c("11", "20", "1", 
-                                "3 (out of 37 assessed 
-                                by IUCN in Zambia)"),
-  "Small-Ranged (50% smallest)" = c("17", "67", "3", "10 (GARD)"),
-  "Small-Ranged OR Threatened" = c("26", "82", "3", "13 (GARD + IUCN)"),
-  "Median global range size (km2)" = c("170,600", "471,000", "4,500", "31,500 (GARD)")
-)
- 
-
-knitr::kable(species_occurrence_zambia, col.names = c("Taxa", "All species", "Threatened \n(CR, EN, VU)", "Small-Ranged \n(50% smallest)", "Small-Ranged \nOR Threatened", "Median global \nrange size (km2)"),
-             caption = "Species occurrence in Zambia.", booktabs = TRUE) %>%
-  column_spec(2, width = "6em") %>%
-  column_spec(3, width = "6em") %>%
-  column_spec(4, width = "6em") %>%
-  column_spec(5, width = "6em") %>%
-  column_spec(6, width = "6em")
-```
+See Figures \@ref(fig:bd-inputs-1), \@ref(fig:bd-inputs-10), and \@ref(fig:bd-inputs-110) on the following pages.
 
 (ref:caption-bd-inputs-1) Raw biodiversity inputs, 1 km$^2$ resolution
 (ref:caption-bd-inputs-10) Raw biodiversity inputs, 10 km grid (100 km$^2$) resolution
@@ -502,7 +515,7 @@ The weighted Jaccard Similarity ($J_w$) allows us to compare non-categorical ras
 
 The weighted Jaccard Similarity is a pairwise metric, so calculating the mean Jaccard Similarity for a given factor's ensemble mean required averaging across all possible pairs with that particular ensemble mean within each category of variation.  We only calculate pairwise Jaccard Similarity between ensemble means within each category of variation to allow for consistent comparisons. For example, the mean $J_w$ for mammals is the mean of three pairwise similarity values between mammals and the other three taxonomic groups: $J_w(mammals, birds)$, $J_w(mammals,amphibians)$, and $J_w(mammals,reptiles)$. This metric gives us a sense of how similar the model’s conversion recommendations are across the different taxonomic groups (and similarly across the factors of variation in the other categories of variation). A $J_w$ = 0.70 means that two sets are 70% similar to each other, or have an overlap of 70%. The lower the mean $J_w$ value of a particular ensemble mean (i.e. mammals, threatened species richness, 110 km grid resolution, etc.), the less similar it is to the other factors within a category of variation. Low values across an entire category of variation indicates that variation within that category of variation has a relatively larger effect on the model outcomes than that within other categories of variation.
 
-Figure \@ref(fig:pairwise-jaccard) shows the pairwise Jaccard Similarity values for our primary analysis (*bp*). While these values are included in Main Text Figure 3, this additional figure shows each pairwise value more clearly.
+Figure \@ref(fig:pairwise-jaccard) shows the pairwise Jaccard Similarity values for our primary analysis (*bp*). While these values are included in Fig. 3, this additional figure shows each pairwise value more clearly.
 
 (ref:caption-pairwise-jaccard) Pairwise weighted Jaccard Similarity values, for *bp* model specification.
 
@@ -532,7 +545,7 @@ We also avoid any prediction of “biodiversity loss” resulting from various c
 
 ## Adjacency: nearest neighbor distance {#section-adjacency}
 
-As an additional measure of spatial similarity, we calculate *adjacency*, as the average nearest neighbor distance for each factor ensemble mean (Figure \@ref(fig:nnd-fig)). This represents the average distance between each pixel in ensemble mean \(a\) and its nearest neighbor in ensemble mean \(b\). Because these factor ensemble means are continuous between 0-1, not categorical, calculating adjacency required adjusting the distance based on the value of the cell in \(a\) and the value of its nearest nearest neighbor in \(b\), by multiplying the distance by the average of those two values. We then took a weighted average of these adjusted distances, dividing by the sum of the averaged cell values (instead of the number of points). These results generally agree with what we see in Main Text Figure 3. Different richness metrics and taxonomic groups have a much higher average distance to their nearest neighbor, meaning that the individual factors within richness metrics and taxonomic groups produce model recommendations are physically farther from each other than factors in other decision categories. This matches with Main Text Figure 3, which shows that types and taxonomic groups are much less similar than methods and resolution. In contrast, methods and resolution show much lower distances, meaning that different factors are more similar to each other (matching Main Text Figure 3), but also, that when model recommendations do not match, they remain relatively close spatially within the country.
+As an additional measure of spatial similarity, we calculate *adjacency*, as the average nearest neighbor distance for each factor ensemble mean (Figure \@ref(fig:nnd-fig)). This represents the average distance between each pixel in ensemble mean \(a\) and its nearest neighbor in ensemble mean \(b\). Because these factor ensemble means are continuous between 0-1, not categorical, calculating adjacency required adjusting the distance based on the value of the cell in \(a\) and the value of its nearest nearest neighbor in \(b\), by multiplying the distance by the average of those two values. We then took a weighted average of these adjusted distances, dividing by the sum of the averaged cell values (instead of the number of points). These results generally agree with what we see in Fig. 3. Different richness metrics and taxonomic groups have a much higher average distance to their nearest neighbor, meaning that the individual factors within richness metrics and taxonomic groups produce model recommendations are physically farther from each other than factors in other decision categories. This matches with Fig. 3, which shows that types and taxonomic groups are much less similar than methods and resolution. In contrast, methods and resolution show much lower distances, meaning that different factors are more similar to each other (matching Fig. 3), but also, that when model recommendations do not match, they remain relatively close spatially within the country.
 
 (ref:caption-nnd-fig) Average distance to nearest neighbor (adjacency) for ensemble mean conversion areas across different categories of variation, assuming 100% weight on biodiversity and constant average yields throughout Zambia (*bp*).
 
@@ -585,7 +598,7 @@ knitr::include_graphics(fp(p_plots, "ms_final/ms_fig_4_robustness_SI.png"))
 # knitr::include_graphics(fp(p_plots, "ms_v5/SI_fig_jac_w_z50.png"))
 ```
 
-(ref:caption-facet-r-z50) Mean conversion priorities assuming a production target that results in the conversion of ~50% of Zambia (*z50*), placing 100% weight in biodiversity and using average and constant yields across Zambia (compare with Main Text Figure 2). The panels show biodiversity indices within five categories of variation: a) existing biodiversity indices (vertebrate endemism richness, Estes et al. 2016, Laurance et al. 2014, and Damania & Wheeler 2015); b) taxonomic groups (mammals, birds, amphibians, and reptiles); c) species richness metrics (all species richness, endemism richness, and small-ranged species richness); d) index combination methods (average, geometric mean, maximum, and multiplication); and e) input resolutions (1 km, 10 km, and 110 km grids). Cell values correspond to the proportion of model runs using that particular factor that select a given cell for conversion. White areas within Zambia correspond to currently protected, cultivated, or settled areas.
+(ref:caption-facet-r-z50) Mean conversion priorities assuming a production target that results in the conversion of ~50% of Zambia (*z50*), placing 100% weight in biodiversity and using average and constant yields across Zambia (compare with Fig. 2). The panels show biodiversity indices within five categories of variation: a) existing biodiversity indices (vertebrate endemism richness, Estes et al. 2016, Laurance et al. 2014, and Damania & Wheeler 2015); b) taxonomic groups (mammals, birds, amphibians, and reptiles); c) species richness metrics (all species richness, endemism richness, and small-ranged species richness); d) index combination methods (average, geometric mean, maximum, and multiplication); and e) input resolutions (1 km, 10 km, and 110 km grids). Cell values correspond to the proportion of model runs using that particular factor that select a given cell for conversion. White areas within Zambia correspond to currently protected, cultivated, or settled areas.
 
 ```{r facet-r-z50, fig.cap = '(ref:caption-facet-r-z50)', out.width = "1\\textwidth"}
 knitr::include_graphics(fp(p_plots, "ms_v5/SI_fig_facet_r_z50_wide.png"))
@@ -712,7 +725,7 @@ knitr::include_graphics(fp(p_plots, "ms_v5/SI_fig_facet_r_extra_composites.png")
 
 ## Incorporating non-biodiversity constraints {#weights-results}
 
-In addition to our baseline scenario (*bp*, with 100% on biodiversity, assuming homogeneous yields throughout Zambia), we ran the model through five additional scenarios that progressively shared weight between biodiversity and yield, carbon loss, and transportation cost, allowing these factors to also influence conversion decisions. As a reminder, these are:
+In addition to our baseline scenario (*bp*, with 100% on biodiversity, assuming homogeneous yields throughout Zambia), we ran the model through five additional scenarios that progressively shared weight between biodiversity and yield, carbon loss, and transportation cost, allowing these factors to also influence conversion decisions. As previously described in Section \@ref(model-weights), these model scenarios are:
 
 - *b* = 100% biodiversity, accurate, spatially heterogeneous yields
 - *by* = 50%/50% biodiversity/yield
@@ -894,7 +907,7 @@ Each of the following figures shows, from top to bottom: the distribution of val
 knitr::include_graphics("/Users/christophercrawford/Google Drive/_Projects/Zambia/agroEcoTradeoff/external/plots/ms_v5/conv_maps_by_ensemble/composites_1_conv_maps.png")
 ```
 
-```{r conv-maps-types-1, fig.cap = '(ref:caption-conv-maps-types-1)', echo=FALSE, out.height = "0.9\\textheight"}
+```{r conv-maps-types-1, fig.cap = '(ref:caption-conv-maps-types-1)', echo=FALSE, out.height = "0.85\\textheight"}
 knitr::include_graphics("/Users/christophercrawford/Google Drive/_Projects/Zambia/agroEcoTradeoff/external/plots/ms_v5/conv_maps_by_ensemble/types_1_conv_maps.png")
 ```
 

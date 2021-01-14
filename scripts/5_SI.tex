@@ -36,7 +36,7 @@
 \IfFileExists{xurl.sty}{\usepackage{xurl}}{} % add URL line breaks if available
 \IfFileExists{bookmark.sty}{\usepackage{bookmark}}{\usepackage{hyperref}}
 \hypersetup{
-  pdftitle={Supporting Information: Consequences of under-explored variation in biodiversity indices used for land-use prioritization},
+  pdftitle={Appendix S1: Consequences of under-explored variation in biodiversity indices used for land-use prioritization},
   pdfauthor={Christopher L. Crawford \^{}1; Lyndon D. Estes\^{}2; Timothy S. Searchinger\^{}1; David S. Wilcove\^{}\{1, 3\}},
   hidelinks,
   pdfcreator={LaTeX via pandoc}}
@@ -108,7 +108,14 @@
 \newcommand{\CSLRightInline}[1]{\parbox[t]{\linewidth - \csllabelwidth}{#1}\break}
 \newcommand{\CSLIndent}[1]{\hspace{\cslhangindent}#1}
 
-\title{Supporting Information: Consequences of under-explored variation in biodiversity indices used for land-use prioritization}
+\title{Appendix S1: Consequences of under-explored variation in biodiversity indices used for land-use prioritization}
+\usepackage{etoolbox}
+\makeatletter
+\providecommand{\subtitle}[1]{% add subtitle to \maketitle
+  \apptocmd{\@title}{\par {\large #1 \par}}{}{}
+}
+\makeatother
+\subtitle{Ecological Applications}
 \author{Christopher L. Crawford\footnote{Corresponding Author, \href{mailto:ccrawford@princeton.edu}{\nolinkurl{ccrawford@princeton.edu}}, Robertson Hall, Princeton University, Princeton, NJ} \(^1\) \and Lyndon D. Estes\(^2\) \and Timothy S. Searchinger\(^1\) \and David S. Wilcove\(^{1, 3}\)}
 \date{\(^1\)Princeton School of Public and International Affairs, Princeton University, Princeton, NJ \newline \(^2\)Graduate School of Geography, Clark University, Worcester, MA \newline \(^3\)Department of Ecology \& Evolutionary Biology, Princeton University, Princeton, NJ \newline \newline \newline \today}
 
@@ -119,7 +126,13 @@
 \setcounter{tocdepth}{2}
 \tableofcontents
 }
+\renewcommand{\thefigure}{S\arabic{figure}}
+\renewcommand{\thesection}{S\arabic{section}}
+\renewcommand{\thetable}{S\arabic{table}}
+\renewcommand\theequation{S\arabic{equation}}
+
 \listoffigures
+\listoftables
 
 \hypertarget{expanded-methods}{%
 \section{Expanded Methods}\label{expanded-methods}}
@@ -132,7 +145,7 @@ Our analysis builds on the \texttt{agroEcoTradeoff} land-use model described in 
 \hypertarget{non-bd-inputs}{%
 \subsubsection{Non-biodiversity model inputs}\label{non-bd-inputs}}
 
-In our analysis, we use this model to explore how a range of approaches for formulating biodiversity values affect land-use recommendations. We therefore use the same settings for non-biodiversity elements as applied in Estes et al. (2016), including representative future production targets for maize and soy (projecting a fourfold increase for maize and a 10-fold increase for soy by 2050, compared with 2009--2014 average), as well as the input yield, carbon density, and travel cost maps. Yield estimates are modeled using DSSAT (Jones et al. 2003) based on weather station data and soil profiles, mapped to a 1 km\(^2\) grid using a generalized additive model, and rescaled to match FAO yield-growth projections for Zambia by 2050 (see Figure \ref{fig:yield}). Travel cost is based on travel time to the nearest market town. Carbon loss is based on estimates of aboveground and belowground biomass carbon stocks Baccini et al. (2012). Additional detail on the model structure and how constraints were modeled can be found in Estes et al. (2016). The general structure of the model is illustrated in Main Text Figure 1b. See Estes et al. (2016) for additional details.
+In our analysis, we use this model to explore how a range of approaches for formulating biodiversity values affect land-use recommendations. We therefore use the same settings for non-biodiversity elements as applied in Estes et al. (2016), including representative future production targets for maize and soy (projecting a fourfold increase for maize and a 10-fold increase for soy by 2050, compared with 2009--2014 average), as well as the input yield, carbon density, and travel cost maps. Yield estimates are modeled using DSSAT (Jones et al. 2003) based on weather station data and soil profiles, mapped to a 1 km\(^2\) grid using a generalized additive model, and rescaled to match FAO yield-growth projections for Zambia by 2050 (see Figure \ref{fig:yield}). Travel cost is based on travel time to the nearest market town. Carbon loss is based on estimates of aboveground and belowground biomass carbon stocks Baccini et al. (2012). Additional detail on the model structure and how constraints were modeled can be found in Estes et al. (2016). The general structure of the model is illustrated in Fig. 1b. See Estes et al. (2016) for additional details.
 
 
 
@@ -163,7 +176,9 @@ We ran the model through five additional scenarios that progressively shared wei
   \emph{byct} = 25\% weight on biodiversity, yield, carbon, and transportation cost
 \end{itemize}
 
-Our baseline production target is based on current projections of future demand and yield increases, and converts to cropland an additional \textasciitilde5\% of Zambia's remaining unprotected, uncultivated, and undeveloped land area (approximately 22,000 km\(^2\)). In addition to these analyses, we also assessed the effect of increasing our production target so that \textasciitilde50\% of Zambia's available land area would be converted, in order to assess scale dependence. This model specification (\emph{z50}), also assumes constant, average yields throughout Zambia, just like the primary analysis (\emph{bp}). See Section \ref{section-prod-targ} for details and results. See full results for the additional weighting specifications in Section \ref{weights-results}.
+See full results for these additional weighting specifications in Section \ref{weights-results}.
+
+Our baseline production target is based on current projections of future demand and yield increases, and converts to cropland an additional \textasciitilde5\% of Zambia's remaining unprotected, uncultivated, and undeveloped land area (approximately 22,000 km\(^2\)). In addition to these analyses, we also assessed the effect of increasing our production target so that \textasciitilde50\% of Zambia's available land area would be converted, in order to assess scale dependence. This model specification (\emph{z50}), also assumes constant, average yields throughout Zambia, just like the primary analysis (\emph{bp}). See Section \ref{section-prod-targ} for details and results.
 
 \hypertarget{bd-inputs}{%
 \subsection{Construction of biodiversity indices}\label{bd-inputs}}
@@ -177,10 +192,13 @@ In order to capture the variation in how biodiversity can be represented in prio
 \def\labelenumi{(\arabic{enumi})}
 \tightlist
 \item
-  \emph{estes}: Estes et al. (2016)'s composite incorporates threat, rarity, and intactness of potential natural vegetation (PNV) types of eastern and southern Africa, described by Van Breugel et al. (2015). Rarity was calculated as the proportion of Zambia occupied by that vegetation type (these values were log transformed due to a highly skewed distribution). Threat was calculated as the proportion of vegetation falling within a protected area. Low values correspond to a rare, relatively unprotected vegetation class, one with high conservation priority. Intactness was then calculated based on the proportion of undisturbed vegetation existing in the surrounding 11 km \(\times\) 11 km neighborhood. The final composite was calculated as follows:
+  \emph{estes}: Estes et al. (2016)'s composite incorporates threat, rarity, and intactness of potential natural vegetation (PNV) types of eastern and southern Africa, described by Van Breugel et al. (2015). Rarity was calculated as the proportion of Zambia occupied by that vegetation type (these values were log transformed due to a highly skewed distribution). Threat was calculated as the proportion of vegetation falling within a protected area. Low values correspond to a rare, relatively unprotected vegetation class, one with high conservation priority. Intactness was then calculated based on the proportion of undisturbed vegetation existing in the surrounding 11 km \(\times\) 11 km neighborhood. As shown in Equation \eqref{eq:estes-comp}, the final composite was calculated as follows:
 \end{enumerate}
 
-\[ Index = \frac{(rarity \cdot threat) + intactness}{2} \]
+\begin{equation}
+Index = \frac{(rarity \cdot threat) + intactness}{2}
+\label{eq:estes-comp}
+\end{equation}
 
 \begin{enumerate}
 \def\labelenumi{(\arabic{enumi})}
@@ -188,12 +206,15 @@ In order to capture the variation in how biodiversity can be represented in prio
 \item
   \emph{damania}: Damania and Wheeler (2015)'s composite combines two sublayers, 1) vertebrate species richness weighted by endemism and threat status, and 2) ecoregion rarity based on area. They use a unique approach that combines factors by taking the maximum value at each cell across multiple layers. They first calculate species richness weighted by both endemism (range-size rarity) and by extinction risk (assessed by IUCN threat status), for all four verebrate taxonomic groups. They then take the maximum across these eight layers at each pixel to calculate their first sublayer. They then calculate ecoregion rarity based on the inverse of ecoregion area. These two sublayers are then converted to percentiles. The final composite consists of the maximum of these two sublayers. Note: following Damania and Wheeler (2015), this includes threatened reptile species from IUCN, despite the fact that reptiles have not been comprehensively assessed.
 \item
-  \emph{laurance}: the biodiversity-specific subset of Laurance et al. (2014)'s environmental values index, combining two equally weighted sublayers: 1) equally weighted a) threatened vertebrate species richness and b) total plant species richness, and 2) four equally weighted pre-existing habitat prioritization layers, a) biodiversity hotspots (Myers et al. (2000)), b) global 200 ecoregions (Olson and Dinerstein (2002)), c) IBAs/EBAs (Stattersfield et al. (1998); Waliczky et al. (2019)), and d) High Biodiversity Wilderness Areas (HBWA) combined with Frontier Forests (Mittermeier et al. (2003); Bryant, Nielsen, and Tangley (1997)).
+  \emph{laurance}: the biodiversity-specific subset of Laurance et al. (2014)'s environmental values index, combining two equally weighted sublayers: 1) equally weighted a) threatened vertebrate species richness and b) total plant species richness, and 2) four equally weighted pre-existing habitat prioritization layers, a) biodiversity hotspots (Myers et al. (2000)), b) global 200 ecoregions (Olson and Dinerstein (2002)), c) IBAs/EBAs (Stattersfield et al. (1998); Waliczky et al. (2019)), and d) High Biodiversity Wilderness Areas (HBWA) combined with Frontier Forests (Mittermeier et al. (2003); Bryant, Nielsen, and Tangley (1997)). See Equation \eqref{eq:laurance-comp} below.
 \end{enumerate}
 
 Laurance et al. (2014) produced an ``environmental values layer'' from three equally weighted sub-layers: 1) biodiversity, 2) key habitats, and 3) carbon and climate regulation ecosystem services (estimates of net carbon emissions from land use change and estimates of atmospheric temperature and moisture regulation). In order to prioritize areas for protection and roads development, this environmental values layer was then combined with a ``road-benefits layer,'' based on four equally weighted continuous agricultural metrics (1. areas with closing yield gaps, 2. existing agriculture, 3. distance to markets, 4. projected production increases{]} multiplied by a fifth metric (5. agroecological suitability). Given that the focus of this paper is on biodiversity, and specifically variation in different approaches to representing biodiversity in a single index, we extract only those parts of Laurance et al. (2014)'s index that specifically relate to biodiversity: 1) threatened vertebrate and plant species richness, and 2) the four habitat priorities. Climate related ecosystem service layers were excluded, along with economic factors. Frontier Forests do not occur within Zambia, so were also excluded from our analysis. See more details in Laurance et al. (2014) and \url{https://www.global-roadmap.org/}.
 
-\[ Index = \frac{vert_{threat} + plants}{2} + \frac{hotspots + ecoregions + IBAs/EBAs + HBWA}{4} \]
+\begin{equation}
+Index = \frac{vert_{threat} + plants}{2} + \frac{hotspots + ecoregions + IBAs/EBAs + HBWA}{4}
+\label{eq:laurance-comp}
+\end{equation}
 
 \begin{enumerate}
 \def\labelenumi{(\arabic{enumi})}
@@ -288,12 +309,31 @@ Derived from IUCN (IUCN 2017), BirdLife International (BirdLife International an
   \emph{rep\_small}: Small-ranged reptile richness
 \end{enumerate}
 
+\begin{table}
+
+\caption{\label{tab:species-occurrence}Species occurrence in Zambia.}
+\centering
+\begin{tabular}[t]{l>{\raggedright\arraybackslash}p{6em}>{\raggedright\arraybackslash}p{6em}>{\raggedright\arraybackslash}p{6em}>{\raggedright\arraybackslash}p{6em}>{\raggedright\arraybackslash}p{6em}}
+\toprule
+Taxa & All species & Threatened 
+(CR, EN, VU) & Small-Ranged 
+(50\% smallest) & Small-Ranged 
+OR Threatened & Median global 
+range size (km2)\\
+\midrule
+Mammals & 252 & 11 & 17 & 26 & 170,600\\
+Birds & 738 & 20 & 67 & 82 & 471,000\\
+Amphibians & 94 & 1 & 3 & 3 & 4,500\\
+Reptiles & 226 (GARD) & 3 (out of 37 assessed 
+                                by IUCN in Zambia) & 10 (GARD) & 13 (GARD + IUCN) & 31,500 (GARD)\\
+\bottomrule
+\end{tabular}
+\end{table}
+
 \hypertarget{methods-for-combining-layers}{%
 \subsubsection{Methods for combining layers}\label{methods-for-combining-layers}}
 
 Different methods for combining multiple layers, for three pairs of layers: 1) threatened mammal and bird species richness (\emph{mb}), approximating an approach focused on the two vertebrate taxa for which we have the best data, and which also have relatively large numbers of threatened species within Zambia; 2) vertebrate species richness and plant species richness (\emph{vp}), approximating the goal of treating all species as equally valuable; and 3) vertebrate species richness with endemism richness (\emph{ae}), approximating a goal of compromising between aspects of richness, endemism, and rarity, following in part Soto-Navarro et al. (2020).
-
-\newpage
 
 \textbf{Combining threatened mammal and bird richness:}
 
@@ -364,27 +404,6 @@ Before running the \texttt{agroEcoTradeoff} model, each biodiversity index was c
 
 See Figures \ref{fig:bd-inputs-1}, \ref{fig:bd-inputs-10}, and \ref{fig:bd-inputs-110} on the following pages.
 
-\begin{table}
-
-\caption{\label{tab:species-occurrence}Species occurrence in Zambia.}
-\centering
-\begin{tabular}[t]{l>{\raggedright\arraybackslash}p{6em}>{\raggedright\arraybackslash}p{6em}>{\raggedright\arraybackslash}p{6em}>{\raggedright\arraybackslash}p{6em}>{\raggedright\arraybackslash}p{6em}}
-\toprule
-Taxa & All species & Threatened 
-(CR, EN, VU) & Small-Ranged 
-(50\% smallest) & Small-Ranged 
-OR Threatened & Median global 
-range size (km2)\\
-\midrule
-Mammals & 252 & 11 & 17 & 26 & 170,600\\
-Birds & 738 & 20 & 67 & 82 & 471,000\\
-Amphibians & 94 & 1 & 3 & 3 & 4,500\\
-Reptiles & 226 (GARD) & 3 (out of 37 assessed 
-                                by IUCN in Zambia) & 10 (GARD) & 13 (GARD + IUCN) & 31,500 (GARD)\\
-\bottomrule
-\end{tabular}
-\end{table}
-
 
 
 
@@ -437,7 +456,7 @@ The weighted Jaccard Similarity (\(J_w\)) allows us to compare non-categorical r
 
 The weighted Jaccard Similarity is a pairwise metric, so calculating the mean Jaccard Similarity for a given factor's ensemble mean required averaging across all possible pairs with that particular ensemble mean within each category of variation. We only calculate pairwise Jaccard Similarity between ensemble means within each category of variation to allow for consistent comparisons. For example, the mean \(J_w\) for mammals is the mean of three pairwise similarity values between mammals and the other three taxonomic groups: \(J_w(mammals, birds)\), \(J_w(mammals,amphibians)\), and \(J_w(mammals,reptiles)\). This metric gives us a sense of how similar the model's conversion recommendations are across the different taxonomic groups (and similarly across the factors of variation in the other categories of variation). A \(J_w\) = 0.70 means that two sets are 70\% similar to each other, or have an overlap of 70\%. The lower the mean \(J_w\) value of a particular ensemble mean (i.e.~mammals, threatened species richness, 110 km grid resolution, etc.), the less similar it is to the other factors within a category of variation. Low values across an entire category of variation indicates that variation within that category of variation has a relatively larger effect on the model outcomes than that within other categories of variation.
 
-Figure \ref{fig:pairwise-jaccard} shows the pairwise Jaccard Similarity values for our primary analysis (\emph{bp}). While these values are included in Main Text Figure 3, this additional figure shows each pairwise value more clearly.
+Figure \ref{fig:pairwise-jaccard} shows the pairwise Jaccard Similarity values for our primary analysis (\emph{bp}). While these values are included in Fig. 3, this additional figure shows each pairwise value more clearly.
 
 
 
@@ -458,7 +477,7 @@ We also avoid any prediction of ``biodiversity loss'' resulting from various con
 \hypertarget{section-adjacency}{%
 \subsection{Adjacency: nearest neighbor distance}\label{section-adjacency}}
 
-As an additional measure of spatial similarity, we calculate \emph{adjacency}, as the average nearest neighbor distance for each factor ensemble mean (Figure \ref{fig:nnd-fig}). This represents the average distance between each pixel in ensemble mean \(a\) and its nearest neighbor in ensemble mean \(b\). Because these factor ensemble means are continuous between 0-1, not categorical, calculating adjacency required adjusting the distance based on the value of the cell in \(a\) and the value of its nearest nearest neighbor in \(b\), by multiplying the distance by the average of those two values. We then took a weighted average of these adjusted distances, dividing by the sum of the averaged cell values (instead of the number of points). These results generally agree with what we see in Main Text Figure 3. Different richness metrics and taxonomic groups have a much higher average distance to their nearest neighbor, meaning that the individual factors within richness metrics and taxonomic groups produce model recommendations are physically farther from each other than factors in other decision categories. This matches with Main Text Figure 3, which shows that types and taxonomic groups are much less similar than methods and resolution. In contrast, methods and resolution show much lower distances, meaning that different factors are more similar to each other (matching Main Text Figure 3), but also, that when model recommendations do not match, they remain relatively close spatially within the country.
+As an additional measure of spatial similarity, we calculate \emph{adjacency}, as the average nearest neighbor distance for each factor ensemble mean (Figure \ref{fig:nnd-fig}). This represents the average distance between each pixel in ensemble mean \(a\) and its nearest neighbor in ensemble mean \(b\). Because these factor ensemble means are continuous between 0-1, not categorical, calculating adjacency required adjusting the distance based on the value of the cell in \(a\) and the value of its nearest nearest neighbor in \(b\), by multiplying the distance by the average of those two values. We then took a weighted average of these adjusted distances, dividing by the sum of the averaged cell values (instead of the number of points). These results generally agree with what we see in Fig. 3. Different richness metrics and taxonomic groups have a much higher average distance to their nearest neighbor, meaning that the individual factors within richness metrics and taxonomic groups produce model recommendations are physically farther from each other than factors in other decision categories. This matches with Fig. 3, which shows that types and taxonomic groups are much less similar than methods and resolution. In contrast, methods and resolution show much lower distances, meaning that different factors are more similar to each other (matching Fig. 3), but also, that when model recommendations do not match, they remain relatively close spatially within the country.
 
 
 
@@ -508,7 +527,7 @@ The relative similarity between these two production targets is shown in Figure 
 
 
 \begin{figure}
-\includegraphics[width=1\textwidth]{/Users/christophercrawford/Google Drive/_Projects/Zambia/agroEcoTradeoff/external/plots/ms_v5/SI_fig_facet_r_z50_wide} \caption{Mean conversion priorities assuming a production target that results in the conversion of \textasciitilde50\% of Zambia (\emph{z50}), placing 100\% weight in biodiversity and using average and constant yields across Zambia (compare with Main Text Figure 2). The panels show biodiversity indices within five categories of variation: a) existing biodiversity indices (vertebrate endemism richness, Estes et al.~2016, Laurance et al.~2014, and Damania \& Wheeler 2015); b) taxonomic groups (mammals, birds, amphibians, and reptiles); c) species richness metrics (all species richness, endemism richness, and small-ranged species richness); d) index combination methods (average, geometric mean, maximum, and multiplication); and e) input resolutions (1 km, 10 km, and 110 km grids). Cell values correspond to the proportion of model runs using that particular factor that select a given cell for conversion. White areas within Zambia correspond to currently protected, cultivated, or settled areas.}\label{fig:facet-r-z50}
+\includegraphics[width=1\textwidth]{/Users/christophercrawford/Google Drive/_Projects/Zambia/agroEcoTradeoff/external/plots/ms_v5/SI_fig_facet_r_z50_wide} \caption{Mean conversion priorities assuming a production target that results in the conversion of \textasciitilde50\% of Zambia (\emph{z50}), placing 100\% weight in biodiversity and using average and constant yields across Zambia (compare with Fig. 2). The panels show biodiversity indices within five categories of variation: a) existing biodiversity indices (vertebrate endemism richness, Estes et al.~2016, Laurance et al.~2014, and Damania \& Wheeler 2015); b) taxonomic groups (mammals, birds, amphibians, and reptiles); c) species richness metrics (all species richness, endemism richness, and small-ranged species richness); d) index combination methods (average, geometric mean, maximum, and multiplication); and e) input resolutions (1 km, 10 km, and 110 km grids). Cell values correspond to the proportion of model runs using that particular factor that select a given cell for conversion. White areas within Zambia correspond to currently protected, cultivated, or settled areas.}\label{fig:facet-r-z50}
 \end{figure}
 
 \newpage
@@ -600,7 +619,7 @@ These \emph{plants}, \emph{habitats}, and \emph{bird\_composite} indices were no
 \hypertarget{weights-results}{%
 \subsection{Incorporating non-biodiversity constraints}\label{weights-results}}
 
-In addition to our baseline scenario (\emph{bp}, with 100\% on biodiversity, assuming homogeneous yields throughout Zambia), we ran the model through five additional scenarios that progressively shared weight between biodiversity and yield, carbon loss, and transportation cost, allowing these factors to also influence conversion decisions. As a reminder, these are:
+In addition to our baseline scenario (\emph{bp}, with 100\% on biodiversity, assuming homogeneous yields throughout Zambia), we ran the model through five additional scenarios that progressively shared weight between biodiversity and yield, carbon loss, and transportation cost, allowing these factors to also influence conversion decisions. As previously described in Section \ref{model-weights}, these model scenarios are:
 
 \begin{itemize}
 \tightlist
@@ -744,7 +763,7 @@ Each of the following figures shows, from top to bottom: the distribution of val
 \end{figure}
 
 \begin{figure}
-\includegraphics[width=1\textwidth,height=0.9\textheight]{/Users/christophercrawford/Google Drive/_Projects/Zambia/agroEcoTradeoff/external/plots/ms_v5/conv_maps_by_ensemble/types_1_conv_maps} \caption{Types of richness metrics, shown for all vertebrate species combined. Note that this figure shows threatened species richness for all four taxonomic groups, even though reptiles have not been comprehensively assessed by IUCN. Threatened species richness is not included in our main analysis. See Section \ref{section-threat} for a comparison of all species richness, endemism richness, small-ranged species richness, and threatened species richness, using data for mammals, birds, and amphibians alone.}\label{fig:conv-maps-types-1}
+\includegraphics[width=1\textwidth,height=0.85\textheight]{/Users/christophercrawford/Google Drive/_Projects/Zambia/agroEcoTradeoff/external/plots/ms_v5/conv_maps_by_ensemble/types_1_conv_maps} \caption{Types of richness metrics, shown for all vertebrate species combined. Note that this figure shows threatened species richness for all four taxonomic groups, even though reptiles have not been comprehensively assessed by IUCN. Threatened species richness is not included in our main analysis. See Section \ref{section-threat} for a comparison of all species richness, endemism richness, small-ranged species richness, and threatened species richness, using data for mammals, birds, and amphibians alone.}\label{fig:conv-maps-types-1}
 \end{figure}
 
 \begin{figure}
@@ -789,7 +808,7 @@ Baccini, A., S. J. Goetz, W. S. Walker, N. T. Laporte, M. Sun, D. Sulla-Menashe,
 BirdLife International and Handbook of the Birds of the World. 2018. {``{Bird species distribution maps of the world}.''} Cambridge, United Kingdom: BirdLife International. \url{http://datazone.birdlife.org/species/requestdis}.
 
 \leavevmode\hypertarget{ref-R-rgdal}{}%
-Bivand, Roger, Tim Keitt, and Barry Rowlingson. 2019. \emph{{rgdal: Bindings for the 'Geospatial' Data Abstraction Library}}. \url{https://cran.r-project.org/package=rgdal}.
+Bivand, Roger, Tim Keitt, and Barry Rowlingson. 2020. \emph{{rgdal: Bindings for the 'Geospatial' Data Abstraction Library}}. \url{https://cran.r-project.org/package=rgdal}.
 
 \leavevmode\hypertarget{ref-Brancalion2019}{}%
 Brancalion, Pedro H S, Aidin Niamir, Eben Broadbent, Renato Crouzeilles, Felipe S M Barros, Angelica M. Almeyda Zambrano, Alessandro Baccini, et al. 2019. {``{Global restoration opportunities in tropical rainforest landscapes}.''} \emph{Science Advances} 5 (7): eaav3223. \url{https://doi.org/10.1126/sciadv.aav3223}.
@@ -825,7 +844,7 @@ Field, Christopher R, and Chris S Elphick. 2019. {``{Quantifying the return on i
 Greenberg, Jonathan Asher, and Matteo Mattiuzzi. 2018. \emph{{gdalUtils: Wrappers for the Geospatial Data Abstraction Library (GDAL) Utilities}}. \url{https://cran.r-project.org/package=gdalUtils}.
 
 \leavevmode\hypertarget{ref-R-raster}{}%
-Hijmans, Robert J. 2019. \emph{{raster: Geographic Data Analysis and Modeling}}. \url{https://cran.r-project.org/package=raster}.
+Hijmans, Robert J. 2020. \emph{{raster: Geographic Data Analysis and Modeling}}. \url{https://cran.r-project.org/package=raster}.
 
 \leavevmode\hypertarget{ref-Ioffe2010}{}%
 Ioffe, Sergey. 2010. {``{Improved consistent sampling, Weighted Minhash and L1 Sketching}.''} \emph{Proceedings - IEEE International Conference on Data Mining, ICDM}, 246--55. \url{https://doi.org/10.1109/ICDM.2010.80}.
