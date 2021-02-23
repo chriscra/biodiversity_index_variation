@@ -1,12 +1,19 @@
 ---
-title: "Preparing Biodiversity Rasters directly from sources used by Laurance et al. 2014"
+title: "Preparing Input Biodiversity Layers"
+author: "Christopher Crawford, Princeton University"
 output: html_notebook
 editor_options: 
   chunk_output_type: console
 ---
 This R Markdown file outlines the process for preparing the input biodiversity layers to go into the indices tested with the `agroEcoTradeoff` prioritization model. Biodiversity datasets were largely informed by those used by Laurance et al. 2014 (details of which can be found here [here](http://www.global-roadmap.org/technical-details/)).
 
-In order, the biodiversity layers
+In order, the biodiversity layers produced here are:
+
+- Vertebrate richness layers, including mammals, birds, amphibians, and reptiles
+- Plant species richness
+- habitat rasters, including biodiversity hotspots, important and endemic bird habitats, WWF global 200 ecoregions, high biodiversity wilderness areas, and frontier forests.
+
+See Appendix S1 for full details. 
 
 # Set up
 
