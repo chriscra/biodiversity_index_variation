@@ -6,14 +6,14 @@ output: html_document
 ---
 This document outlines code for running computationally expensive functions in parallel, most importantly, `st_make_valid`.
 
-Workflow for parallel:
-add libraries
-check the number of clusters
-set up the cluster with the particular number of cores
-export the libraries each core needs to run the analysis (basically, parallel or snowfall, sf, lwgeom)
-load the file, add a surrogate key to re order stuff if it comes in at a different time.
+Workflow for parallel computing:
+- add libraries
+- check the number of clusters
+- set up the cluster with the particular number of cores
+- export the libraries each core needs to run the analysis (basically, parallel or snowfall, sf, lwgeom)
+- load the file, add a surrogate key to re order stuff if it comes in at a different time.
 
-dummy function to apply st_make_valid to elements of a list, return that element, and automatically start on the next one. I think each element will be put into a list, which could then be re collected using the function collect()
+dummy function to apply st_make_valid to elements of a list, return that element, and automatically start on the next one. I think each element will be put into a list, which could then be re collected using the function `collect()`
 
 
 ```{r utilities, eval=TRUE}

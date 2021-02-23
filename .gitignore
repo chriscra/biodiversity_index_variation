@@ -5,9 +5,13 @@ Backups/
 external/
 lyndon_files/
 
+
 # files to exclude
 *.bib
 *.webloc
+.DS_Store
+
+
 # installer.sh
 
 # scripts to exclude
@@ -17,6 +21,8 @@ scripts/**/*.pdf
 scripts/**/*.png
 scripts/**/*.rda
 scripts/versions/
+scripts/backups_2.23.21/
+scripts/.DS_Store
 
 # note: a/**/z matches nested directories
 

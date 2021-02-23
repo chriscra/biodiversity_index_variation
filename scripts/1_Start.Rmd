@@ -1,19 +1,26 @@
 ---
-title: "Zambia Start File"
+title: "Biodiversity Index Variation - Start File"
 output: html_notebook
 editor_options: 
   chunk_output_type: console
 ---
+This Rmarkdown notebook is intended to serve as a useful starting place for this Zambia Biodiversity Index Variation project. It includes chunks to:
+- load packages, functions, pathnames, etc.
+- load some basic, useful gis files (these are sometimes recreated or superceded in later .Rmd files)
+- explore the inner workings of the `agroEcoTradeoff` model, specifically the way results are stored
+- load prepared biodiversity input layers, including vertebrate species files, plants and habitats files, and final inputs and tradeoff model results
+- model run naming conventions
+
 ```{r start-up, eval=TRUE}
 ## libraries --------------------------------------------------------------------------------
 source("scripts/cc_libraries.R")
 source("scripts/cc_functions.R")
 source("scripts/cc_pathnames.R")
 source("scripts/cc_plot_things.R")
-
 ```
 
 ```{r load-basic-gis-files}
+
 # Other helpful files ----------------------------------------------------------------
 aaeac <- sf::st_crs("+proj=aea +lat_1=20 +lat_2=-23 +lat_0=0 +lon_0=25 +x_0=0 +y_0=0 +ellps=WGS84 +datum=WGS84 +units=m +no_defs") # Africa Albers Equal Area Conic projection.
 # could probably also use raster::crs
@@ -42,13 +49,9 @@ cp <- read.csv(fp(p_ZA,"ZA-cons-priorities.csv"))
 cp.dt <- fread(fp(p_ZA,"ZA-cons-priorities.csv"))
 
 cp_raster <- raster(fp(p_datnew,"cons-priorities_from_csv.tif"))
-
-
-
 ```
 
 ```{r inputs_agroEcoTradeoff}
-
 # -----------------------------------------------------------------------
 # inputs forand from agroEcoTradeoff model
 # -----------------------------------------------------------------------
@@ -172,7 +175,10 @@ load(file = fp(p_iucn_dev, "vert_lists.RData"), verbose = TRUE)
 load(file = fp(p_iucn_dev, "mam_list.RData"))
 load(file = fp(p_iucn_dev, "bird_list.RData"))
 load(file = fp(p_iucn_dev, "amp_list.RData"))
-load(file = fp(p_iucn_dev, "rep_list.RData"))
+load(file = fp(p_iucn_dev, "rep_list.RData")) # note, this rep_list file includes only data from IUCN, not from GARD. See GARD list for the most up to date files. The richness metric .tifs have all been updated to use GARD (or IUCN in the case of threatened species richness). These are the finaly data files used in the analysis.
+
+load(file = "/Users/christophercrawford/Google Drive/_Projects/Zambia/agroEcoTradeoff/external/data_new/1_IUCN_dev/gard_list.RData", verbose = TRUE) #
+
 
 
 # load-vert-bricks -------------------------------------------------------------------------------
@@ -193,12 +199,6 @@ ecoregions_weighted_rarity <- raster(fp(p_ecoreg_dev, "ecoregions_weighted_rarit
 # final zambia rasters:
 load(file = fp(p_datnew,"final-rasters-zambia.RData"), verbose = TRUE)
 ```
-
-
-
-
-
-This markdown notebook includes the analyses for the Zambia methods paper.
 
 ```{r load-inputs+toffs}
 load(file = fp(p_mod_inputs,"bd_inputs.RData"), verbose = TRUE)
@@ -264,7 +264,7 @@ jaccard_combo <- read.csv(file = fp(p_mod_output, "jaccard_combo.csv"))
 ```
 
 ```{r names_and_ensembles}
-# new runs, May 30th, aka runs_530
+# new runs, May 30th 2020, aka runs_530 - these are the final version included in the published manuscript (2021)
 length(runs_1)
 grep("threat", runs_1, value = TRUE, invert = TRUE) %>% length
 

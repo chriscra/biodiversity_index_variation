@@ -176,6 +176,22 @@ cc_make_raster8 <- function (input_sf, run_filter = TRUE,
                                                  +ellps=WGS84 +datum=WGS84 +units=m +no_defs"),
                              fasterize_field = NULL, fasterize_fun = 'sum', #template_raster = msk,
                              run_mask = TRUE, mask = msk, prep_zambia = TRUE) {
+  # `cc_make_raster8()` was designed to
+  # 1. filter species to the appropriate groups by default (i.e. presence = extant species only,
+        # origin = native and reintroduced species only, terrestrial species only,
+        # seasonality = "Resident", "Breeding", and "Non-breeding Season", and excluding Extinct or Extinct in the Wild species ("EX", "EW")
+  # 2. allow for selection of 1) all species, 2) small-ranged species, 3) threatened species, or 4) small-ranged or threatened species
+  # 3. reproject geometries, and finally
+  # 4. produce rasters for 8 different richness metrics:
+        # 1) all sp. richness,
+        # 2) endemism richness (based on the inverse of the global range),
+        # 3) Zambian endemism richness (based on the inverse of the Zambian range),
+        # 4) threatened species richness,
+        # 5) weighted threatened species richness (following Damania & Wheeler 2015),
+        # 6) small-ranged species richness (based on the global range median),
+        # 7) Zambian small-ranged species richness (based on the Zambian range median), and
+        # 8) small-ranged or threatened species richness.
+
   # if run_filter = FALSE, set all the filter switches to false. This is used to turn off this entire filter step, so that make_raster can be used for just regular polygon-to-raster conversion.
   if (run_filter == FALSE) {
     filter_presence = FALSE
