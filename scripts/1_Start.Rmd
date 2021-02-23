@@ -263,10 +263,10 @@ jaccard_combo <- read.csv(file = fp(p_mod_output, "jaccard_combo.csv"))
 # from second iteration, following Xingli's advice.
 ```
 
-```{r names_and_ensembles}
-# new runs, May 30th 2020, aka runs_530 - these are the final version included in the published manuscript (2021)
-length(runs_1)
-grep("threat", runs_1, value = TRUE, invert = TRUE) %>% length
+```{r *runs}
+# Final model runs:
+
+# 38 runs x 3 resolutions = 114 runs
 
 runs_1 <- c(
   "vert_all",  # mam, bird, amp, and rep (comprehensive)
@@ -311,78 +311,24 @@ runs_1 <- c(
 runs_1
 runs_10 <- paste0(runs_1, "_10")
 runs_110 <- paste0(runs_1, "_110")
+
+# combine runs at the three resolutions
 runs <- c(runs_1, runs_10, runs_110)
 
 
-paste0(runs, "_10")
-38*3
+# extra runs, for reference:
+extra_runs <- c("vert_all_mba", "vert_endemism_mba", "vert_threat_mba", "vert_small_mba", "vert_all_mba_10", "vert_endemism_mba_10", "vert_threat_mba_10", "vert_small_mba_10", "vert_all_mba_110", "vert_endemism_mba_110", "vert_threat_mba_110", "vert_small_mba_110", "vert_all_sum_norm", "vert_endemism_sum_norm", "vert_small_sum_norm", "vert_all_sum_norm_10", "vert_endemism_sum_norm_10", "vert_small_sum_norm_10", "vert_all_sum_norm_110", "vert_endemism_sum_norm_110", "vert_small_sum_norm_110")
 
-
-
-# 54 layers.
-# runs, from february through May 2020, old. 
-runs <- c(
-  "vert_all",
-  "vert_endemism",
-  "vert_threat",
-  "vert_small",
-  "vert_threat_weighted",
-  "vert_small_threat",
-  "vert_small_zam",
-  "vert_endemism_zam",
-  "mam_all",
-  "bird_all",
-  "amp_all",
-  "rep_all",
-  "plants",
-  "mam_endemism",
-  "bird_endemism",
-  "amp_endemism",
-  "rep_endemism",
-  "mam_threat",
-  "bird_threat",
-  "amp_threat",
-  "rep_threat",
-  "mam_small",
-  "bird_small",
-  "amp_small",
-  "rep_small",
-  "average_mb",
-  "average_vp",
-  "average_ae",
-  "geometric_mb",
-  "geometric_vp",
-  "geometric_ae",
-  "max_mb",
-  "max_vp",
-  "max_ae",
-  "multi_mb",
-  "multi_vp",
-  "multi_ae",
-  "vert_all_10",
-  "vert_endemism_10",
-  "vert_threat_10",
-  "vert_small_10",
-  "vert_all_110",
-  "vert_endemism_110",
-  "vert_threat_110",
-  "vert_small_110",
-  "estes",
-  "laurance",
-  "habitats",
-  "bird_composite",
-  "damania",
-  "vert_all_sum_norm",
-  "vert_endemism_sum_norm",
-  "vert_threat_sum_norm",
-  "vert_small_sum_norm"
-)
 
 
 brick_mod_names <- c(runs, "reference_yct", "reference_y")
 runs_w_ref <- c(runs, "reference_yct", "reference_y")
 runs_w_raw <- c(runs, paste0(runs[1:8], "_raw"))
+```
 
+
+```{r ensembles-names}
+# ensemble names
 ensemble_names <- c(
   "en1_types",
   "en1_types_b",
