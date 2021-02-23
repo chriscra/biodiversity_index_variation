@@ -35,18 +35,6 @@ nocite: |
 ```{r misc, eval = FALSE, echo = FALSE}
 library(tinytex)
 tinytex::install_tinytex()
-
-# author: Christopher L. Crawford^[ccrawford@princeton.edu] $^1$ \and 
-#         Lyndon D. Estes$^2$ \and
-#         Timothy S. Searchinger$^1$ \and
-#         David S. Wilcove$^1$
-
-# author:
-#   - Christopher L. Crawford^[Princeton University, Princeton, NJ, ccrawford@princeton.edu]
-#   - Lyndon D. Estes^[Clark University, Worcester, MA]
-#   - Timothy S. Searchinger^[Princeton University, Princeton, NJ]
-#   - David S. Wilcove^[Princeton University, Princeton, NJ]
-
 ```
 ```{r start, eval = TRUE, echo = FALSE, include = FALSE}
 source("cc_functions.R")
