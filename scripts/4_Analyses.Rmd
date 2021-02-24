@@ -4,6 +4,12 @@ output: html_notebook
 editor_options: 
   chunk_output_type: console
 ---
+This R Markdown file outlines the primary analyses conducted on the tradeoff model runs completed in "3_Model_Runs.Rmd"
+
+It is broadly separated into the following sections:
+- First, loading the raw data outputs from the tradeoff model, combining results for maize and soy into a single binary conversion recommendation for each model run, and then combining all biodiversity index runs into a single data.table for each model weighting specification. These data.tables have one row for each pixel in Zambia (1 km2 resolution), and one column for each model run, with either a 1 or 0 representing the model's recommendation to convert that pixel (or not).
+
+
 See: scripts/1_Start.Rmd 
 
 ```{r save_or_load_workspace}
@@ -332,86 +338,18 @@ fwrite(conv_z50_dt, file = fp(p_mod_output, "conv_z50_dt.csv"))
 
 ```
 
+# Analysis work flow
 
+Five decision categories:
+1. Existing biodviersity indices
+2. Taxonomic groups - average across a) all four types of richness for each taxa, and b) across the weights
+3. Richness metrics - average across the a) three resolutions, and the b) weights. 
+4. Methods for combining layers - average across a) mb, ae, and vp, b) weights
+5. Resolution of inputs - average across a) four types of richness for each resolution, b) weights
 
+Load data.tables for each model weighting specification, and combine into a single data.table.
 
-# Final Analysis Work Flow
-AKA Xingli's approach:
-Five facets:
-1. Types - average across the a) three resolutions, and the b) weights. 
-2. Taxa - average across a) all four types of richness for each taxa, and b) across the weights
-3. Methods - average across a) mb, ae, and vp, b) weights
-4. Resolution - average across a) four types of richness for each resolution, b) weights
-5. Composites (should be dropped)
-
-(6. Weighting) - can also average across the three weights for any particular one of these averagings.
-
-Two phases:
-1. Average taxa, methods, and resolutions.
-2. Average taxa, methods, and resolutions, but also for all weights. 
-
-The plan:
-- first calculate the average for taxa
-- then calculate the weighted jaccard.
-- make a data-table of bd100 to calculate the averages within taxa, methods, and resolutions
-- do this for all 3 weights
-- and then do this to average across the three weights too
-- calculate
-
-```{r expl_grep}
-# Goal: write code that will create new columns using rowSums and rowMeans to select only a few columns. 
-
-conv_bd100_dt
-conv_bd100_dt[, .(x, y)]
-bd100_dt <- conv_bd100_dt[, .(x, y)]
-
-dt <- copy(conv_bd100_dt[, c(1:2, # make sure to select x and y
-                             grep("mam|bird|amp|rep", names(conv_bd100_dt))), with = FALSE])
-dt
-names(dt) <- gsub("_conv_bd100", "", names(dt))
-dt[, bird_composite := NULL]
-dt
-
-grep("mam", names(dt), value = TRUE)
-dt[, grep("mam", names(dt)), with = FALSE]
-dt[, grep("mam", names(dt), value = TRUE), with = FALSE]
-dt[, c("mam_all", "mam_threat")]
-dt[, c("x","y", grep("mam", names(dt), value = TRUE)), with = FALSE]
-
-
-names(dt)
-# testing different ways to calculate the row mean
-dt[, A := rowMeans(dt[, c(3,7,11,15)])]
-dt[, A1 := rowMeans(dt[, .(mam_all, mam_endemism, mam_threat, mam_small)])]
-dt[, A2 := rowMeans(dt[, grep("mam", names(dt)), with = FALSE])]
-identical(dt[, A], dt[, A1]); identical(dt[, A], dt[, A2])
-
-
-dt[, -c(3:5)]
-names(dt)
-# selecting all that do not match:
-dt[, grep("all|endemism|threat", names(dt), invert = TRUE), with = FALSE]
-# or:
-dt[, .(x, y, A, A1, A2)]
-
-
-
-
-# ------------------------------------------------------------------ final method
-
-# create taxa averages
-dt[, mam := rowMeans(dt[, grep("mam", names(dt)), with = FALSE])]
-dt[, bird := rowMeans(dt[, grep("bird", names(dt)), with = FALSE])]
-dt[, amp := rowMeans(dt[, grep("amp", names(dt)), with = FALSE])]
-dt[, rep := rowMeans(dt[, grep("rep", names(dt)), with = FALSE])]
-dt
-
-# test it
-dt_r <- dt_to_raster(dt[, grep("all|endemism|threat", names(dt), invert = TRUE), with = FALSE], CRSobj)
-plot(dt_r)
-```
-
-```{r load data.tables}
+```{r load-raw-data.tables}
 # read them back in:
 bd_dt <- fread(file = fp(p_mod_output, "bd_dt.csv")) # just the biodiversity inputs. Note that I can also load in directly a data.table with ensembles added, etc. See "bd_dt_ensemble"
 
@@ -428,7 +366,7 @@ object_size(conv_b_dt, conv_b_pure_dt, conv_bc_dt, conv_bt_dt, conv_by_dt, conv_
 
 ```
 
-```{r load_prep_dt}
+```{r rename-dt}
 # rename and merge data.tables
 # load the data.tables: see chunk {r load data.tables}
 
@@ -442,7 +380,7 @@ dt_z50 <- copy(conv_z50_dt)
 
 rm(conv_b_pure_dt, conv_b_dt, conv_bc_dt, conv_bt_dt, conv_by_dt, conv_byct_dt, conv_z50_dt)
 object_size(dt_bp, dt_b, dt_by, dt_bc, dt_bt, dt_byct, dt_z50)
-rm(dt_bp, dt_b, dt_by, dt_bc, dt_bt, dt_byct, dt_z50)
+# rm(dt_bp, dt_b, dt_by, dt_bc, dt_bt, dt_byct, dt_z50) # if needed:
 
 # dt_byct <- copy(conv_eq_dt[, c(1:2)]) # copy, selecting only x and y
 
@@ -458,7 +396,7 @@ names(dt_byct) <- c("x", "y", paste0(runs, "_byct"))
 names(dt_z50) <- c("x", "y", paste0(runs, "_z50"))
 
 
-# remove runs not included in averages (leaving in composites for now)
+# unused code to remove runs not included in ensemble means
 # names(dt_b)[c(7:10,53:58)]
 # 
 # dt_b[, c(7:10, 53:58) := NULL] # or: dt[, names(dt)[48:58] := NULL]
@@ -470,6 +408,8 @@ names(dt_z50) <- c("x", "y", paste0(runs, "_z50"))
 # dt_bt[, c(7:10, 53:56) := NULL]
 # dt_z50[, c(7:10, 53:56) := NULL]
 
+# check that the lengths are identical
+
 dt_bp %>% length
 dt_b %>% length
 dt_by %>% length
@@ -479,10 +419,13 @@ dt_byct %>% length
 dt_z50 %>% length
 
 ncol(dt_b)
-# dt_bp[, key := 1:.N] # optional, to test the ordering. 
+# dt_bp[, key := 1:.N] # optional, to test the ordering.
+```
 
-# merge the data.tables into a single data.table
-# without sort = FALSE, things get out of order.
+
+```{r merge-save-dt}
+# merge all data.tables into a single data.table:
+# make sure that sort = FALSE, because without this, things get out of order!
 dt <- merge(dt_bp, dt_b, by = c("x","y"), sort = FALSE)
 dt <- merge(dt, dt_by, by = c("x","y"), sort = FALSE)
 dt <- merge(dt, dt_bc, by = c("x","y"), sort = FALSE)
@@ -493,7 +436,8 @@ dt <- merge(dt, dt_z50, by = c("x","y"), sort = FALSE)
 (ncol(dt) - 2) / 7 # 46 each, plus x and y
 object_size(dt)
 
-# save the dt
+
+# save the dt, with the threatened species richness runs in still
 dt_w_threat <- dt
 fwrite(dt_w_threat, file = fp(p_mod_output, "dt_w_threat.csv")) # with 800 columns, including the threatened species runs
 fwrite(dt_bp, file = fp(p_mod_output, "dt_bp.csv"))
@@ -509,14 +453,16 @@ rm(dt_bp, dt_b, dt_by, dt_bc, dt_bt, dt_byct, dt_z50)
 
 
 
-# to remove all threat runs:
+# remove all threatened species richness runs from the primary dt model run:
 dt[, grep("threat", names(dt)), with = FALSE] %>% length # 5*7*3 # 5 (4 taxa plus combo) * 3 resolutions * 7 weights
 length(dt)
 dt[, (grep("threat", names(dt), value = TRUE)) := NULL]
 
 fwrite(dt, file = fp(p_mod_output, "dt.csv")) # this is the file I'll use going forward
+```
 
 
+```{r load-prepped-dts}
 # load it back in
 dt <- fread(file = fp(p_mod_output, "dt.csv"))  # note: this has threatened species removed. 
 dt %>% length
@@ -532,9 +478,14 @@ dt_z50 <- fread(file = fp(p_mod_output, "dt_z50.csv"))
 ```
 
 
-Calculating the ensemble averages for each facet within each decision category.
+
 ```{r dt_m_ensemble_means}
-# for each comparison, average within each weight first, then across all weights.  
+# Calculate ensemble means for each facet within each decision category.
+# Ensemble means are calculated within each model weighting specification first (7 of them, in the following 7 sections)
+# Then, ensembles means are calculated for each facet across all weighting specifications,
+# as well as for each weighting specification (across all facets).
+
+# copy just x and y coordinates to a new data.table
 dt_m <- copy(dt[, x:y])
 dt_m %>% length
 
@@ -784,6 +735,9 @@ dt_m[, habitats_z50 := rowMeans(dt[, grep("habitats.+z50$", names(dt)), with = F
 dt_m[, bird_composite_z50 := rowMeans(dt[, grep("bird_composite.+z50$", names(dt)), with = FALSE])]
 dt_m[, damania_z50 := rowMeans(dt[, grep("damania.+z50$", names(dt)), with = FALSE])]
 
+
+
+
 # -------------------------------------------------------------------------------------
 # averages across all weights ---------------------------------------------------------
 # -------------------------------------------------------------------------------------
@@ -824,6 +778,7 @@ dt_m[, bird_composite := rowMeans(dt[, grep("bird_composite[^z]+$", names(dt)), 
 dt_m[, damania := rowMeans(dt[, grep("damania[^z]+$", names(dt)), with = FALSE])]
 
 
+
 # -------------------------------------------------------------------------------------
 # individual weights ------------------------------------------------------------------
 # -------------------------------------------------------------------------------------
@@ -837,15 +792,14 @@ dt_m[, z50 := rowMeans(dt[, grep("_z50$", names(dt)), with = FALSE])]
 
 
 
+```
+
+
+```{r save-load-dt-m}
 # # to remove all threat runs: (note that this messes up the code at the end, weighted jaccard, which needs 22, not 21)
 # dt_m[, grep("threat", names(dt_m)), with = FALSE] %>% length # 7 weights plus all
 # length(dt_m)
 # dt_m[, (grep("threat", names(dt_m), value = TRUE)) := NULL]
-
-
-# --------------------------------------------------------------------------------
-names(dt_m)
-length(dt_m)
 
 # save the dt_m
 object_size(dt_m)
@@ -853,29 +807,30 @@ fwrite(dt_m, file = fp(p_mod_output, "dt_m.csv"))
 fwrite(dt_m_w_threat, file = fp(p_mod_output, "dt_m_w_threat.csv"))
 
 
+
 # load in dt_m, the data.table consisting of only the averages across the facets within each of the four comparisons
 dt_m <- fread(file = fp(p_mod_output, "dt_m.csv"))
-dt_m0 <- fread(file = fp(p_mod_output, "dt_m0.csv")) # original dt_m file, with just dt_b, dt_by, and dt_byct.
-
-
 ```
 
 ```{r adjust_by_convertible}
-# see 1_Start.rmd chunk "load-basic-gis-files" for inputs, specifically the below
-# il <- agroEcoTradeoff::fetch_inputs(path = p_ZA)
+# In order to calculate the area converted, I need to account for the amount of "convertible area" in each cell (i.e. the proportion of each cell that is currently non-ag and non-urban, or, what the proportion that is current convertible still). 
+# Rather than simply calculating the total area converted by summing across cells, e.g.:
 
-# ----------------------------------------------
-# to calculate the total area converted, previously I had been calculating 
 # area_conv = colSums(dt_m[, -c(1:2)])
-# this should also be multiplied by the convertible area (i.e. the proportion of each cell that is currently non-ag and non-urban, or, what the proportion that is current convertible still)
+
+# I need to mutliply each cell (1 or 0) by the convertible area to get an accurate area.
 
 
-# select just the indices where convertible is greater than 0, i.e. only cells that are at least partially convertible (i.e. outside of pas and entirely urban areas). This is the data.table method for masking:
-valinds <- which(il$convertible > 0)
+# see "1_Start.rmd" chunk "inputs_agroEcoTradeoff" for more details on the agroEcoTradeoff model inputs, but most important is the below:
+il <- agroEcoTradeoff::fetch_inputs(path = p_ZA)
+
+
+# Next, select just the indices where convertible is greater than 0, i.e. only cells that are at least partially convertible (i.e. outside of pas and entirely urban areas). This is essentially the data.table method for masking:
+valinds <- which(il$convertible > 0) # create a vector of indices where convertible is > 0, then use to select rows in the data.table:
 il$convertible[valinds, ] 
 
 # -----------------------------------------------
-# multiply ensemble means (dt_m) by the convertible proportions. Note: convertible not as a data.table column, but just the values
+# multiply ensemble means (dt_m) by the convertible proportions, as a vector of values, not a data.table column.
 dt_m_convertible <- dt_m[, lapply(.SD, function(x) {
   il$convertible[valinds, ]$convertible * x})]
 
@@ -989,7 +944,8 @@ facet_names[22*8 + (1:7)] # weights
 
 
 ``` {r bd_dt_m_ensemble_means}
-# averaging the biodiversity inputs themselves
+# produce ensemble means of the biodiversity inputs themselves:
+
 bd_dt <- fread(file = fp(p_mod_output, "bd_dt.csv")) # just the biodiversity inputs.
 names(bd_dt)
 
@@ -1065,6 +1021,8 @@ bd_dt_m <- fread(file = fp(p_mod_output, "bd_dt_m.csv"))
 ```
 
 ```{r rasters_simple}
+# produce simple version of the biodiversity input rasters, as well as of the conversion maps:
+
 dt_bp %>% length
 dt_b %>% length #reference
 dt_by %>% length
@@ -1151,6 +1109,7 @@ names(facet_r_bp) <- grep("_bp$", facet_names, value = TRUE)
 names(facet_r_b) <- grep("_b$", facet_names, value = TRUE)
 names(facet_r_z50) <- grep("_z50$", facet_names, value = TRUE)
 
+
 # conv_r
 conv_r <- list(
   "bp" = dt_bp_r, "b" = dt_b_r, "by" = dt_by_r, "bc" = dt_bc_r, "bt" = dt_bt_r, 
@@ -1163,19 +1122,12 @@ for(i in 1:length(conv_r)) {print(nlayers(conv_r[[i]]))}
 plot(conv_r[[1]][[1]], main = names(conv_r[[1]][[1]]))
 ```
 
-```{r}
-
-plot(facet_r_bp[[c("mam_bp", "bird_bp")]])
-
-plot(min(facet_r_bp$mam_bp, facet_r_bp$bird_bp))
-plot(max(facet_r_bp$mam_bp, facet_r_bp$bird_bp))
-
-cellStats(min(facet_r_bp$mam_bp, facet_r_bp$bird_bp), "sum")/cellStats(max(facet_r_bp$mam_bp, facet_r_bp$bird_bp), "sum")
-
-```
 
 
 ```{r weighted_jaccard}
+# Calculate the weighted jaccard similarity index across all permutations within each decision category:
+
+
 dt_m %>% ncol() 
 
 # create dataframe
@@ -1276,12 +1228,17 @@ toc() # 5.559 seconds
 jac_w[jac_w == 1] <- NA
 
 
-object_size(jac_w)
-class(jac_w)
+
 
 # save it to file
 fwrite(jac_w, file = fp(p_mod_output, "jac_w.csv"))
 fwrite(jac_w_w_threat, file = fp(p_mod_output, "jac_w_w_threat.csv"))
+
+
+
+
+
+
 
 # check to make sure the loop worked. 
 dt_m_convertible[, c("all", "small"), with = FALSE
@@ -1289,8 +1246,6 @@ dt_m_convertible[, c("all", "small"), with = FALSE
 jac_w["all", "small"] # need to have the rows named
 jac_w %>% filter(facet == "all") %>% select("small")
 names(jac_w)
-
-
 
 dt_m_convertible[, c("damania", "estes"), with = FALSE
      ][, sum(pmin(.SD[,1], .SD[,2]))/sum(pmax(.SD[,1], .SD[,2]))]
@@ -1315,40 +1270,14 @@ dt_m[, c("b", "by"), with = FALSE
 jac_w["b", "by"]
 
 
-# testing if no zeros:
-# what happens if rather than 0s, the cells that are not selected by either model are given some sort of value? Essentially, the weighted jaccard similarity goes up significantly. Not really sure what this means just yet though... the weighted jaccard similarity compares the cells that are selected by one model to the cells that are selected by another. 
-test_dt <- dt_m_convertible[, c("x", "y", "all", "threat"), with = FALSE]
-test_dt[, c("all", "threat"), with = FALSE
-     ][, sum(pmin(.SD[,1], .SD[,2]))/sum(pmax(.SD[,1], .SD[,2]))]
-test_dt[, "all_plus" := all + 0.1]
-test_dt[, "threat_plus" := threat + 0.1]
-test_dt[, "all_inv" := (all - 1)*-1]
-test_dt[, "threat_inv" := (threat - 1)*-1]
-test_dt %>% dt_to_raster(CRSobj) %T>% plot()
-
-test_dt[, c("all", "threat"), with = FALSE
-     ][, sum(pmin(.SD[,1], .SD[,2]))/sum(pmax(.SD[,1], .SD[,2]))]
-test_dt[, c("all_plus", "threat_plus"), with = FALSE
-     ][, sum(pmin(.SD[,1], .SD[,2]))/sum(pmax(.SD[,1], .SD[,2]))]
-test_dt[, c("all_inv", "threat_inv"), with = FALSE
-     ][, sum(pmin(.SD[,1], .SD[,2]))/sum(pmax(.SD[,1], .SD[,2]))]
-
-
-
-
-# original file:
-jac_w0 <- fread(fp(p_mod_output, "jac_w0.csv"))
-
-
-jac_w0[facet == "all_b", "threat_b"]
-nrow(jac_w0)
-head(jac_w0)
-jac_w["all_b", "threat_b"] # pretty close - but remember, these now have been adjusted by convertible, so they should be slightly different. 
 
 ```
 
 
 ```{r jac_melt}
+
+# pick back up here:......
+
 jac_w_clean <- jac_w[facet_names, facet_names] # 63x63
 
 head(jac_w[, 1:10])
@@ -12789,8 +12718,11 @@ dev.off()
 ```
 
 
-### methods panel
-```{r *methods_panel}
+### Methods panel
+
+```{r methods-panel-manual}
+# Produce small thumbnail raster maps for use in MS Figure 1, the methods panel
+
 # set up:
 mp_height <- 300
 mp_width <- 300
@@ -12849,24 +12781,6 @@ yield_dt[, x := bd_dt[, .(x)]]
 yield_dt[, y := bd_dt[, .(y)]]
 
 
-save_thumbnails <- function(raster, raster_names, label = "",
-                            mp_width = 300, mp_height = 300, mp_units = "px", 
-                            no_pas, pas_col = col_pas_all, pas_border = NA){
-  
-  if (no_pas){no_pas_label = "_no_pas"} else {no_pas_label = ""}
-  
-  png(file = paste0(p_plots,"/ms_v5/methods_panel_v5/", raster_names, no_pas_label, label, ".png"), 
-    width = mp_width, height = mp_height, units = mp_units)
-  
-  par(bg=NA, mar=c(0,0,0,0), oma=c(0,0,0,0))
-  plot(msk_shp, border = NA)
-  plot(raster, box = F, axes = F, legend = FALSE, add = TRUE)
-  if (no_pas) {
-    plot(pas, col = pas_col, border = pas_border, add=T)
-  }
-  plot(msk_shp, add = T)
-  dev.off()
-}
 
 #
 bd_dt[, 3:6]
@@ -12875,7 +12789,14 @@ bd_scores_vert_all_conv_bd100_dt[,1] <- bd_scores_vert_all_conv_bd100_dt[, 1] * 
 bd_scores_vert_all_conv_bd100_dt[,2] <- bd_scores_vert_all_conv_bd100_dt[, 2] * conv_bd100_dt[, 3]
 bd_scores_vert_all_conv_bd100_dt[,3] <- bd_scores_vert_all_conv_bd100_dt[, 3] * conv_bd100_dt[, 3]
 bd_scores_vert_all_conv_bd100_dt[,4] <- bd_scores_vert_all_conv_bd100_dt[, 4] * conv_bd100_dt[, 3]
+```
 
+
+```{r methods-panel-function-loop}
+# Produce small thumbnail raster maps for use in MS Figure 1, the methods panel
+
+# see cc_functions.R for 
+save_thumbnails()
 
 bd_scores_vert_all_conv_bd100 <- data.table(
   x = bd_conv_bd100_dt$x,
@@ -12889,10 +12810,11 @@ bd_scores_vert_all_conv_bd100 <- data.table(
   vert_threat = bd_scores_vert_all_conv_bd100_dt[,3],
   vert_small = bd_scores_vert_all_conv_bd100_dt[,4]
 )
+
 bd_scores_in_conv_r <- dt_to_raster(bd_scores_vert_all_conv_bd100, CRSobj)
 plot(bd_scores_in_conv_r)
 
-# make list to run through the model
+# make list to run through the save_thumbnails() function
 panel_rasters <- list(
   "yield_input_maize" = yield_input$maize,
   "carbon_input" = carbon_input,
@@ -12922,6 +12844,10 @@ panel_rasters <- list(
   "vert_all_raw" = vert_r$all_richness$sum,
   "vert_endemism_raw" = vert_r$endemism_richness$sum
 )
+
+
+
+# Save thumbnail images for methods panel: 
 
 for (i in seq_along(panel_rasters)) {
   save_thumbnails(raster = panel_rasters[[i]], raster_names = names(panel_rasters)[i], 
@@ -12979,216 +12905,11 @@ for (i in seq_along(panel_r_ensemble)) {
                   )
 }
 
-
-# ---------------------------------------------------------------------------------------------
-# ---------------------------------------------------------------------------------------------
-# ---------------------------------------------------------------------------------------------
-# ---------------------------------------------------------------------------------------------
-
-
-
-# yield
-png(file = fp(p_plots,"methods_panel/yield_input_maize2.png"), 
-    width = 450, height = 300, units = "px")
-par(bg=NA, mar=c(0,0,0,0), oma=c(0,0,0,0))
-plot(msk_shp, border = NA)
-plot(yield_input$maize, box = F, axes = F, legend = TRUE, add = TRUE)
-plot(msk_shp, add = T)
-dev.off()
-
-
-# carbon
-png(file = fp(p_plots,"methods_panel/carbon_input.png"), 
-    width = mp_width, height = mp_height, units = mp_units)
-par(bg=NA, mar=c(0,0,0,0), oma=c(0,0,0,0))
-plot(msk_shp, border = NA)
-plot(carbon_input, box = F, axes = F, legend = FALSE, add = TRUE)
-plot(msk_shp, add = T)
-dev.off()
-
-# travel cost
-png(file = fp(p_plots,"methods_panel/travel_cost_input.png"), 
-    width = mp_width, height = mp_height, units = mp_units)
-par(bg=NA, mar=c(0,0,0,0), oma=c(0,0,0,0))
-plot(msk_shp, border = NA)
-plot(travel_input, box = F, axes = F, legend = FALSE, add = TRUE)
-plot(msk_shp, add = T)
-dev.off()
-
-
-# -------------------------------------
-# with no PAs
-# yield
-png(file = fp(p_plots,"methods_panel/yield_input_maize_no_pas.png"), 
-    width = mp_width, height = mp_height, units = mp_units)
-par(bg=NA, mar=c(0,0,0,0), oma=c(0,0,0,0))
-plot(msk_shp, border = NA)
-plot(yield_input_no_pas$maize, box = F, axes = F, legend = FALSE, add = TRUE)
-plot(msk_shp, add = T)
-plot(pas, col = col_pas_all, border = NA, add=T)
-dev.off()
-
-# carbon
-png(file = fp(p_plots,"methods_panel/carbon_inputs_no_pas.png"), 
-    width = mp_width, height = mp_height, units = mp_units)
-par(bg=NA, mar=c(0,0,0,0), oma=c(0,0,0,0))
-plot(msk_shp, border = NA)
-plot(carbon_input, box = F, axes = F, legend = FALSE, add = TRUE)
-plot(msk_shp, add = T)
-plot(pas, col = col_pas_all, border = NA, add=T)
-dev.off()
-
-# travel cost
-png(file = fp(p_plots,"methods_panel/travel_cost_input_no_pas.png"), 
-    width = mp_width, height = mp_height, units = mp_units)
-par(bg=NA, mar=c(0,0,0,0), oma=c(0,0,0,0))
-plot(msk_shp, border = NA)
-plot(travel_input, box = F, axes = F, legend = FALSE, add = TRUE)
-plot(msk_shp, add = T)
-plot(pas, col = col_pas_all, border = NA, add=T)
-dev.off()
-
-
-# ------------------------------------------------------------------------------------
-# example bd input
-# ------------------------------------------------------------------------------------
-png(file = fp(p_plots,"methods_panel/vert_all.png"), 
-    width = mp_width, height = mp_height, units = mp_units)
-par(bg=NA, mar=c(0,0,0,0), oma=c(0,0,0,0))
-plot(msk_shp, border = NA)
-plot(vert_all, box = F, axes = F, legend = FALSE, add = TRUE)
-plot(msk_shp, add = T)
-dev.off()
-
-png(file = fp(p_plots,"methods_panel/vert_all_no_pas.png"), 
-    width = mp_width, height = mp_height, units = mp_units)
-par(bg=NA, mar=c(0,0,0,0), oma=c(0,0,0,0))
-plot(msk_shp, border = NA)
-plot(bd_dt_r$vert_all, box = F, axes = F, legend = FALSE, add = TRUE)
-plot(msk_shp, add = T)
-plot(pas, col = col_pas_all, border = NA, add=T)
-dev.off()
-
-
-# ------------------------------------------------------------------------------------
-# example conv map
-# ------------------------------------------------------------------------------------
-png(file = fp(p_plots,"methods_panel/vert_all_conv_bd100.png"), 
-    width = mp_width, height = mp_height, units = mp_units)
-par(bg=NA, mar=c(0,0,0,0), oma=c(0,0,0,0))
-plot(msk_shp, border = NA)
-plot(conv_r$bd100$vert_all, box = F, axes = F, legend = FALSE, add = TRUE)
-plot(msk_shp, add = T)
-plot(pas, col = col_pas_all, border = NA, add=T)
-dev.off()
-
-png(file = fp(p_plots,"methods_panel/vert_all_conv_bd50.png"), 
-    width = mp_width, height = mp_height, units = mp_units)
-par(bg=NA, mar=c(0,0,0,0), oma=c(0,0,0,0))
-plot(msk_shp, border = NA)
-plot(conv_r$bd50_y50$vert_all, box = F, axes = F, legend = FALSE, add = TRUE)
-plot(msk_shp, add = T)
-plot(pas, col = col_pas_all, border = NA, add=T)
-dev.off()
-
-png(file = fp(p_plots,"methods_panel/vert_all_conv_eq.png"), 
-    width = mp_width, height = mp_height, units = mp_units)
-par(bg=NA, mar=c(0,0,0,0), oma=c(0,0,0,0))
-plot(msk_shp, border = NA)
-plot(conv_r$eq$vert_all, box = F, axes = F, legend = FALSE, add = TRUE)
-plot(msk_shp, add = T)
-plot(pas, col = col_pas_all, border = NA, add=T)
-dev.off()
-
-# ------------------------------------------------------------------------------------
-# bd scores in conv
-# ------------------------------------------------------------------------------------
-bd_scores_in_conv <- data.table(
-  x = bd_conv_bd100_dt$x,
-  y = bd_conv_bd100_dt$y,
-  bd100 = bd_conv_bd100_dt$vert_all_conv_bd100,
-  bd50 = bd_conv_bd50_y50_dt$vert_all_conv_bd50_y50,
-  eq = bd_conv_eq_dt$vert_all_conv_eq
-)
-bd_scores_in_conv_r <- dt_to_raster(bd_scores_in_conv, CRSobj)
-plot(bd_scores_in_conv_r)
-
-png(file = fp(p_plots,"methods_panel/vert_all_bd_in_conv_bd100.png"), 
-    width = mp_width, height = mp_height, units = mp_units)
-par(bg=NA, mar=c(0,0,0,0), oma=c(0,0,0,0))
-plot(msk_shp, border = NA)
-plot(bd_scores_in_conv_r$bd100, box = F, axes = F, legend = FALSE, add = TRUE)
-plot(msk_shp, add = T)
-plot(pas, col = col_pas_all, border = NA, add=T)
-dev.off()
-
-png(file = fp(p_plots,"methods_panel/vert_all_bd_in_conv_bd50.png"), 
-    width = mp_width, height = mp_height, units = mp_units)
-par(bg=NA, mar=c(0,0,0,0), oma=c(0,0,0,0))
-
-plot(msk_shp, border = NA)
-plot(bd_scores_in_conv_r$bd50, box = F, axes = F, legend = FALSE, add = TRUE)
-plot(msk_shp, add = T)
-plot(pas, col = col_pas_all, border = NA, add=T)
-dev.off()
-
-png(file = fp(p_plots,"methods_panel/vert_all_bd_in_conv_eq.png"), 
-    width = mp_width, height = mp_height, units = mp_units)
-par(bg=NA, mar=c(0,0,0,0), oma=c(0,0,0,0))
-
-plot(msk_shp, border = NA)
-plot(bd_scores_in_conv_r$eq, box = F, axes = F, legend = FALSE, add = TRUE)
-plot(msk_shp, add = T)
-plot(pas, col = col_pas_all, border = NA, add=T)
-dev.off()
-
-
-# ------------------------------------------------------------------------------------
-# example raw bd all
-# ------------------------------------------------------------------------------------
-png(file = fp(p_plots,"methods_panel/vert_all_raw.png"), 
-    width = mp_width, height = mp_height, units = mp_units)
-par(bg=NA, mar=c(0,0,0,0), oma=c(0,0,0,0))
-plot(msk_shp, border = NA)
-plot(vert_r$all_richness$sum, box = F, axes = F, legend = FALSE, add = TRUE)
-plot(msk_shp, add = T)
-plot(pas, col = col_pas_all, border = NA, add=T)
-dev.off()
-
-png(file = fp(p_plots,"methods_panel/vert_all_raw_no_pas.png"), 
-    width = mp_width, height = mp_height, units = mp_units)
-par(bg=NA, mar=c(0,0,0,0), oma=c(0,0,0,0))
-plot(msk_shp, border = NA)
-plot(bd_dt_r$vert_all_raw, box = F, axes = F, legend = FALSE, add = TRUE)
-plot(msk_shp, add = T)
-plot(pas, col = col_pas_all, border = NA, add=T)
-dev.off()
-
-# ------------------------------------------------------------------------------------
-# example raw endemism richness
-# ------------------------------------------------------------------------------------
-png(file = fp(p_plots,"methods_panel/vert_endemism_raw.png"), 
-    width = mp_width, height = mp_height, units = mp_units)
-par(bg=NA, mar=c(0,0,0,0), oma=c(0,0,0,0))
-plot(msk_shp, border = NA)
-plot(vert_r$endemism_richness$sum, box = F, axes = F, legend = FALSE, add = TRUE)
-plot(msk_shp, add = T)
-plot(pas, col = col_pas_all, border = NA, add=T)
-dev.off()
-
-png(file = fp(p_plots,"methods_panel/vert_endemism_raw_no_pas.png"), 
-    width = mp_width, height = mp_height, units = mp_units)
-par(bg=NA, mar=c(0,0,0,0), oma=c(0,0,0,0))
-plot(msk_shp, border = NA)
-plot(bd_dt_r$vert_endemism_raw, box = F, axes = F, legend = FALSE, add = TRUE)
-plot(msk_shp, add = T)
-plot(pas, col = col_pas_all, border = NA, add=T)
-dev.off()
-
-
 ```
 
 ```{r convprob_r}
+# create rasters for conversion priority
+
 # b
 vert_all_convprob_r_b <- toff_bd100$vert_all %>%
     list(Y = .$inputs$y_std,
@@ -13256,12 +12977,11 @@ save_thumbnails(raster = vert_all_convprob_r_byct$maize,
                   no_pas = TRUE, label = "",
                   mp_width = 300, mp_height = 300, mp_units = "px"
                   )
-
-
-
 ```
 
 ```{r facet_averages}
+# not ultimately used, but perhaps useful for a future project.
+
 dt_m$all
 
 facet_r$all %T>% plot()
@@ -13327,11 +13047,6 @@ raster::plot(facet_r$all, legend = FALSE)
 rangeBuilder::addRasterLegend(facet_r$all, location = 'right', side = 3, nTicks = 0)#, mixmax = c(0,2))
 addRasterLegend(s1, location = "bottom", direction = "horizontal", side=1,
                 nTicks = 0, ramp=col_main)
-
-#, 
-	# shortFrac = 0.02, longFrac = 0.3, axisOffset = 0, border = TRUE, 
-	# ramp = "terrain", isInteger = 'auto', ncolors = 64, breaks = NULL, 
-	# minmax = NULL, locs = NULL, cex.axis = 0.8, labelDist = 0.7, digits = 2, ...)
 
 ```
 

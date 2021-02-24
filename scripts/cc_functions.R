@@ -681,144 +681,29 @@ cc_var <- function(x, y) {
   return(var_from_control)
 }
 
-# x <- test
-# y <- results_eq$bd_conv_norm[1]
-# x - y
-# sum((x - y)^2)/33
-# results_eq_norm_var[1,]
-# length(x)
-#
-# test_v <- vector(length = 33)
-# for (i in 1:33) {
-#   test_v[i] <- cc_var(as.numeric(results_eq_norm[i, -c(1, 35:39)]),
-#                       results_eq$bd_conv_norm[i])
-# }
-# test_v
-# cc_var(as.numeric(results_eq_norm[1, -c(1, 35:39)]),
-#                       results_eq$bd_conv_norm[1])
-#
-# results_eq_norm[, c(2:34)]
-#
-#
-# transpose(results_eq_norm[1:33, c(2:34)])
-# results_eq$bd_conv_norm
-# head(results_eq_norm)[, 1:5]
-# test_var_ap = apply(results_eq_norm[, c(2:34)], MARGIN = 1, FUN = function(x) sqrt(var(x)/length(x)))
-#
-# test_mapply <- mapply(FUN = cc_var,
-#   transpose(results_eq_norm[1:33, c(2:34)]),  # transposed df, so that each conv result is a column, rather than a row. This is iterated through by column
-#   results_eq$bd_conv_norm[1:33] # second vector, with the bd loss in controlling layer
-#   )
 
-# from Joona Lehtomäki (https://gist.github.com/jlehtoma/3369793)
-jaccard <- function(raster1, raster2, threshhold, warn.uneven=TRUE) {
 
-  # Get the values above the threshhold
-  raster1.bin <- raster1 >= threshhold
-  raster2.bin <- raster2 >= threshhold
 
-  if (warn.uneven) {
-    raster1.size <- count(raster1.bin, 1)
-    raster2.size <- count(raster2.bin, 1)
-    # Sort from smaller to larger
-    sizes <- sort(c(raster1.size, raster2.size))
-    if (sizes[2] / sizes[1] > 20) {
-      warning("The extents of raster values above the threshhold differ more than 20-fold: Jaccard coefficient may not be informative.")
-    }
+
+# ------------------------------------------------------------------------------------
+# function to save thumbnail images for methods panel (MS figure 1)
+# ------------------------------------------------------------------------------------
+
+save_thumbnails <- function(raster, raster_names, label = "",
+                            mp_width = 300, mp_height = 300, mp_units = "px",
+                            no_pas, pas_col = col_pas_all, pas_border = NA){
+
+  if (no_pas){no_pas_label = "_no_pas"} else {no_pas_label = ""}
+
+  png(file = paste0(p_plots,"/ms_v5/methods_panel_v5/", raster_names, no_pas_label, label, ".png"),
+      width = mp_width, height = mp_height, units = mp_units)
+
+  par(bg=NA, mar=c(0,0,0,0), oma=c(0,0,0,0))
+  plot(msk_shp, border = NA)
+  plot(raster, box = F, axes = F, legend = FALSE, add = TRUE)
+  if (no_pas) {
+    plot(pas, col = pas_col, border = pas_border, add=T)
   }
-
-  # Calculate the intersection of the two rasters, this is given by adding
-  # the binary rasters together -> 2 indicates intersection
-  combination <- raster1.bin + raster2.bin
-  intersection <- combination == 2
-
-  # Union is all the area covered by the both rasters
-  union <- combination >= 1
-
-  jaccard <- count(intersection, 1) / count(union, 1)
-
-  return(count(intersection, 1) / count(union, 1))
-}
-
-
-
-
-# old ------------------------
-cc_make_raster_old <- function (input_sf, run_filter = TRUE,
-                             filter_presence = TRUE, presence_code = 1,
-                             filter_origin = TRUE, origin_code = c(1, 2),
-                             filter_marine = TRUE, marine_code = "False",
-                             filter_seasonal = TRUE, seasonal_code = c(1, 2, 3),
-                             filter_category = TRUE, category_code = c("CR", "EN", "VU"),
-                             filter_range_size = FALSE, range_threshold = 0.5,
-                             filter_both = FALSE,
-                             run_clip = TRUE, clip_area,
-                             run_reproject = TRUE, run_extract = TRUE, run_cast = FALSE,
-                             projection = st_crs("+proj=aea +lat_1=20 +lat_2=-23 +lat_0=0 +lon_0=25 +x_0=0 +y_0=0
-                                             +ellps=WGS84 +datum=WGS84 +units=m +no_defs"),
-                             fasterize_field = NULL, fasterize_fun = 'sum', #template_raster = msk,
-                             run_mask = FALSE, mask = msk, prep_zambia = TRUE) {
-  # if run_filter = FALSE, set all the filter switches to false. This is used to turn off this entire filter step, so that make_raster can be used for just regular polygon-to-raster conversion.
-  if (run_filter == FALSE) {
-    filter_presence = FALSE
-    filter_origin = FALSE
-    filter_marine = FALSE
-    filter_seasonal = FALSE
-    filter_category = FALSE
-    filter_range_size = FALSE
-    filter_both = FALSE
-  }
-
-  # if run_clip is TRUE, then clip the polygons to the specified area, in clip_area, which are unioned using st_union. This should be the same projection as the input sf object.
-  clipped_sf <- input_sf %>%
-    {if (run_clip)        st_intersection(., st_union(clip_area)) else .} %>%
-    {if (run_extract)     st_collection_extract(., "POLYGON") else .} %>%
-    {if (run_cast)        st_cast(., "MULTIPOLYGON",) else .}
-
-  # If filter switches are set to TRUE, the line will be run.
-  # 1. filter to presence, defaults to code 1 (extant species only). Other unused codes are: 2. Probably Extant (discontinued, ambiguous), 3. Possibly Extant, 4. Possibly Extinct, 5. Extinct, 6. Presence Uncertain.
-  # 2. filter to origin, defaults to codes 1 & 2 (native and reintroduced species respectively). Other unused codes are: 3. Introduced, 4. Vagrant, 5. Origin Uncertain, 6. Assisted Colonisation.
-  # 3. filter by marine, defaults to "FALSE" (all species but marine ones)
-  # 4. filter species with range seasonality. Defaults to c(1,2,3). Codes are: "Resident" (1), "Breeding" (2), "Non-breeding Season" (3), Passage (4), and Seasonal Occurrence Uncertain (5).
-  # 5. filter by redlist category. Defaults to c("CR", "EN", "VU")), i.e. "threatened" species. Other categories include LC [Least Concern], EX [Extinct], EW [Extinct in the Wild], NT [Near Threatened], & DD [Data Deficient].
-  # 6. filter by total range size. Defaults to selecting small ranged species, i.e. those with ranges smaller than the median. Note that the range_size_quantile was calculated by ordering the total range sizes from smallest to largest and normalizing to 1. Total range size is actually just the sum of the parts of the range we're using (i.e. extant, native, reintroduced, breeding, non-breeding, resident, non-marine, etc.)
-  # 7. filter to any species that has a threatened redlist category or is small-ranged (total range size below median).
-  filtered_sf <- clipped_sf %>%
-    {if (filter_presence) filter(., presence == presence_code) else .} %>%
-    {if (filter_origin)   filter(., origin %in% origin_code) else .} %>%
-    {if (filter_marine)   filter(., marine == marine_code) else .} %>%
-    {if (filter_seasonal) filter(., seasonal %in% seasonal_code) else .} %>%
-    {if (filter_category) filter(., category %in% category_code) else .} %>%
-    {if (filter_range_size) filter(., range_size_quantile < range_threshold) else .} %>%
-    {if (filter_both) filter(., category %in% category_code |
-                               range_size_quantile < range_threshold) else .}
-
-  # if run_reproject is TRUE, then reproject sf object to crs in projection
-  reprojected_sf <- filtered_sf %>%
-    {if (run_reproject)   st_transform(., projection) else .}
-
-  # use fasterize to create a raster from prepped input polygons. Note that the template raster is created by extending the input raster (mask) to the extent of the input polygons. The raster is created using the function fasterize_fun, which by default 'sum' (To just produce a 0-1 raster of polygons, use the function 'last'.). If run_mask = TRUE, then the new raster will be cropped and then masked to the input "mask".
-  mask_filled <- mask
-  mask_filled[is.na(mask_filled)] <- 0 # replace NAs with 0s
-  template_raster <- extend(mask_filled, extent(st_transform(clip_area, projection)), value = 0)
-
-  output_raster <- reprojected_sf %>%
-    fasterize(., template_raster, field = fasterize_field, fun = fasterize_fun) %>%
-    {if (run_mask) crop(., extent(mask)) else .} %>%
-    {if (run_mask) raster::mask(., mask) else .}
-
-  # if the prep_zambia element is TRUE, then the output raster will be cropped to mask, NAs filled with 0s, and masked to mask. This preps the raster for use in the tradeoff model.
-  if (prep_zambia == TRUE) {
-    output_raster <- crop(output_raster, extent(mask))
-    output_raster[is.na(output_raster)] <- 0 # replace NAs with 0s
-    output_raster <- raster::mask(output_raster, mask)
-  }
-
-  names(output_raster) <- deparse(quote(output_raster))
-
-  # create a list with four elements, and the naming follows this convension: list(name_of_list_item = object, ...). The last element in a function is returned by default.
-  list(filtered_sf = filtered_sf,
-       clipped_sf = clipped_sf,
-       reprojected_sf = reprojected_sf,
-       output_raster = output_raster)
+  plot(msk_shp, add = T)
+  dev.off()
 }
