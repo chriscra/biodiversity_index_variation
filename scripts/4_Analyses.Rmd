@@ -27,7 +27,6 @@ See Appendix S1 for more details.
 source("scripts/cc_libraries.R")
 source("scripts/cc_functions.R")
 source("scripts/cc_pathnames.R")
-source("scripts/cc_plot_things.R")
 ```
 
 # Analysis
@@ -59,9 +58,6 @@ toc()
 length(bd_dt)
 object_size(bd_dt)
 
-fwrite(bd_dt, file = fp(p_mod_output, "bd_dt.csv"))
-
-
 
 # -----------------------------------------------
 # -------- add raw richness and endemism scores ----------------------------------------
@@ -86,268 +82,25 @@ bd_raw_dt <- bd_raw_dt[valinds, ]
 # check it out.
 bd_raw_dt %>% dt_to_raster(., CRSobj) %T>% plot()
 
-colSums(bd_raw_dt[, "endemism"])
 
-# 
-#
-#
+
 length(bd_dt)
 names(bd_dt)
-bd_dt <- bd_dt[,1:56]
-bd_dt <- cbind(bd_dt, bd_raw_dt[, 3:10])
-
-# total length should be: 64, the first two of which are x and y. 
+# bd_dt <- bd_dt[,1:56]
 
 
-
-# 
-
-```
-
-
-```{r conv_b_pure_dt}
-toff_b_pure
-length(toff_b_pure)
-conv_b_pure_dt <- il$mask[, .(x, y)][valinds] # just x and y coordinates
-
-# -----------------------------------
-# run through each model, summing maize and soy to create the conversion model.
-# -----------------------------------
-for (i in 1:length(runs)) {
-  conv_b_pure_dt[, runs[i] := rowSums(toff_b_pure[[i]][,3:4])]
-}
-
-conv_b_pure_dt
-object_size(conv_b_pure_dt)
-
-# # -----------------------------------
-# # make data.table of biodiversity scores in conversion areas:
-# # -----------------------------------
-# bd_conv_b_pure_dt <- conv_b_pure_dt[, 3:(2+length(runs))] * bd_dt[, 3:(2+length(runs))]
-# bd_conv_b_pure_dt <- cbind(
-#   il$mask[, .(x, y)][valinds], 
-#   bd_conv_b_pure_dt
-#   )
-
-rm(toff_b_pure)
-```
-
-```{r conv_b_dt}
-toff_b
-length(toff_b)
-conv_b_dt <- il$mask[, .(x, y)][valinds] # just x and y coordinates
-
-# -----------------------------------
-# run through each model, summing maize and soy to create the conversion model.
-# -----------------------------------
-for (i in 1:length(runs)) {
-  conv_b_dt[, runs[i] := rowSums(toff_b[[i]][,3:4])]
-}
-
-conv_b_dt
-object_size(conv_b_dt)
-
-# # -----------------------------------
-# # make data.table of biodiversity scores in conversion areas:
-# # -----------------------------------
-# bd_conv_b_dt <- conv_b_dt[, 3:(2+length(runs))] * bd_dt[, 3:(2+length(runs))]
-# bd_conv_b_dt <- cbind(
-#   il$mask[, .(x, y)][valinds], 
-#   bd_conv_b_dt
-#   )
-
-rm(toff_b)
-```
-
-
-```{r conv_by_dt}
-toff_by
-length(toff_by)
-conv_by_dt <- il$mask[, .(x, y)][valinds] # just x and y coordinates
-
-# -----------------------------------
-# run through each model, summing maize and soy to create the conversion model.
-# -----------------------------------
-for (i in 1:length(runs)) {
-  conv_by_dt[, runs[i] := rowSums(toff_by[[i]][,3:4])]
-}
-
-conv_by_dt
-object_size(conv_by_dt)
-
-# # -----------------------------------
-# # make data.table of biodiversity scores in conversion areas:
-# # -----------------------------------
-# bd_conv_by_dt <- conv_by_dt[, 3:(2+length(runs))] * bd_dt[, 3:(2+length(runs))]
-# bd_conv_by_dt <- cbind(
-#   il$mask[, .(x, y)][valinds], 
-#   bd_conv_by_dt
-#   )
-
-rm(toff_by)
-```
-
-```{r conv_bc_dt}
-toff_bc
-conv_bc_dt <- il$mask[, .(x, y)][valinds] # just x and y coordinates
-
-# -----------------------------------
-# run through each model, summing maize and soy to create the conversion model.
-# -----------------------------------
-for (i in 1:length(runs)) {
-  conv_bc_dt[, runs[i] := rowSums(toff_bc[[i]][,3:4])]
-}
-
-# -----------------------------------
-# make data.table of biodiversity scores in conversion areas:
-# -----------------------------------
-bd_conv_bc_dt <- conv_bc_dt[, 3:(2+length(runs))] * bd_dt[, 3:(2+length(runs))]
-bd_conv_bc_dt <- cbind(
-  il$mask[, .(x, y)][valinds], 
-  bd_conv_bc_dt
-  )
-
-rm(toff_bc)
-
-```
-
-```{r conv_bt_dt}
-toff_bt
-conv_bt_dt <- il$mask[, .(x, y)][valinds] # just x and y coordinates
-
-# -----------------------------------
-# run through each model, summing maize and soy to create the conversion model.
-# -----------------------------------
-for (i in 1:length(runs)) {
-  conv_bt_dt[, runs[i] := rowSums(toff_bt[[i]][,3:4])]
-}
-
-# -----------------------------------
-# make data.table of biodiversity scores in conversion areas:
-# -----------------------------------
-bd_conv_bt_dt <- conv_bt_dt[, 3:(2+length(runs))] * bd_dt[, 3:(2+length(runs))]
-bd_conv_bt_dt <- cbind(
-  il$mask[, .(x, y)][valinds], 
-  bd_conv_bt_dt
-  )
-
-rm(toff_bt)
-
-```
-
-```{r conv_byct_dt}
-toff_byct
-length(toff_byct)
-conv_byct_dt <- il$mask[, .(x, y)][valinds] # just x and y coordinates
-
-# -----------------------------------
-# run through each model, summing maize and soy to create the conversion model.
-# -----------------------------------
-for (i in 1:length(runs)) {
-  conv_byct_dt[, runs[i] := rowSums(toff_byct[[i]][,3:4])]
-}
-
-conv_byct_dt
-object_size(conv_byct_dt)
-
-# # -----------------------------------
-# # make data.table of biodiversity scores in conversion areas:
-# # -----------------------------------
-# bd_conv_byct_dt <- conv_byct_dt[, 3:(2+length(runs))] * bd_dt[, 3:(2+length(runs))]
-# bd_conv_byct_dt <- cbind(
-#   il$mask[, .(x, y)][valinds], 
-#   bd_conv_byct_dt
-#   )
-
-rm(toff_byct)
-```
-
-```{r conv_z50_dt}
-toff_z50
-conv_z50_dt <- il$mask[, .(x, y)][valinds] # just x and y coordinates
-
-# -----------------------------------
-# run through each model, summing maize and soy to create the conversion model.
-# -----------------------------------
-for (i in 1:length(runs)) {
-  conv_z50_dt[, runs[i] := rowSums(toff_z50[[i]][,3:4])]
-}
-
-# # -----------------------------------
-# # make data.table of biodiversity scores in conversion areas:
-# # -----------------------------------
-# bd_conv_z50_dt <- conv_z50_dt[, 3:(2+length(runs))] * bd_dt[, 3:(2+length(runs))]
-# bd_conv_z50_dt <- cbind(
-#   il$mask[, .(x, y)][valinds], 
-#   bd_conv_z50_dt
-#   )
-# 
-
-rm(toff_z50)
-
-```
-
-
-
-```{r save-raw-data.tables}
-bd_dt # showing all bd scores, for unprotected areas 
-
-conv_eq_dt # showing converted areas, using full model, equal weights on all four constraints
-bd_conv_eq_dt # showing only bd scores in converted areas, equal weights
-
-conv_bd50_y50_dt # converting areas with, 100% of the tradeoff weight on biodiversity
-bd_conv_bd50_y50_dt # bd scores in converted areas, 100% weight on biodiversity
-
-conv_bd100_dt # converting areas with, 100% of the tradeoff weight on biodiversity
-bd_conv_bd100_dt # bd scores in converted areas, 100% weight on biodiversity
-
-conv_10p_bd_dt # converting just the lowest 10% of cells assuming constant yields.
-bd_conv_10p_bd_dt # biodiversity scores in lowest 10% of cells
-
-conv_bc_dt
-conv_bt_dt
-conv_b_pure_dt
-conv_z50_dt
-
-# save data.tables:
-save(bd_dt, # showing all bd scores 
-     conv_b_dt,
-     conv_by_dt,
-     conv_byct_dt,
-     conv_bc_dt,
-     conv_bt_dt,
-     conv_b_pure_dt,
-     conv_z50_dt,
-     
-     #conv_10p_bd_dt, # converting just the lowest 10% of cells, assuming constant yields.
-     #bd_conv_10p_bd_dt, # biodiversity scores in lowest 10% of cells
-     
-     file = fp(p_mod_output, "conv_data.tables.RData")
-)
-
+# -----------------------------------------------
+# save to file
+# -----------------------------------------------
 fwrite(bd_dt, file = fp(p_mod_output, "bd_dt.csv"))
-
-fwrite(conv_eq_dt, file = fp(p_mod_output, "conv_eq_dt.csv"))
-fwrite(bd_conv_eq_dt, file = fp(p_mod_output, "bd_conv_eq_dt.csv"))
-
-fwrite(conv_bd50_y50_dt, file = fp(p_mod_output, "conv_bd50_y50_dt.csv"))
-fwrite(bd_conv_bd50_y50_dt, file = fp(p_mod_output, "bd_conv_bd50_y50_dt.csv"))
-
-fwrite(conv_bd100_dt, file = fp(p_mod_output, "conv_bd100_dt.csv"))
-fwrite(bd_conv_bd100_dt, file = fp(p_mod_output, "bd_conv_bd100_dt.csv"))
-
-# fwrite(conv_10p_bd_dt, file = fp(p_mod_output, "conv_10p_bd_dt.csv"))
-# fwrite(bd_conv_10p_bd_dt, file = fp(p_mod_output, "bd_conv_10p_bd_dt.csv"))
+fwrite(bd_raw_dt, file = fp(p_mod_output, "bd_raw_dt.csv"))
 
 
-fwrite(conv_bc_dt, file = fp(p_mod_output, "conv_bc_dt.csv"))
-fwrite(conv_bt_dt, file = fp(p_mod_output, "conv_bt_dt.csv"))
-fwrite(conv_b_pure_dt, file = fp(p_mod_output, "conv_b_pure_dt.csv"))
-fwrite(conv_z50_dt, file = fp(p_mod_output, "conv_z50_dt.csv"))
 
 
-# conv_10p_bd_dt_og <- fread(file = fp(p_mod_output, "conv_10p_bd_dt_old.csv"))
-
+# -----------------------------------------------
+# optionally combine raw with all inputs
+# bd_dt <- cbind(bd_dt, bd_raw_dt[, 3:10])
 ```
 
 ## Calculate ensemble means
@@ -362,7 +115,9 @@ Five decision categories:
 Load data.tables for each model weighting specification, and combine into a single data.table.
 
 ```{r load-raw-data.tables}
-# read them back in:
+# Note: in May 2020, I modified code so that the model results were combined and converted to a single merged data.table for each model run, saved to the following files.
+
+
 bd_dt <- fread(file = fp(p_mod_output, "bd_dt.csv")) # just the biodiversity inputs. Note that I can also load in directly a data.table with ensembles added, etc. See chunk "bd_dt_m_ensemble_means"
 
 conv_b_pure_dt <- fread(file = fp(p_mod_output, "conv_b_pure_dt.csv"))
@@ -375,6 +130,37 @@ conv_z50_dt <- fread(file = fp(p_mod_output, "conv_z50_dt.csv"))
 
 object_size(conv_b_dt)
 object_size(conv_b_dt, conv_b_pure_dt, conv_bc_dt, conv_bt_dt, conv_by_dt, conv_byct_dt, conv_z50_dt)
+
+```
+
+
+
+```{r save-raw-data.tables}
+bd_dt # showing all bd scores, for unprotected areas 
+
+# save data.tables as backup, and as .RData files
+
+
+# save data.tables:
+save(bd_dt, # showing all bd scores 
+     conv_b_pure_dt,
+     conv_b_dt,
+     conv_by_dt,
+     conv_bc_dt,
+     conv_bt_dt,
+     conv_byct_dt,
+     conv_z50_dt,
+     
+     file = fp(p_mod_output, "mod_results_backup.RData")
+)
+
+fwrite(conv_b_pure_dt, file = fp(p_mod_output, "mod_result_backup_conv_b_pure_dt.csv"))
+fwrite(conv_b_dt, file = fp(p_mod_output, "mod_result_backup_conv_b_dt.csv"))
+fwrite(conv_by_dt, file = fp(p_mod_output, "mod_result_backup_conv_by_dt.csv"))
+fwrite(conv_bc_dt, file = fp(p_mod_output, "mod_result_backup_conv_bc_dt.csv"))
+fwrite(conv_bt_dt, file = fp(p_mod_output, "mod_result_backup_conv_bt_dt.csv"))
+fwrite(conv_byct_dt, file = fp(p_mod_output, "mod_result_backup_conv_byct_dt.csv"))
+fwrite(conv_z50_dt, file = fp(p_mod_output, "mod_result_backup_conv_z50_dt.csv"))
 
 ```
 
@@ -1916,6 +1702,7 @@ nndat_facet_stats
 
 object_size(nndat, nnl, nnl_sums, nndat_facet_stats)
 save(nndat, nnl, nnl_sums, nndat_facet_stats, file = fp(p_mod_output, "nnd_files.RData"))
+
 load(file = fp(p_mod_output, "nnd_files.RData"), verbose = TRUE)
 
 
@@ -1943,13 +1730,16 @@ gg_nnd <- ggplot() +
              mapping = aes(x = facet, y = adj_mean_dist / 1000),
              alpha = 0.15) + 
   facet_grid(cols = vars(comparison), scales = "free_x", switch = "x", 
-             space = "free_x") #+ theme(legend.title = element_text("Mean Value"))
+             space = "free_x") + 
+  
+  scale_colour_viridis("Mean Values", discrete = T) # for color blindness
+
 gg_nnd
 
 
 
 # save:
-png(paste0(p_plots, "/ms_v5/", "SI_fig_nnd_bp", ".png"), 
+png(paste0(p_plots, "/si/", "SI_fig_nnd_bp", ".png"), 
     width = 6, height = 4, units = "in", res = 400)
 print(
     gg_nnd + 
@@ -2144,14 +1934,18 @@ SI_fig_jac_w_threat <- ggplot() +
              mapping = aes(x = facet, y = jac_w),
              alpha = 0.15) + 
   facet_grid(cols = vars(comparison), scales = "free_x", switch = "x", 
-             space = "free_x")
+             space = "free_x") + 
+  scale_colour_viridis(discrete = T, begin = 0, end = 0.8)
+
 
 SI_fig_jac_w_threat + 
   labs(title = "With Threatened Species Richness") + 
   coord_cartesian(ylim=c(0, 1.0))
 
+# ------------------------------------------------------------------------------ #
 # save:
-png(paste0(p_plots, "/ms_v5/", "SI_fig_jac_w_threat", ".png"), 
+# ------------------------------------------------------------------------------ #
+png(paste0(p_plots, "/si/", "SI_fig_jac_w_threat", ".png"), 
     width = 4, height = 4, units = "in", res = 400)
 print(
     SI_fig_jac_w_threat + 
@@ -2167,6 +1961,9 @@ facet_r_threat <- writeRaster(
   dt_to_raster(dt_bp_threat_m_convertible, CRSobj),
   overwrite=TRUE, fp(p_mod_output,"facet_r_threat.tif"))
 plot(facet_r_threat)
+
+# ------------------------------------------------------------------------------ #
+# ------------------------------------------------------------------------------ #
 
 facet_r_threat <- brick(fp(p_mod_output,"facet_r_threat.tif"))
 names(facet_r_threat) <- gsub("_bp", "", names(dt_bp_threat_m_convertible)[-c(1:2)])
@@ -2198,7 +1995,10 @@ p2 <- gplot(facet_r_threat[[c("all", "endemism", "threat", "small")]], maxpixels
       coord_equal()
 
 
+
+# ------------------------------------------------------------------------------ #
 # start png call here. 
+# ------------------------------------------------------------------------------ #
 png(paste0(p_plots, "/si/","SI_fig_facet_r_threat", "_combo.png"),    
     width = 5, height = 6,
     units = "in", res = 300)
@@ -2206,8 +2006,7 @@ png(paste0(p_plots, "/si/","SI_fig_facet_r_threat", "_combo.png"),
 plot_grid(
   p1, p2, 
   SI_fig_jac_w_threat + 
-    theme(legend.position = "top") + 
-    scale_colour_viridis(discrete = T, begin = 0, end = 0.8), 
+    theme(legend.position = "top"),
   labels = "auto",
   ncol = 1, rel_heights = c(1.3, 1.2, 2.5))
 
@@ -2299,7 +2098,7 @@ p2 <- gplot(norm_r[["difference"]], maxpixels = 5000000) +
             legend.title = element_blank()) + 
       coord_equal()
 
-png(paste0(p_plots, "/ms_v5/","SI_norm_order_plots.png"),    
+png(paste0(p_plots, "/si/","SI_norm_order_plots.png"),    
     width = 4, height = 5,
     units = "in", res = 300)
 plot_grid(p1, p2, ncol = 1, rel_heights = c(1, 2))
@@ -2612,7 +2411,12 @@ order_jac_w_melt_conv <- order_jac_w_melt_conv %>%
             "damania"        = "damania")
          )
 
+
+# ------------------------------------------------------------------------------ #
+# ------------------------------------------------------------------------------ #
+# ------------------------------------------------------------------------------ #
 # condensed plot - order of conversion
+# ------------------------------------------------------------------------------ #
 SI_fig_jac_w_order_conv <- ggplot() +
   theme_classic() + 
   theme(axis.text.x = element_text(angle = 320, vjust = 1, hjust = 0)) +
@@ -2626,15 +2430,18 @@ SI_fig_jac_w_order_conv <- ggplot() +
              mapping = aes(x = facet, y = jac_w),
              alpha = 0.15) + 
   facet_grid(cols = vars(comparison), scales = "free_x", switch = "x", 
-             space = "free_x")
+             space = "free_x") + 
+  scale_colour_viridis("Mean Values", discrete = T) # for color blindness
 
 SI_fig_jac_w_order_conv + 
   labs(title = "Similarity of Conversion Order") + 
   coord_cartesian(ylim=c(0.4, 1.0)) + 
   theme(legend.position = "none")
 
+# ------------------------------------------------------------------------------ #
 # save:
-png(paste0(p_plots, "/ms_v5/", "SI_fig_jac_w_order_conv", ".png"), 
+# ------------------------------------------------------------------------------ #
+png(paste0(p_plots, "/si/", "SI_fig_jac_w_order_conv", ".png"), 
     width = 6, height = 4, units = "in", res = 400)
 print(
     SI_fig_jac_w_order_conv + 
@@ -2646,7 +2453,10 @@ print(
 dev.off()
 
 
+
+# ------------------------------------------------------------------------------ #
 # condensed plot - order of protection
+# ------------------------------------------------------------------------------ #
 SI_fig_jac_w_order_protect <- ggplot() +
   theme_classic() + 
   theme(axis.text.x = element_text(angle = 320, vjust = 1, hjust = 0)) +
@@ -2660,15 +2470,19 @@ SI_fig_jac_w_order_protect <- ggplot() +
              mapping = aes(x = facet, y = jac_w),
              alpha = 0.15) + 
   facet_grid(cols = vars(comparison), scales = "free_x", switch = "x", 
-             space = "free_x")
+             space = "free_x") + 
+  scale_colour_viridis("Mean Values", discrete = T) # for color blindness
+
 
 SI_fig_jac_w_order_protect + 
   labs(title = "Similarity of Protection Order") + 
   coord_cartesian(ylim=c(0.4, 1.0)) + 
   theme(legend.position = "none")
 
+# ------------------------------------------------------------------------------ #
 # save:
-png(paste0(p_plots, "/ms_v5/", "SI_fig_jac_w_order_protect", ".png"), 
+# ------------------------------------------------------------------------------ #
+png(paste0(p_plots, "/si/", "SI_fig_jac_w_order_protect", ".png"), 
     width = 6, height = 4, units = "in", res = 400)
 print(
     SI_fig_jac_w_order_protect + 
@@ -3494,8 +3308,74 @@ new_labels_lookup <- c(
 
 ```
 
-```{r color-palette}
-map_colors <- c("#F2F2F2", viridis(50, direction = -1)) # terrain.colors(50, rev = TRUE)
+```{r color-palettes}
+# primary mapping palettes
+# terrain.colors(50, rev = TRUE) # original plotting colors
+map_colors <- c("#F2F2F2", viridis(50, direction = -1))  # colorblindness-safe
+
+map_colors_rev <- c("#F2F2F2", viridis(50, direction = 1)) # unused
+
+
+
+# cc_plot_things:
+
+load(file = fp(p_ZA,"parks_roads.rda"), verbose = TRUE) # includes roads (a SpatialLinesDataFrame),
+# pas (SpatialPolygonsDataFrame, a shapefile that includes both national parks and GMAs), and
+# zambia (SpatialPolygonsDataFrame, outline of Zambia)
+msk_shp <- readOGR(fp(p_datnew,"msk.shp")) %>%
+  spTransform(CRS("+proj=aea +lat_1=20 +lat_2=-23 +lat_0=0 +lon_0=25 +x_0=0 +y_0=0 +ellps=WGS84 +datum=WGS84 +units=m +no_defs"))
+rm(zambia, roads)
+
+# plot colors
+
+pacols <- c("grey80", "grey70") # colors for NPs and GMAs
+col_pas <- c("grey80", "grey70")
+col_pas_all <- col_pas[pas$type]
+
+col_overlap <- c(
+  "grey90", # grey # no conversion
+#  "#1F78B4", # blue # Mod 1 only
+  "#FF7F00", # orange # Mod 1 only
+  "#FDBF6F", # yellow # Mod 2 only
+#  "#E31A1C", # red # Mod 2 only
+  "#33A02C" # green # Both Models
+) # light purple # both soy
+
+#display.brewer.all(n=9, type="all", select=NULL, exact.n=TRUE, colorblindFriendly=FALSE)
+
+# old colors:
+
+## main color scheme for plots (0 = green / high bd, 1 = pink / convert)
+# col_main <- colorRampPalette(brewer.pal(n=11,name='PiYG'))(100) #pink-yellow-green
+# col_main2 <- col_main[15:95] # slightly muted on both ends, for s4,5,6,7
+# col_main3 <- col_main[16:100] # toned down pink, for s8
+# col_main_legend <- c(col_main[15],col_main[85])
+#
+# col_grad0 <- colorRampPalette(brewer.pal(n=9,name='YlOrRd'))(100) # for graduated plot of tradeoff_mod results rasters
+# col_grad <- col_grad0[1:75] # more mellow red at the top end
+# col_grad1 <- col_grad0[30:100] # darker yellow at the bottom
+# col_grad2 <- col_grad
+# col_grad2[76] <- "#662506"
+
+
+
+#col_overlap <- rev(brewer.pal(n=9,name='RdYlGn')) # for diverging plot of overlapping results rasters
+#col_overlap[1] <- "grey90" # removing the dark green color from the front
+
+#col_overlap <- brewer.pal(n=9,name='Paired')
+# col_overlap <- c(
+#   "grey90", # grey # no conversion
+#   "#1F78B4", # blue # estes maize only
+#   "#B2DF8A", # light green # estes soy only
+#   "#E31A1C", # red # laurance maize only
+#   "#33A02C", # green # both maize
+#   "#FF7F00", # orange # L maize, E soy
+#   "#FDBF6F", # yellow # laurance soy only
+#   "#FB9A99", # pink # Laurance soy, Estes maize
+#   "#CAB2D6") # light purple # both soy
+#
+# col_overlap_maize <- c("grey90","#fec44f","#e31a1c","#41ab5d") # yellow (E), red (L), green (overlap)
+# #col_overlap_maize <- c("grey90",brewer.pal(n=3,name='Paired'))
 
 ```
 
@@ -3517,110 +3397,119 @@ eval(parse(text = paste0("facet_r_","bp")))[[1:3]]
 # put the main figure together, for bp
 # ----------------------------------------
 
-# weight <- "bp"
-weight <- "z50"
-# weight <- "all"
-
-drop_threat <- TRUE
-brick <- eval(parse(text = paste0("facet_r_", weight)))
-names(brick) <- gsub(paste0("_", weight), "", names(brick))
-if (drop_threat) {brick <- dropLayer(brick, which(names(brick) == "threat"))}
-
-pixels <- 5000000
+# write function to save facet maps
+cc_print_facet_maps <- function(weight, drop_threat = TRUE, pixels = 5000000,
+                                custom_colors = map_colors,
+                                label = "") {
   
-p1 <- gplot(brick[[c("mam", "bird", "amp", "rep")]], maxpixels = pixels) + 
-      geom_raster(aes(fill = value)) +
-      facet_wrap(~ variable, nrow = 1, labeller = labeller(variable = new_labels_lookup)) + 
-      scale_fill_gradientn(colors = map_colors, na.value = "white", limits = c(0, 1)) + 
-      labs(y = "Taxonomic Groups", x = NULL) + 
-      theme(rect = element_blank(), line = element_blank(), 
-            axis.line = element_blank(), 
-            axis.ticks = element_blank(), 
-            axis.ticks.length = unit(0, "pt"), axis.text = element_blank(),
-            legend.position = "none") + 
-      coord_equal()
+  # for producing manuscript figure 2, and corresponding figures for "all" and "z50" weighting specifications
+  
+  # load in the correct raster brick
+  brick <- eval(parse(text = paste0("facet_r_", weight)))
+  names(brick) <- gsub(paste0("_", weight), "", names(brick))
+  if (drop_threat) {brick <- dropLayer(brick, which(names(brick) == "threat"))}
+  
+  
+  # make the components of the plot
+  p1 <- gplot(brick[[c("mam", "bird", "amp", "rep")]], maxpixels = pixels) + 
+        geom_raster(aes(fill = value)) +
+        facet_wrap(~ variable, nrow = 1, labeller = labeller(variable = new_labels_lookup)) + 
+        scale_fill_gradientn(colors = custom_colors, na.value = "white", limits = c(0, 1)) + 
+        labs(y = "Taxonomic Groups", x = NULL) + 
+        theme(rect = element_blank(), line = element_blank(), 
+              axis.line = element_blank(), 
+              axis.ticks = element_blank(), 
+              axis.ticks.length = unit(0, "pt"), axis.text = element_blank(),
+              legend.position = "none") + 
+        coord_equal()
+  
+  p2 <- gplot(brick[[c("all", "endemism", "small")]], maxpixels = pixels) + # or facet_r[[comparison_names$types]] for just the four ensemble means
+        geom_raster(aes(fill = value)) +
+        facet_wrap(~ variable, nrow = 1, labeller = labeller(variable = new_labels_lookup)) + 
+        scale_fill_gradientn(colors = custom_colors, na.value = "white", limits = c(0, 1)) + 
+        labs(y = "Richness Metrics", x = NULL) + 
+        theme(rect = element_blank(), line = element_blank(), 
+              axis.line = element_blank(), axis.ticks = element_blank(), 
+              axis.ticks.length = unit(0, "pt"), axis.text = element_blank(),
+              legend.position = "none") + 
+        coord_equal()
+      
+  p3 <- gplot(brick[[c("average", "geometric", "max", "multi")]], maxpixels = pixels) + 
+        geom_raster(aes(fill = value)) +
+        facet_wrap(~ variable, nrow = 1, labeller = labeller(variable = new_labels_lookup)) + 
+        scale_fill_gradientn(colors = custom_colors, na.value = "white", limits = c(0, 1)) + 
+        labs(y = "Methods", x = NULL) + 
+        theme(rect = element_blank(), line = element_blank(), 
+              axis.line = element_blank(), axis.ticks = element_blank(), 
+              axis.ticks.length = unit(0, "pt"), axis.text = element_blank(),
+              legend.position = "none") + 
+        coord_equal()
+      
+  p4 <- gplot(brick[[c("res1", "res10", "res110")]], maxpixels = pixels) + 
+        geom_raster(aes(fill = value)) +
+        facet_wrap(~ variable, nrow = 1, labeller = labeller(variable = new_labels_lookup)) + 
+        scale_fill_gradientn(colors = custom_colors, na.value = "white", limits = c(0, 1)
+                             ) + 
+        labs(y = "Resolution", x = NULL) + 
+        theme(rect = element_blank(), line = element_blank(), 
+              axis.line = element_blank(), axis.ticks = element_blank(), 
+              axis.ticks.length = unit(0, "pt"), axis.text = element_blank(), legend.position = "none"
+              ) + 
+        coord_equal()
+      
+  p5 <- gplot(brick[[c("vert_endemism", #"plants", 
+                       "estes", "laurance", #"habitats", "bird_composite", 
+                       "damania")]], 
+              maxpixels = pixels) + 
+        geom_raster(aes(fill = value)) +
+        facet_wrap(~ variable, nrow = 1, labeller = labeller(variable = new_labels_lookup)) + 
+        scale_fill_gradientn(colors = custom_colors, na.value = "white", limits = c(0, 1)) + 
+        labs(y = "Indices", x = NULL) + 
+        theme(rect = element_blank(), line = element_blank(), 
+              axis.line = element_blank(), axis.ticks = element_blank(), 
+              axis.ticks.length = unit(0, "pt"), axis.text = element_blank(),
+              legend.title = element_blank()) + 
+        coord_equal()
+      
+      
+  # p6 <- gplot(brick[[c("plants", "habitats", "bird_composite")]], maxpixels = pixels) + 
+  #       geom_raster(aes(fill = value)) +
+  #       facet_wrap(~ variable, nrow = 1) + 
+  #       scale_fill_gradientn(colors = custom_colors, na.value = "white") + 
+  #       labs(y = "Composites", x = NULL) + 
+  #       theme(rect = element_blank(), line = element_blank(), 
+  #             axis.line = element_blank(), axis.ticks = element_blank(), 
+  #             axis.ticks.length = unit(0, "pt"), axis.text = element_blank()) + 
+  #       coord_equal()
+  
+  # start pdf call here. 
+  
+  if (weight == "bp") {
+    pdf(paste0(p_plots, "/ms_final/","ms_fig_2_facet_r_", weight, label, ".pdf"),
+      width = 8, height = 5)
+  }
+  
+  
+  if (weight == "z50" | weight == "all") {
+    png(paste0(p_plots, "/si/","SI_fig_facet_r_", weight, label, ".png"),
+      width = 8, height = 5, units = "in", res = 400)
+  }
+  
+  print(plot_grid(
+    plot_grid(p5, nrow = 1, labels = c("a")),
+    plot_grid(p1, NULL, p2, nrow = 1, labels = c("b", "", "c"), rel_widths = c(4, 0.1, 3.1)), 
+    plot_grid(p3, NULL, p4, nrow = 1, labels = c("d", "", "e"), rel_widths = c(4, 0.1, 3.1)),
+    ncol = 1, rel_heights = c(1.2, 1, 1)))
+  
+  dev.off()
+  
+  cat("Success! Saved facet ensemble maps for weight:", weight)
+}
 
-p2 <- gplot(brick[[c("all", "endemism", "small")]], maxpixels = pixels) + # or facet_r[[comparison_names$types]] for just the four ensemble means
-      geom_raster(aes(fill = value)) +
-      facet_wrap(~ variable, nrow = 1, labeller = labeller(variable = new_labels_lookup)) + 
-      scale_fill_gradientn(colors = map_colors, na.value = "white", limits = c(0, 1)) + 
-      labs(y = "Richness Metrics", x = NULL) + 
-      theme(rect = element_blank(), line = element_blank(), 
-            axis.line = element_blank(), axis.ticks = element_blank(), 
-            axis.ticks.length = unit(0, "pt"), axis.text = element_blank(),
-            legend.position = "none") + 
-      coord_equal()
-    
-p3 <- gplot(brick[[c("average", "geometric", "max", "multi")]], maxpixels = pixels) + 
-      geom_raster(aes(fill = value)) +
-      facet_wrap(~ variable, nrow = 1, labeller = labeller(variable = new_labels_lookup)) + 
-      scale_fill_gradientn(colors = map_colors, na.value = "white", limits = c(0, 1)) + 
-      labs(y = "Methods", x = NULL) + 
-      theme(rect = element_blank(), line = element_blank(), 
-            axis.line = element_blank(), axis.ticks = element_blank(), 
-            axis.ticks.length = unit(0, "pt"), axis.text = element_blank(),
-            legend.position = "none") + 
-      coord_equal()
-    
-p4 <- gplot(brick[[c("res1", "res10", "res110")]], maxpixels = pixels) + 
-      geom_raster(aes(fill = value)) +
-      facet_wrap(~ variable, nrow = 1, labeller = labeller(variable = new_labels_lookup)) + 
-      scale_fill_gradientn(colors = map_colors, na.value = "white", limits = c(0, 1)
-                           ) + 
-      labs(y = "Resolution", x = NULL) + 
-      theme(rect = element_blank(), line = element_blank(), 
-            axis.line = element_blank(), axis.ticks = element_blank(), 
-            axis.ticks.length = unit(0, "pt"), axis.text = element_blank(), legend.position = "none"
-            ) + 
-      coord_equal()
-    
-p5 <- gplot(brick[[c("vert_endemism", #"plants", 
-                     "estes", "laurance", #"habitats", "bird_composite", 
-                     "damania")]], 
-            maxpixels = pixels) + 
-      geom_raster(aes(fill = value)) +
-      facet_wrap(~ variable, nrow = 1, labeller = labeller(variable = new_labels_lookup)) + 
-      scale_fill_gradientn(colors = map_colors, na.value = "white", limits = c(0, 1)) + 
-      labs(y = "Indices", x = NULL) + 
-      theme(rect = element_blank(), line = element_blank(), 
-            axis.line = element_blank(), axis.ticks = element_blank(), 
-            axis.ticks.length = unit(0, "pt"), axis.text = element_blank(),
-            legend.title = element_blank()) + 
-      coord_equal()
-    
-    
-# p6 <- gplot(brick[[c("plants", "habitats", "bird_composite")]], maxpixels = pixels) + 
-#       geom_raster(aes(fill = value)) +
-#       facet_wrap(~ variable, nrow = 1) + 
-#       scale_fill_gradientn(colors = map_colors, na.value = "white") + 
-#       labs(y = "Composites", x = NULL) + 
-#       theme(rect = element_blank(), line = element_blank(), 
-#             axis.line = element_blank(), axis.ticks = element_blank(), 
-#             axis.ticks.length = unit(0, "pt"), axis.text = element_blank()) + 
-#       coord_equal()
-
-# start png call here. 
-# bp weights here:
-pdf(paste0(p_plots, "/ms_final/","ms_fig_2_facet_r_", weight, "_wide.pdf"),
-    width = 8, height = 5, # units = "in", res = 300
-)
-
-# for z50, all
-pdf(paste0(p_plots, "/si/","SI_fig_facet_r_", weight, "_wide.pdf"),
-    width = 8, height = 5)
-
-plot_grid(
-  plot_grid(p5, nrow = 1, labels = c("a")),
-  plot_grid(p1, NULL, p2, nrow = 1, labels = c("b", "", "c"), rel_widths = c(4, 0.1, 3.1)), 
-  plot_grid(p3, NULL, p4, nrow = 1, labels = c("d", "", "e"), rel_widths = c(4, 0.1, 3.1)),
-  ncol = 1, rel_heights = c(1.2, 1, 1))
-
-dev.off()
-
-# plot_grid(
-#           ncol = 1, #align = "v", axis = "l", 
-#           labels = "auto"
-#           )
+cc_print_facet_maps(weight = "bp", custom_colors = map_colors)
+cc_print_facet_maps(weight = "bp", custom_colors = map_colors_rev, label = "_rev", pixels = 5000000) # trying the color palette reversed
+cc_print_facet_maps(weight = "all", custom_colors = map_colors)
+cc_print_facet_maps(weight = "z50", custom_colors = map_colors)
 ```
 
 
@@ -3752,8 +3641,8 @@ dev.off()
 # -------------------------------------------------------
 # save version for SI
 # -------------------------------------------------------
-pdf(paste0(p_plots, "/si/", "ms_fig_4_robustness_SI", ".pdf"), # for SI
-    width = 7, height = 4#, units = "in", res = 400
+png(paste0(p_plots, "/si/", "ms_fig_4_robustness_SI", ".png"), # for SI
+    width = 7, height = 4, units = "in", res = 400
     )
 gg_fig4 + scale_colour_viridis(name = "Production \nTarget",
                                labels = c("bp" = "\n5% of Zambia \n(100% bd, \nmean yield, bp) \n ",
@@ -3828,7 +3717,6 @@ print(
             plot.margin = unit(c(0.4, 0.9, 0.2, 0.2), "cm"))
   )
 dev.off()
-
 
 # --------------------------------------------------------
 # by ----------------------------------------------------
@@ -4001,105 +3889,110 @@ dev.off()
 #
 # See Appendix Section S3.1 for the rest of the weighting specifications:
 # --------------------------------------------------------------------------------------------------------
-conv_r[[1]][[1]]
-names(conv_r)
-conv_b_pure_dt[, c("x", "y", runs_1), with = FALSE]
 
-
-save_basic_conv_plots_all <- function(runs, i, tag, fig_width = 12, fig_height = 13) {
-  png(paste0(p_plots, "/ms_v5/", "basic_conv_maps_", names(conv_r)[i], tag, ".png"),    
+save_basic_conv_plots_all <- function(runs, i, tag, fig_width = 12, fig_height = 13,
+                                      custom_colors = map_colors) {
+  
+  png(paste0(p_plots, "/si/conv_maps/", "basic_conv_maps_", names(conv_r)[i], tag, ".png"),    
       width = fig_width, height = fig_height, units = "in", res = 300)
   
   par(mfrow=c(6,7), mar=c(1,1,2,1), oma = c(1, 1, 1, 1))
-  for (j in paste0(runs, paste0("_", names(conv_r)[i]))) {
+  
+  for (j in runs) {
     plot(conv_r[[i]][[j]], 
-         main = names(conv_r[[i]][[j]]),
-         axes = FALSE, legend = FALSE, box = FALSE)
+         main = paste0(j, "_", names(conv_r[i])),
+         axes = FALSE, legend = FALSE, box = FALSE,
+         col = custom_colors)
     
     plot(pas, col = col_pas_all, border = "gray", add=TRUE)
     #legend("bottomright", legend= c("GMA", "Nat'l Park"), fill=col_pas, cex = 1.1, bty = "n")
     plot(msk_shp, add = TRUE)
     
-    }
-  dev.off()
   }
+  
+  # add standalone legend at the end
+  plot.new() # must add a new plot window
+  plot(conv_r[[1]][[1]], col = map_colors,
+     legend.only = TRUE,
+     legend.width = 3,
+     legend.shrink = 1.4, cex = 5,
+     smallplot=c(0.2, 0.35, 0.15, 0.85))#; par(mar = par("mar")) 
+  # small plot works as follows:
+  # smallplot=c(min % from left, max % from left, min % from bottom, max % from bottom).
+  
+  dev.off()
+}
 
-save_basic_conv_plots_all(i = 1, runs = runs_1, tag = "_1")
-save_basic_conv_plots_all(i = 1, runs = runs_10, tag = "_10")
-save_basic_conv_plots_all(i = 1, runs = runs_110, tag = "_110")
+# 
+# # test on just i = 1
+# save_basic_conv_plots_all(i = 1, runs = runs_1, tag = "_1")
+# save_basic_conv_plots_all(i = 1, runs = runs_10, tag = "_10")
+# save_basic_conv_plots_all(i = 1, runs = runs_110, tag = "_110")
+# 
 
-names(conv_r)
-for (i in 1:7) { # seq_along(conv_r)
+
+for (i in 1:7) { 
   save_basic_conv_plots_all(i = i, runs = runs_1, tag = "_1")
   save_basic_conv_plots_all(i = i, runs = runs_10, tag = "_10")
   save_basic_conv_plots_all(i = i, runs = runs_110, tag = "_110")
-  #save_basic_conv_plots_all(i)
   }
 
-
-
-
-# --------------------------------------------------------------------------------------------------------
-# just the conv maps for the main comparisons:
-# --------------------------------------------------------------------------------------------------------
-# specifically, I just want:
-ensembles_list[indices$main]
-runs[ensembles_list[indices$main][[1]]] # 4
-runs[ensembles_list[indices$main][[2]]] # 4
-runs[ensembles_list[indices$main][[3]]] # 4
-runs[ensembles_list[indices$main][[4]]] # 2 additional
-runs[ensembles_list[indices$main][[5]]] # 6 additional
-
-# so, it's 20 total. try a 4 column by 5 row figure
-conv_r[[1]][[]]
-ensembles_list[indices$main]
-print_list <- c(
-  ensembles_list[indices$main][[1]],
-  ensembles_list[indices$main][[2]],
-  ensembles_list[indices$main][[3]],
-  ensembles_list[indices$main][[4]][-1], # without the first entry, "3"
-  ensembles_list[indices$main][[5]][-6]) # without the sixth entry, "2"
-
-length(print_list)
-conv_r[[1]][[print_list[5]]]
-
-save_basic_conv_plots_main <- function(i, fig_width = 8, fig_height = 10) {
-  png(paste0(p_plots, "/ms_fig_raster/", "basic_conv_maps_", names(conv_r)[i], "_main.png"),    
-      width = fig_width, height = fig_height, units = "in", res = 300)
-  
-  par(mfrow=c(5,4), mar=c(1,1,2,1), oma = c(1, 1, 1, 1))
-  for (j in print_list) {
-    plot(conv_r[[i]][[j]], 
-         main = names(conv_r[[i]][[j]]),
-         axes = FALSE, legend = FALSE, box = FALSE)
-    }
-  dev.off()
-  }
-
-for (i in seq_along(conv_r)) {save_basic_conv_plots_main(i)}
-
-
-plot(conv_10p_bd_dt_ensembles_r, nc = 6, nr = 6)
-
-
-
-par(mfrow=c(6,6), mar=c(0, 0, 1, 0), oma = c(1, 1, 1, 1))
-for (i in 1:length(runs_w_ref)) plot(conv_10p_bd_dt_ensembles_r[[i]], main = names(conv_10p_bd_dt_ensembles_r[[i]]), axes = FALSE, legend = FALSE, box = FALSE)
 ```
+
+```{r SI-print-bd-input-maps}
+save_bd_input_plots <- function(runs = runs_1, tag = "_1", fig_width = 12, fig_height = 13,
+                                custom_colors = map_colors) {
+  png(paste0(p_plots, "/si/", "bd_input_maps", tag, ".png"),
+      width = fig_width, height = fig_height, units = "in", res = 300)
+
+  par(mfrow=c(6,7), mar=c(1,1,2,1), oma = c(1, 1, 1, 1))
+  for (j in runs) {
+    plot(bd_inputs_brick[[j]],
+         main = names(bd_inputs_brick[[j]]),
+         axes = FALSE, legend = FALSE, box = FALSE,
+         col = custom_colors)
+
+    #plot(pas, col = col_pas_all, border = "gray", add=TRUE)
+    #legend("bottomright", legend= c("GMA", "Nat'l Park"), fill=col_pas, cex = 1.1, bty = "n")
+    plot(msk_shp, add = TRUE)
+
+  }
+  
+  # add standalone legend at the end
+  plot.new() # must add a new plot window
+  plot(bd_inputs_brick[[runs_1[8]]], col = map_colors,
+     legend.only = TRUE,
+     legend.width = 3,
+     legend.shrink = 1.4, cex = 5,
+     smallplot=c(0.2, 0.35, 0.15, 0.85)); par(mar = par("mar")) 
+  # small plot works as follows:
+  # smallplot=c(min % from left, max % from left, min % from bottom, max % from bottom).
+
+  dev.off()
+}
+
+
+
+
+save_bd_input_plots(runs = runs_1, tag = "_1")
+save_bd_input_plots(runs = runs_10, tag = "_10")
+save_bd_input_plots(runs = runs_110, tag = "_110")
+```
+
 
 ```{r SI-conv-with-dist-by-group}
 # --------------------------------------------------------------------------------------------------------
 # This chunk saves figures of modeled conversion maps, producing two figures for each decision category.
 # The first includes the distribution of values in the biodiversity inputs, the raw biodiversity inputs themselves,
 # and three weighting specifications: bp, b, and z50. 
-# The second figure includes the b, and the remaining four weighting scenarions (by, bc, bt, and byct).
+# The second figure includes the b, and the remaining four weighting scenarios (by, bc, bt, and byct).
 
 # These are produced at 1 km2 resolution for illustrative purposes only.
 # See Appendix Section S3.2
 # --------------------------------------------------------------------------------------------------------
 indices <- 1:4
 
-save_conv_plots_new <- function(i, runs = runs_1, indices = 1:4, tag = "",
+save_conv_plots_by_category <- function(i, runs = runs_1, indices = 1:4, tag = "",
                                 fig_width = 7, fig_height = 10, pixels = 100000) {
   row_density <- densityplot(conv_r$bd[[runs[indices]]], layout = c(4, 1))
   # row_1 <- histogram(bd_dt_r[[ensembles_list[[2]]]], layout = c(4, 1))
@@ -4185,7 +4078,7 @@ save_conv_plots_new <- function(i, runs = runs_1, indices = 1:4, tag = "",
     coord_equal()
   
   
-  png(paste0(p_plots, "/ms_v5/", tag, 
+  png(paste0(p_plots, "/si/conv_maps_by_category/", tag, 
              "_conv_maps.png"),    
       width = fig_width, height = fig_height, 
       units = "in", res = 300)
@@ -4197,7 +4090,7 @@ save_conv_plots_new <- function(i, runs = runs_1, indices = 1:4, tag = "",
     )
   dev.off()
   
-  png(paste0(p_plots, "/ms_v5/", tag, 
+  png(paste0(p_plots, "/si/conv_maps_by_category/", tag, 
              "_conv_maps2.png"),    
       width = fig_width, height = fig_height, 
       units = "in", res = 300)
@@ -4220,57 +4113,57 @@ save_conv_plots_new <- function(i, runs = runs_1, indices = 1:4, tag = "",
 
 tic()
 # types
-save_conv_plots_new(runs = runs_1, indices = 1:4, tag = "types_1")
-save_conv_plots_new(runs = runs_10, indices = 1:4, tag = "types_10")
-save_conv_plots_new(runs = runs_110, indices = 1:4, tag = "types_110")
+save_conv_plots_by_category(runs = runs_1, indices = 1:4, tag = "types_1")
+save_conv_plots_by_category(runs = runs_10, indices = 1:4, tag = "types_10")
+save_conv_plots_by_category(runs = runs_110, indices = 1:4, tag = "types_110")
 
 # taxa_all
-save_conv_plots_new(runs = runs_1, indices = 5:8, tag = "taxa_all_1")
-save_conv_plots_new(runs = runs_10, indices = 5:8, tag = "taxa_all_10")
-save_conv_plots_new(runs = runs_110, indices = 5:8, tag = "taxa_all_110")
+save_conv_plots_by_category(runs = runs_1, indices = 5:8, tag = "taxa_all_1")
+save_conv_plots_by_category(runs = runs_10, indices = 5:8, tag = "taxa_all_10")
+save_conv_plots_by_category(runs = runs_110, indices = 5:8, tag = "taxa_all_110")
 
 # taxa_endemism
-save_conv_plots_new(runs = runs_1, indices = 10:13, tag = "taxa_endemism_1")
-save_conv_plots_new(runs = runs_10, indices = 10:13, tag = "taxa_endemism_10")
-save_conv_plots_new(runs = runs_110, indices = 10:13, tag = "taxa_endemism_110")
+save_conv_plots_by_category(runs = runs_1, indices = 10:13, tag = "taxa_endemism_1")
+save_conv_plots_by_category(runs = runs_10, indices = 10:13, tag = "taxa_endemism_10")
+save_conv_plots_by_category(runs = runs_110, indices = 10:13, tag = "taxa_endemism_110")
 
 # taxa_threat
-save_conv_plots_new(runs = runs_1, indices = 14:17, tag = "taxa_threat_1")
-save_conv_plots_new(runs = runs_10, indices = 14:17, tag = "taxa_threat_10")
-save_conv_plots_new(runs = runs_110, indices = 14:17, tag = "taxa_threat_110")
+save_conv_plots_by_category(runs = runs_1, indices = 14:17, tag = "taxa_threat_1")
+save_conv_plots_by_category(runs = runs_10, indices = 14:17, tag = "taxa_threat_10")
+save_conv_plots_by_category(runs = runs_110, indices = 14:17, tag = "taxa_threat_110")
 
 # taxa_small
-save_conv_plots_new(runs = runs_1, indices = 18:21, tag = "taxa_small_1")
-save_conv_plots_new(runs = runs_10, indices = 18:21, tag = "taxa_small_10")
-save_conv_plots_new(runs = runs_110, indices = 18:21, tag = "taxa_small_110")
+save_conv_plots_by_category(runs = runs_1, indices = 18:21, tag = "taxa_small_1")
+save_conv_plots_by_category(runs = runs_10, indices = 18:21, tag = "taxa_small_10")
+save_conv_plots_by_category(runs = runs_110, indices = 18:21, tag = "taxa_small_110")
 
 # methods_mb
-save_conv_plots_new(runs = runs_1, indices = c(22, 25, 28, 31), tag = "methods_mb_1")
-save_conv_plots_new(runs = runs_10, indices = c(22, 25, 28, 31), tag = "methods_mb_10")
-save_conv_plots_new(runs = runs_110, indices = c(22, 25, 28, 31), tag = "methods_mb_110")
+save_conv_plots_by_category(runs = runs_1, indices = c(22, 25, 28, 31), tag = "methods_mb_1")
+save_conv_plots_by_category(runs = runs_10, indices = c(22, 25, 28, 31), tag = "methods_mb_10")
+save_conv_plots_by_category(runs = runs_110, indices = c(22, 25, 28, 31), tag = "methods_mb_110")
 
 # methods_vp
-save_conv_plots_new(runs = runs_1, indices = 1 + c(22, 25, 28, 31), tag = "methods_vp_1")
-save_conv_plots_new(runs = runs_10, indices = 1 + c(22, 25, 28, 31), tag = "methods_vp_10")
-save_conv_plots_new(runs = runs_110, indices = 1+ c(22, 25, 28, 31), tag = "methods_vp_110")
+save_conv_plots_by_category(runs = runs_1, indices = 1 + c(22, 25, 28, 31), tag = "methods_vp_1")
+save_conv_plots_by_category(runs = runs_10, indices = 1 + c(22, 25, 28, 31), tag = "methods_vp_10")
+save_conv_plots_by_category(runs = runs_110, indices = 1+ c(22, 25, 28, 31), tag = "methods_vp_110")
 
 # methods_ae
-save_conv_plots_new(runs = runs_1, indices = 2 + c(22, 25, 28, 31), tag = "methods_ae_1")
-save_conv_plots_new(runs = runs_10, indices = 2+ c(22, 25, 28, 31), tag = "methods_ae_10")
-save_conv_plots_new(runs = runs_110, indices = 2 + c(22, 25, 28, 31), tag = "methods_ae_110")
+save_conv_plots_by_category(runs = runs_1, indices = 2 + c(22, 25, 28, 31), tag = "methods_ae_1")
+save_conv_plots_by_category(runs = runs_10, indices = 2+ c(22, 25, 28, 31), tag = "methods_ae_10")
+save_conv_plots_by_category(runs = runs_110, indices = 2 + c(22, 25, 28, 31), tag = "methods_ae_110")
 
 # methods_ae
-save_conv_plots_new(runs = runs_1, indices = 2 + c(22, 25, 28, 31), tag = "methods_ae_1")
-save_conv_plots_new(runs = runs_10, indices = 2+ c(22, 25, 28, 31), tag = "methods_ae_10")
-save_conv_plots_new(runs = runs_110, indices = 2 + c(22, 25, 28, 31), tag = "methods_ae_110")
+save_conv_plots_by_category(runs = runs_1, indices = 2 + c(22, 25, 28, 31), tag = "methods_ae_1")
+save_conv_plots_by_category(runs = runs_10, indices = 2+ c(22, 25, 28, 31), tag = "methods_ae_10")
+save_conv_plots_by_category(runs = runs_110, indices = 2 + c(22, 25, 28, 31), tag = "methods_ae_110")
 
 
 # composites
-save_conv_plots_new(runs = runs_1, indices = c(2, 9, 34:38), tag = "composites_1", 
+save_conv_plots_by_category(runs = runs_1, indices = c(2, 9, 34:38), tag = "composites_1", 
                     fig_width = 10, fig_height = 9)
-save_conv_plots_new(runs = runs_10, indices = c(2, 9, 34:38), tag = "composites_10", 
+save_conv_plots_by_category(runs = runs_10, indices = c(2, 9, 34:38), tag = "composites_10", 
                     fig_width = 10, fig_height = 9)
-save_conv_plots_new(runs = runs_110, indices = c(2, 9, 34:38), tag = "composites_110",
+save_conv_plots_by_category(runs = runs_110, indices = c(2, 9, 34:38), tag = "composites_110",
                     fig_width = 10, fig_height = 9)
 
 toc()
@@ -4279,33 +4172,24 @@ toc()
 
 
 # --------------------------------------------------------------------------------------------------------
-# --------------------------------------------------------------------------------------------------------
+# testing the size --------------------------------------------------------------------------------------------------------
 # --------------------------------------------------------------------------------------------------------
 tic()
-save_conv_plots_new(i = 1, fig_width = 7, fig_height = 9, pixels = 100000) # tester for 1, think I did 7 and 9 earlier. 
+save_conv_plots_by_category(i = 1, fig_width = 7, fig_height = 9, pixels = 100000) # tester for 1, think I did 7 and 9 earlier. 
 toc()
 
 names(ensembles_list)[c(1, 3:9)]
-for (i in c(2, 4:9)) save_conv_plots_new(i, fig_width = 7, fig_height = 9) # four comparisons in the ensemble
-save_conv_plots_new(3, fig_width = 8, fig_height = 9) # 5 inputs
-save_conv_plots_new(14, fig_width = 10, fig_height = 8) # 7 inputs
+for (i in c(2, 4:9)) save_conv_plots_by_category(i, fig_width = 7, fig_height = 9) # four comparisons in the ensemble
+save_conv_plots_by_category(3, fig_width = 8, fig_height = 9) # 5 inputs
+save_conv_plots_by_category(14, fig_width = 10, fig_height = 8) # 7 inputs
 
-for (i in c(10:13)) save_conv_plots_new(i, fig_width = 7, fig_height = 11) # 3 inputs # these are fine
-for (i in c(15:18)) save_conv_plots_new(i, fig_width = 7, fig_height = 11) # 2 inputs # these are also fine
+for (i in c(10:13)) save_conv_plots_by_category(i, fig_width = 7, fig_height = 11) # 3 inputs # these are fine
+for (i in c(15:18)) save_conv_plots_by_category(i, fig_width = 7, fig_height = 11) # 2 inputs # these are also fine
 
 ```
 
 
 ## Methods panel (ms fig. 1)
-
-```{r}
-
-plot(bd_inputs_brick$bird_all, box = F, axes = F, legend = F, col = map_colors)
-addRasterLegend(bd_inputs_brick$bird_all, ramp = map_colors, nTicks = 0, side = "none")
-
-
-```
-
 
 ```{r methods-panel-manual}
 # Produce small thumbnail raster maps for use in MS Figure 1, the methods panel
@@ -4319,6 +4203,10 @@ mp_res <- 300
 col_pas <- c("gray88","gray78")
 col_pas_all <- col_pas[pas$type] # this sets up the colors based on a particular attribute, in this case, "type" . See levels(pas$type) to view the order in which the colors will be assigned to the values. 
 dev.off()
+
+# legend:
+plot(bd_inputs_brick$bird_all, box = F, axes = F, legend = F, col = map_colors)
+addRasterLegend(bd_inputs_brick$bird_all, ramp = map_colors, nTicks = 0, side = "none")
 
 
 
@@ -5288,38 +5176,49 @@ yield_input_dt
 yield_dt
 # yield_dt <- toff_eq$reference_y$inputs$p_yield
 yield_dt <- fread(file = fp(p_mod_output, "yield_dt.csv"))
-yield_dt_r <- dt_to_raster(yield_dt, CRSobj)
-
 
 # add x and y columns.
-bd_dt
 yield_dt[, x := bd_dt[, .(x)]]
 yield_dt[, y := bd_dt[, .(y)]]
 
+# convert to raster
+yield_dt_r <- dt_to_raster(yield_dt, CRSobj)
+
+pas_sf <- st_as_sf(pas) %>%
+  mutate(type = fct_recode(type, 
+                           "Game Mgmt. Area" = "gma", 
+                           "National Park" = "npark"))
+
+
+
 row_maize <- ggplot() +
-         geom_raster(data = yield_dt, aes(x = x, y = y, fill = maize)) +
+  geom_raster(data = yield_dt, aes(x = x, y = y, fill = maize)) +
   scale_fill_gradientn(colors = map_colors, na.value = "white") + 
-  labs(y = NULL, x = NULL, fill = "tons/ha", title = "Maize") + 
   theme(rect = element_blank(), line = element_blank(), 
         axis.line = element_blank(), axis.ticks = element_blank(), 
         axis.ticks.length = unit(0, "pt"), axis.text = element_blank(),
         plot.title = element_text(hjust = 0.5)) + 
   coord_equal() + 
-  geom_sf(data = pas_sf, aes(alpha = type), lwd = 0.1)
+  geom_sf(data = pas_sf, mapping = aes(alpha = type), lwd = 0.1) + 
+  labs(y = NULL, x = NULL, fill = "Yield (tons/ha)", title = "Maize", alpha = "Protected Areas")
+
 
 row_soy <- ggplot() +
          geom_raster(data = yield_dt, aes(x = x, y = y, fill = soy)) +
   scale_fill_gradientn(colors = map_colors, na.value = "white") + 
-  labs(y = NULL, x = NULL, fill = "tons/ha", title = "Soy") + 
   theme(rect = element_blank(), line = element_blank(), 
         axis.line = element_blank(), axis.ticks = element_blank(), 
         axis.ticks.length = unit(0, "pt"), axis.text = element_blank(),
         plot.title = element_text(hjust = 0.5)) + 
   coord_equal() + 
-  geom_sf(data = pas_sf, aes(alpha = type), lwd = 0.1)
+  geom_sf(data = pas_sf, mapping = aes(alpha = type), lwd = 0.1) +
+  labs(y = NULL, x = NULL, fill = "Yield (tons/ha)", title = "Soy", alpha = "Protected Areas")
+  
+  
 
+# ------------------------------------------------------------ #
 # put the figure together
-png(paste0(p_plots, "/doc_figures/","yield_maps.png"),    
+png(paste0(p_plots, "/si/","yield_maps.png"),    
       width = 10, height = 5, 
       units = "in", res = 300)
 # pdf(paste0(p_plots, "/", names(ensembles_list)[i], 
