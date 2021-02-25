@@ -691,19 +691,21 @@ cc_var <- function(x, y) {
 
 save_thumbnails <- function(raster, raster_names, label = "",
                             mp_width = 300, mp_height = 300, mp_units = "px",
-                            no_pas, pas_col = col_pas_all, pas_border = NA){
+                            no_pas, pas_col = col_pas_all, pas_border = NA,
+                            custom_colors = map_colors){
 
   if (no_pas){no_pas_label = "_no_pas"} else {no_pas_label = ""}
 
-  png(file = paste0(p_plots,"/ms_v5/methods_panel_v5/", raster_names, no_pas_label, label, ".png"),
+  png(file = paste0(p_plots,"/methods_panel/", raster_names, no_pas_label, label, ".png"),
       width = mp_width, height = mp_height, units = mp_units)
 
   par(bg=NA, mar=c(0,0,0,0), oma=c(0,0,0,0))
   plot(msk_shp, border = NA)
-  plot(raster, box = F, axes = F, legend = FALSE, add = TRUE)
+  plot(raster, box = F, axes = F, legend = FALSE, add = TRUE,
+       col = custom_colors)
   if (no_pas) {
     plot(pas, col = pas_col, border = pas_border, add=T)
   }
-  plot(msk_shp, add = T)
+  plot(msk_shp, add = T, lwd = 5)
   dev.off()
 }
