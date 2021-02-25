@@ -1274,6 +1274,10 @@ Now, assuming heterogeneous (accurate) yields throughout Zambia, we ran the mode
 6. bt = 50%/50% biodiversity/transportation cost, and
 7. byct = 25% weight on biodiversity, yield, carbon, and transportation cost.
 
+```{r load-il}
+il <- agroEcoTradeoff::fetch_inputs(path = p_ZA)
+```
+
 
 ```{r toff_bp}
 tic()
@@ -1330,6 +1334,7 @@ for (i in 1:length(runs_mean_yield)) {
 fwrite(conv_z50_dt, file = fp(p_mod_output, "conv_z50_dt.csv"))
 toc()
 rm(conv_z50_dt)
+
 # # save toff_z50
 # save(toff_z50, file = fp(p_mod_output, "toff_z50_list.RData"))
 # rm(toff_z50)
@@ -1400,6 +1405,7 @@ toc()
 # load(file = fp(p_mod_output, "toff_by_list.RData"), verbose = T)
 
 ```
+
 
 ```{r toff_bc}
 # toff_bc <- vector("list", length = length(runs)) # must create an empty list first. Can also do this with simply list()
