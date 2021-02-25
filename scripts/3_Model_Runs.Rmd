@@ -1,5 +1,5 @@
 ---
-title: "Produce agroEcoTradeoff Model Runs"
+title: "3. agroEcoTradeoff Model Runs"
 author: "Christopher Crawford, Princeton University"
 output: html_notebook
 editor_options: 
@@ -9,11 +9,17 @@ This notebook outlines the main `agroEcoTradeoff` model runs for the biodiversit
 
 We conduct model runs for seven primary weighting specifications, as described below.
 
-See Appendix S1 for more details. 
-
+See Appendix S1 for more details.
 
 # Start up:
-See: scripts/1_Start.Rmd 
+
+```{r start-up, eval=TRUE}
+## libraries --------------------------------------------------------------------------------
+source("scripts/cc_libraries.R")
+source("scripts/cc_functions.R")
+source("scripts/cc_pathnames.R")
+source("scripts/cc_plot_things.R")
+```
 
 ## Accessing the `agroEcoTradeoff` model
 
@@ -813,8 +819,11 @@ runs_1
 runs_10 <- paste0(runs_1, "_10")
 runs_110 <- paste0(runs_1, "_110")
 
+
+# ------------------------------------------------------------------
 # combine runs at the three resolutions
 runs <- c(runs_1, runs_10, runs_110)
+# ------------------------------------------------------------------
 
 
 # extra runs, for reference:
@@ -1251,7 +1260,7 @@ for (i in 1:length(runs_mean_yield)) {
 ```
 
 
-# Primary modely runs
+# Primary model runs
 
 We produced model runs for seven primary weighting specifications:
 
