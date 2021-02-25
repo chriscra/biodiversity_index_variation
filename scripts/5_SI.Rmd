@@ -48,6 +48,7 @@ facet_names_distill <- c("all", "endemism", "small", "mam", "bird", "amp", "rep"
 facet_names <- c("all_bp", "endemism_bp", "threat_bp", "small_bp", "mam_bp", "bird_bp", "amp_bp", "rep_bp", "average_bp", "geometric_bp", "max_bp", "multi_bp", "res1_bp", "res10_bp", "res110_bp", "vert_endemism_bp", "plants_bp", "estes_bp", "laurance_bp", "habitats_bp", "bird_composite_bp", "damania_bp", "all_b", "endemism_b", "threat_b", "small_b", "mam_b", "bird_b", "amp_b", "rep_b", "average_b", "geometric_b", "max_b", "multi_b", "res1_b", "res10_b", "res110_b", "vert_endemism_b", "plants_b", "estes_b", "laurance_b", "habitats_b", "bird_composite_b", "damania_b", "all_by", "endemism_by", "threat_by", "small_by", "mam_by", "bird_by", "amp_by", "rep_by", "average_by", "geometric_by", "max_by", "multi_by", "res1_by", "res10_by", "res110_by", "vert_endemism_by", "plants_by", "estes_by", "laurance_by", "habitats_by", "bird_composite_by", "damania_by", "all_bc", "endemism_bc", "threat_bc", "small_bc", "mam_bc", "bird_bc", "amp_bc", "rep_bc", "average_bc", "geometric_bc", "max_bc", "multi_bc", "res1_bc", "res10_bc", "res110_bc", "vert_endemism_bc", "plants_bc", "estes_bc", "laurance_bc", "habitats_bc", "bird_composite_bc", "damania_bc", "all_bt", "endemism_bt", "threat_bt", "small_bt", "mam_bt", "bird_bt", "amp_bt", "rep_bt", "average_bt", "geometric_bt", "max_bt", "multi_bt", "res1_bt", "res10_bt", "res110_bt", "vert_endemism_bt", "plants_bt", "estes_bt", "laurance_bt", "habitats_bt", "bird_composite_bt", "damania_bt", "all_byct", "endemism_byct", "threat_byct", "small_byct", "mam_byct", "bird_byct", "amp_byct", "rep_byct", "average_byct", "geometric_byct", "max_byct", "multi_byct", "res1_byct", "res10_byct", "res110_byct", "vert_endemism_byct", "plants_byct", "estes_byct", "laurance_byct", "habitats_byct", "bird_composite_byct", "damania_byct", "all_z50", "endemism_z50", "threat_z50", "small_z50", "mam_z50", "bird_z50", "amp_z50", "rep_z50", "average_z50", "geometric_z50", "max_z50", "multi_z50", "res1_z50", "res10_z50", "res110_z50", "vert_endemism_z50", "plants_z50", "estes_z50", "laurance_z50", "habitats_z50", "bird_composite_z50", "damania_z50", "all", "endemism", "threat", "small", "mam", "bird", "amp", "rep", "average", "geometric", "max", "multi", "res1", "res10", "res110", "vert_endemism", "plants", "estes", "laurance", "habitats", "bird_composite", "damania", "bp", "b", "by", "bc", "bt", "byct", "z50")
 
 
+# load and reorganize factor levels for jaccard similarity values, including renaming some levels (richness <- types)
 
 jac_w_melt <- read_csv(file = fp(p_mod_output, "jac_w_melt.csv")) %>% 
   mutate(
@@ -519,7 +520,9 @@ ggplot(filter(jac_w_melt,
   xlab(NULL) + ylab("Jaccard Similarity") + 
   facet_grid(cols = vars(comparison), scales = "free_x", switch = "x", 
              space = "free_x") + theme(legend.position = "bottom") + 
-  theme(plot.margin = unit(c(0.4, 0.5, 0.2, 0.2), "cm"))
+  theme(plot.margin = unit(c(0.4, 0.5, 0.2, 0.2), "cm")) + 
+  
+  scale_fill_viridis("Mean Values", discrete = T) # for color blindness
 ```
 
 ## Challenges with spatial uncertainty analysis
@@ -574,7 +577,7 @@ The relative similarity between these two production targets is shown in Figure 
 # add in this line to the caption, if I add order back in...
 # *order* refers to similarity of the order in which cells are selected for conversion (or protection) based on biodiversity value.
 
-knitr::include_graphics(fp(p_plots, "ms_final/ms_fig_4_robustness_SI.png"))
+knitr::include_graphics(fp(p_plots, "si/ms_fig_4_robustness_SI.png"))
 
 # other, unused:
 
@@ -654,6 +657,9 @@ These *plants*, *habitats*, and *bird_composite* indices were not included in ou
 facet_r_bp <- brick(fp(p_mod_output,"facet_r_bp.tif"))
 
 names(facet_r_bp) <- gsub("_bp", "", grep("_bp$", facet_names, value = TRUE))
+
+map_colors <- c("#F2F2F2", viridis(20, direction = -1)) # terrain.colors(50, rev = TRUE)
+
 
 p1 <- gplot(facet_r_bp[[c("vert_endemism", "estes", "laurance", "damania")]], 
             maxpixels = 5000000) + 
@@ -751,7 +757,8 @@ ggplot(data = filter(facet_stats, comparison != "weights"),
   labs(x = "Factor", y = "Jaccard Similarity", color = "Model \nWeight") +
   geom_point(size = 2.5, alpha = 0.8) +
   facet_grid(cols = vars(comparison), scales = "free_x", 
-             switch = "x", space = "free_x")
+             switch = "x", space = "free_x") + 
+  scale_color_viridis("Model \nWeight", discrete = T)
 
 
 
