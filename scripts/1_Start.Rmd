@@ -16,7 +16,6 @@ This Rmarkdown notebook is intended to serve as a useful starting place for this
 source("scripts/cc_libraries.R")
 source("scripts/cc_functions.R")
 source("scripts/cc_pathnames.R")
-source("scripts/cc_plot_things.R")
 ```
 
 ```{r load-basic-gis-files}
@@ -207,16 +206,8 @@ bd_inputs_brick <- brick(fp(p_mod_inputs,"bd_inputs_brick.tif")); names(bd_input
 # load(file = fp(p_mod_inputs,"bd_inputs.RData"), verbose = TRUE) # or, load individually
 bd_inputs_brick
 
-load(file = fp(p_mod_output, "toff_eq_list.RData"), verbose = TRUE)
-load(file = fp(p_mod_output, "toff_bd50_y50_list.RData"), verbose = TRUE)
-load(file = fp(p_mod_output, "toff_bd100_list.RData"), verbose = TRUE)
 
 load(file = fp(p_mod_output, "reference_files.RData"), verbose = TRUE) # contains: reference_y_toff, reference_y_toff_outputs, reference_yct_toff, reference_yct_toff_outputs, reference_y, reference_yct,
-
-# extras
-load(file = fp(p_mod_output, "toff_eq_outputs_list.RData"), verbose = TRUE)
-load(file = fp(p_mod_output, "toff_bd100_outputs_list.RData"), verbose = TRUE)
-
 
 
 bd_inputs_brick <- brick(fp(p_mod_inputs,"bd_inputs_brick.tif"))
@@ -224,44 +215,6 @@ names(bd_inputs_brick) <- runs
 
 ```
 
-```{r load_results}
-# ---------------------------------------
-# load in conv ensemble rasters 
-# ---------------------------------------
-conv_eq_dt_ensembles_r <- brick(fp(p_mod_output,"conv_eq_dt_ensembles_r.tif"))
-conv_bd50_y50_dt_ensembles_r <- brick(fp(p_mod_output,"conv_bd50_y50_dt_ensembles_r.tif"))
-conv_bd100_dt_ensembles_r <- brick(fp(p_mod_output,"conv_bd100_dt_ensembles_r.tif"))
-# conv_10p_bd_dt_ensembles_r <- brick(fp(p_mod_output,"conv_10p_bd_dt_ensembles_r.tif"))
-
-# add the layer names back again
-names(conv_eq_dt_ensembles_r) <- c("x", "y", runs_w_ensembles)
-names(conv_bd50_y50_dt_ensembles_r) <- c("x", "y", runs_w_ensembles)
-names(conv_bd100_dt_ensembles_r) <- c("x", "y", runs_w_ensembles)
-# names(conv_10p_bd_dt_ensembles_r) <- c("x", "y", runs_w_ensembles)
-
-
-# ---------------------------------------
-# create new ensembles list
-# ---------------------------------------
-conv_r <- list(
-  "bd100" = conv_bd100_dt_ensembles_r, 
-  "bd50_y50" = conv_bd50_y50_dt_ensembles_r, 
-  "eq" = conv_eq_dt_ensembles_r#, 
-#  "10p_bd" = conv_10p_bd_dt_ensembles_r
-  )
-
-
-bd_dt_ensembles <- fread(file = fp(p_mod_output, "bd_dt_ensembles.csv"))
-
-
-# from the first iteration, looking at each conversion map individually:
-results_combo <- read.csv(file = fp(p_mod_output, "results_combo.csv"))
-overlap_combo <- read.csv(file = fp(p_mod_output, "overlap_combo.csv"))
-jaccard_combo <- read.csv(file = fp(p_mod_output, "jaccard_combo.csv"))
-
-
-# from second iteration, following Xingli's advice.
-```
 
 ```{r *runs}
 # Final model runs:
