@@ -1,5 +1,3 @@
-# pathnames for Zambia project:
-
 ## Pathnames --------------------------------------------------------------------------------
 
 # Zambia specific file path names

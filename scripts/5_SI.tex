@@ -138,19 +138,19 @@
 \section{Expanded Methods}\label{expanded-methods}}
 
 \hypertarget{land-use-prioritization-model-estes2016a}{%
-\subsection{Land-use prioritization model (Estes et al. 2016)}\label{land-use-prioritization-model-estes2016a}}
+\subsection{Land-use prioritization model (L. D. Estes et al. 2016)}\label{land-use-prioritization-model-estes2016a}}
 
-Our analysis builds on the \texttt{agroEcoTradeoff} land-use model described in Estes et al. (2016) and applied to Zambia. The \texttt{agroEcoTradeoff} model is designed to prioritize areas for agricultural expansion in order to meet a set of crop-specific production targets while simultaneously minimizing four costs: the total area of land required (i.e.~maximizing yields), transportation costs, carbon released through conversion of natural vegetation to agriculture, and biodiversity loss. The model requires spatially explicit inputs representing these four costs in the form of maps with pixel values ranging from 0-1. The model is structured to express these costs in terms of production efficiency, or cost per unit yield estimated to result from the conversion of a given cell. These constraints are then weighted according to user preferences and combined into a single map of ``conversion priority.'' Cells are then sequentially chosen for conversion until a user-specified production target is met, based on the expected yield in each cell and adjusted to account for the proportion of each pixel that is not currently cropped, settled, protected, or with slopes greater than 20\%.
+Our analysis builds on the \texttt{agroEcoTradeoff} land-use model described in L. D. Estes et al. (2016) and applied to Zambia. The \texttt{agroEcoTradeoff} model is designed to prioritize areas for agricultural expansion in order to meet a set of crop-specific production targets while simultaneously minimizing four costs: the total area of land required (i.e.~maximizing yields), transportation costs, carbon released through conversion of natural vegetation to agriculture, and biodiversity loss. The model requires spatially explicit inputs representing these four costs in the form of maps with pixel values ranging from 0-1. The model is structured to express these costs in terms of production efficiency, or cost per unit yield estimated to result from the conversion of a given cell. These constraints are then weighted according to user preferences and combined into a single map of ``conversion priority.'' Cells are then sequentially chosen for conversion until a user-specified production target is met, based on the expected yield in each cell and adjusted to account for the proportion of each pixel that is not currently cropped, settled, protected, or with slopes greater than 20\%.
 
 \hypertarget{non-bd-inputs}{%
 \subsubsection{Non-biodiversity model inputs}\label{non-bd-inputs}}
 
-In our analysis, we use this model to explore how a range of approaches for formulating biodiversity values affect land-use recommendations. We therefore use the same settings for non-biodiversity elements as applied in Estes et al. (2016), including representative future production targets for maize and soy (projecting a fourfold increase for maize and a 10-fold increase for soy by 2050, compared with 2009--2014 average), as well as the input yield, carbon density, and travel cost maps. Yield estimates are modeled using DSSAT (Jones et al. 2003) based on weather station data and soil profiles, mapped to a 1 km\(^2\) grid using a generalized additive model, and rescaled to match FAO yield-growth projections for Zambia by 2050 (see Figure \ref{fig:yield}). Travel cost is based on travel time to the nearest market town. Carbon loss is based on estimates of aboveground and belowground biomass carbon stocks Baccini et al. (2012). Additional detail on the model structure and how constraints were modeled can be found in Estes et al. (2016). The general structure of the model is illustrated in Fig. 1b. See Estes et al. (2016) for additional details.
+In our analysis, we use this model to explore how a range of approaches for formulating biodiversity values affect land-use recommendations. We therefore use the same settings for non-biodiversity elements as applied in L. D. Estes et al. (2016), including representative future production targets for maize and soy (projecting a fourfold increase for maize and a 10-fold increase for soy by 2050, compared with 2009--2014 average), as well as the input yield, carbon density, and travel cost maps. Yield estimates are modeled using DSSAT (Jones et al. 2003) based on weather station data and soil profiles, mapped to a 1 km\(^2\) grid using a generalized additive model, and rescaled to match FAO yield-growth projections for Zambia by 2050 (see Figure \ref{fig:yield}). Travel cost is based on travel time to the nearest market town. Carbon loss is based on estimates of aboveground and belowground biomass carbon stocks Baccini et al. (2012). Additional detail on the model structure and how constraints were modeled can be found in L. D. Estes et al. (2016). The general structure of the model is illustrated in Fig. 1b. See L. D. Estes et al. (2016) for additional details.
 
 
 
 \begin{figure}
-\includegraphics[width=1\textwidth]{/Users/christophercrawford/Google Drive/_Projects/Zambia/agroEcoTradeoff/external/plots/yield_maps} \caption{Estimated maize and soy yields across Zambia, in tons/ha (with different scales for each crop). Average yields, used in the pure biodiversity (\emph{bp}) and 50\% conversion (\emph{z50}) model weighting specifications, are 5.30 tons/ha for maize and 3.38 tons/ha for soy. See Estes et al. (2016) for details on how yields were modeled.}\label{fig:yield}
+\includegraphics[width=1\textwidth]{/Users/christophercrawford/Google Drive/_Projects/Zambia/agroEcoTradeoff/external/plots/si/yield_maps} \caption{Estimated maize and soy yields across Zambia, in tons/ha (with different scales for each crop). Average yields, used in the pure biodiversity (\emph{bp}) and 50\% conversion (\emph{z50}) model weighting specifications, are 5.30 tons/ha for maize and 3.38 tons/ha for soy. See L. D. Estes et al. (2016) for details on how yields were modeled.}\label{fig:yield}
 \end{figure}
 
 \hypertarget{model-weights}{%
@@ -192,7 +192,7 @@ In order to capture the variation in how biodiversity can be represented in prio
 \def\labelenumi{(\arabic{enumi})}
 \tightlist
 \item
-  \emph{estes}: Estes et al. (2016)'s composite incorporates threat, rarity, and intactness of potential natural vegetation (PNV) types of eastern and southern Africa, described by Van Breugel et al. (2015). Rarity was calculated as the proportion of Zambia occupied by that vegetation type (these values were log transformed due to a highly skewed distribution). Threat was calculated as the proportion of vegetation falling within a protected area. Low values correspond to a rare, relatively unprotected vegetation class, one with high conservation priority. Intactness was then calculated based on the proportion of undisturbed vegetation existing in the surrounding 11 km \(\times\) 11 km neighborhood. As shown in Equation \eqref{eq:estes-comp}, the final composite was calculated as follows:
+  \emph{estes}: L. D. Estes et al. (2016)'s composite incorporates threat, rarity, and intactness of potential natural vegetation (PNV) types of eastern and southern Africa, described by Van Breugel et al. (2015). Rarity was calculated as the proportion of Zambia occupied by that vegetation type (these values were log transformed due to a highly skewed distribution). Threat was calculated as the proportion of vegetation falling within a protected area. Low values correspond to a rare, relatively unprotected vegetation class, one with high conservation priority. Intactness was then calculated based on the proportion of undisturbed vegetation existing in the surrounding 11 km \(\times\) 11 km neighborhood. As shown in Equation \eqref{eq:estes-comp}, the final composite was calculated as follows:
 \end{enumerate}
 
 \begin{equation}
@@ -348,7 +348,7 @@ Different methods for combining multiple layers, for three pairs of layers: 1) t
 \item
   \emph{max\_mb}: Maximum of threatened mammal \& bird richness, following Damania and Wheeler (2015): \(value = maximum (x,y)\)
 \item
-  \emph{multi\_mb}: Multiplying threatened mammal \& bird richness, following Estes et al. (2016) and Koh and Ghazoul (2010): \(value = x \cdot y\)
+  \emph{multi\_mb}: Multiplying threatened mammal \& bird richness, following L. D. Estes et al. (2016) and Koh and Ghazoul (2010): \(value = x \cdot y\)
 \end{enumerate}
 
 \textbf{Combining all vertebrate species richness and plant species richness per ecoregion:}
@@ -395,7 +395,7 @@ In total, we produced 90 unique indices to cover the full range of permutations 
 
 Species range maps were filtered prior to the calculation of species richness in order to: exclude marine species; exclude species classified as ``Extinct'' (EX) or ``Extinct in the Wild'' (EW); include only ranges where species were considered ``extant;'' include only ranges where species are considered ``native'' or ``reintroduced;'' and include only portions of the range where species are ``resident,'' ``breeding,'' or ``non-breeding'' (i.e.~wintering, excluding ``passage'' areas for migratory species).
 
-Range maps, species richness maps, and biodiversity indices were processed and calculated in RStudio using R version 3.6.0 (2019-04-26), using the \texttt{agroEcoTradeoff}, \texttt{dtraster}, \texttt{lmisc}, \texttt{raster}, \texttt{rgdal}, \texttt{sf}, \texttt{sp}, \texttt{gdalUtils}, \texttt{rasterVis}, \texttt{data.table}, \texttt{tictoc}, \texttt{fasterize}, \texttt{lwgeom}, \texttt{magrittr}, \texttt{parallel}, \texttt{reshape2}, \texttt{cowplot}, \texttt{tidyverse}, \texttt{knitr}, \texttt{spatstat}, \texttt{rmarkdown}, \texttt{bookdown}, and \texttt{pryr} packages.
+Species range maps, richness maps, biodiversity indices, and the resulting model outputs were processed in RStudio version 1.4.993, using R version 4.0.2 (2020-06-22), using the \texttt{agroEcoTradeoff}, \texttt{data.table}, \texttt{sf}, \texttt{raster}, \texttt{dtraster}, \texttt{fasterize}, \texttt{tidyverse}, \texttt{lmisc}, \texttt{rgdal}, \texttt{sp}, \texttt{gdalUtils}, \texttt{rasterVis}, \texttt{tictoc}, \texttt{lwgeom}, \texttt{magrittr}, \texttt{reshape2}, \texttt{cowplot}, \texttt{knitr}, \texttt{spatstat}, \texttt{rmarkdown}, \texttt{bookdown}, \texttt{pryr}, and \texttt{viridis} packages.
 
 Before running the \texttt{agroEcoTradeoff} model, each biodiversity index was cropped and masked to the outline of Zambia, removing large bodies of water, then rescaled to between 0-1, setting a given index's maximum value to 1 and the minimum to 0. This involved taking the value of each cell, subtracting the index's global minimum value, then dividing this value by the difference between the global maximum and the global minimum.
 
@@ -409,15 +409,15 @@ See Figures \ref{fig:bd-inputs-1}, \ref{fig:bd-inputs-10}, and \ref{fig:bd-input
 
 
 \begin{figure}
-\includegraphics[width=1\textwidth]{/Users/christophercrawford/Google Drive/_Projects/Zambia/agroEcoTradeoff/external/plots/ms_v5/bd_input_maps_runs_1} \caption{Raw biodiversity inputs, 1 km\(^2\) resolution}\label{fig:bd-inputs-1}
+\includegraphics[width=1\textwidth]{/Users/christophercrawford/Google Drive/_Projects/Zambia/agroEcoTradeoff/external/plots/si/bd_input_maps_1} \caption{Raw biodiversity inputs, 1 km\(^2\) resolution}\label{fig:bd-inputs-1}
 \end{figure}
 
 \begin{figure}
-\includegraphics[width=1\textwidth]{/Users/christophercrawford/Google Drive/_Projects/Zambia/agroEcoTradeoff/external/plots/ms_v5/bd_input_maps_runs_10} \caption{Raw biodiversity inputs, 10 km grid (100 km\(^2\)) resolution}\label{fig:bd-inputs-10}
+\includegraphics[width=1\textwidth]{/Users/christophercrawford/Google Drive/_Projects/Zambia/agroEcoTradeoff/external/plots/si/bd_input_maps_10} \caption{Raw biodiversity inputs, 10 km grid (100 km\(^2\)) resolution}\label{fig:bd-inputs-10}
 \end{figure}
 
 \begin{figure}
-\includegraphics[width=1\textwidth]{/Users/christophercrawford/Google Drive/_Projects/Zambia/agroEcoTradeoff/external/plots/ms_v5/bd_input_maps_runs_110} \caption{Raw biodiversity inputs, 110 km grid (12,100 km\(^2\), \textasciitilde1\(^{\circ}\) latitude) resolution}\label{fig:bd-inputs-110}
+\includegraphics[width=1\textwidth]{/Users/christophercrawford/Google Drive/_Projects/Zambia/agroEcoTradeoff/external/plots/si/bd_input_maps_110} \caption{Raw biodiversity inputs, 110 km grid (12,100 km\(^2\), \textasciitilde1\(^{\circ}\) latitude) resolution}\label{fig:bd-inputs-110}
 \end{figure}
 
 \hypertarget{conversion-maps-for-bp-weighting-specification}{%
@@ -430,15 +430,15 @@ Next, we show maps for only our primary model weighting specification, with 100\
 
 
 \begin{figure}
-\includegraphics[width=1\textwidth]{/Users/christophercrawford/Google Drive/_Projects/Zambia/agroEcoTradeoff/external/plots/ms_v5/conv_maps/basic_conv_maps_bp_1} \caption{Modeled conversion maps, 1 km\(^2\) resolution, with 100\% weight on biodiversity and average yields (\emph{bp})}\label{fig:conv-maps-1-bp}
+\includegraphics[width=1\textwidth]{/Users/christophercrawford/Google Drive/_Projects/Zambia/agroEcoTradeoff/external/plots/si/conv_maps/basic_conv_maps_bp_1} \caption{Modeled conversion maps, 1 km\(^2\) resolution, with 100\% weight on biodiversity and average yields (\emph{bp})}\label{fig:conv-maps-1-bp}
 \end{figure}
 
 \begin{figure}
-\includegraphics[width=1\textwidth]{/Users/christophercrawford/Google Drive/_Projects/Zambia/agroEcoTradeoff/external/plots/ms_v5/conv_maps/basic_conv_maps_bp_10} \caption{Modeled conversion maps, 10 km grid (100 km\(^2\)) resolution, with 100\% weight on biodiversity and average yields (\emph{bp})}\label{fig:conv-maps-10-bp}
+\includegraphics[width=1\textwidth]{/Users/christophercrawford/Google Drive/_Projects/Zambia/agroEcoTradeoff/external/plots/si/conv_maps/basic_conv_maps_bp_10} \caption{Modeled conversion maps, 10 km grid (100 km\(^2\)) resolution, with 100\% weight on biodiversity and average yields (\emph{bp})}\label{fig:conv-maps-10-bp}
 \end{figure}
 
 \begin{figure}
-\includegraphics[width=1\textwidth]{/Users/christophercrawford/Google Drive/_Projects/Zambia/agroEcoTradeoff/external/plots/ms_v5/conv_maps/basic_conv_maps_bp_110} \caption{Modeled conversion maps, 110 km grid (12,100 km\(^2\), \(1^{\circ}\times1^{\circ}\) latitude) resolution, with 100\% weight on biodiversity and average yields (\emph{bp})}\label{fig:conv-maps-110-bp}
+\includegraphics[width=1\textwidth]{/Users/christophercrawford/Google Drive/_Projects/Zambia/agroEcoTradeoff/external/plots/si/conv_maps/basic_conv_maps_bp_110} \caption{Modeled conversion maps, 110 km grid (12,100 km\(^2\), \(1^{\circ}\times1^{\circ}\) latitude) resolution, with 100\% weight on biodiversity and average yields (\emph{bp})}\label{fig:conv-maps-110-bp}
 \end{figure}
 
 \newpage
@@ -482,7 +482,7 @@ As an additional measure of spatial similarity, we calculate \emph{adjacency}, a
 
 
 \begin{figure}
-\includegraphics[width=1\textwidth,height=0.8\textheight]{/Users/christophercrawford/Google Drive/_Projects/Zambia/agroEcoTradeoff/external/plots/ms_v5/SI_fig_nnd_bp} \caption{Average distance to nearest neighbor (adjacency) for ensemble mean conversion areas across different categories of variation, assuming 100\% weight on biodiversity and constant average yields throughout Zambia (\emph{bp}).}\label{fig:nnd-fig}
+\includegraphics[width=1\textwidth,height=0.8\textheight]{/Users/christophercrawford/Google Drive/_Projects/Zambia/agroEcoTradeoff/external/plots/si/SI_fig_nnd_bp} \caption{Average distance to nearest neighbor (adjacency) for ensemble mean conversion areas across different categories of variation, assuming 100\% weight on biodiversity and constant average yields throughout Zambia (\emph{bp}).}\label{fig:nnd-fig}
 \end{figure}
 
 \newpage
@@ -502,7 +502,7 @@ We found a category mean \(J_w\) = 0.10 for the three taxonomic groups (mammals,
 
 \begin{figure}
 
-{\centering \includegraphics[width=0.7\textwidth]{/Users/christophercrawford/Google Drive/_Projects/Zambia/agroEcoTradeoff/external/plots/ms_v5/SI_fig_facet_r_threat_combo} 
+{\centering \includegraphics[width=0.7\textwidth]{/Users/christophercrawford/Google Drive/_Projects/Zambia/agroEcoTradeoff/external/plots/si/SI_fig_facet_r_threat_combo} 
 
 }
 
@@ -514,20 +514,20 @@ We found a category mean \(J_w\) = 0.10 for the three taxonomic groups (mammals,
 \hypertarget{section-prod-targ}{%
 \subsection{Increasing the production target}\label{section-prod-targ}}
 
-Our first robustness check involved assessing the influence of our production target on the similarity results, by increasing the production target from the baseline level of \textasciitilde5\% all the way to \textasciitilde50\% (while retaining 100\% of the model weight on biodiversity, and assuming mean yields). Our original model run (\emph{bp}), assumes a production target of \textasciitilde5\% based on current projections of demand and yield growth (Estes et al. 2016), amounting to about 22,000 km\(^2\) of land (about the size of New Jersey). For comparison we run the model with a much higher production target, at \textasciitilde50\% (\emph{z50}), in order to assess how similarity is affected by the size of the area being converted (and therefore, being compared).
+Our first robustness check involved assessing the influence of our production target on the similarity results, by increasing the production target from the baseline level of \textasciitilde5\% all the way to \textasciitilde50\% (while retaining 100\% of the model weight on biodiversity, and assuming mean yields). Our original model run (\emph{bp}), assumes a production target of \textasciitilde5\% based on current projections of demand and yield growth (L. D. Estes et al. 2016), amounting to about 22,000 km\(^2\) of land (about the size of New Jersey). For comparison we run the model with a much higher production target, at \textasciitilde50\% (\emph{z50}), in order to assess how similarity is affected by the size of the area being converted (and therefore, being compared).
 
-The relative similarity between these two production targets is shown in Figure 4 of the main text, and reproduced here as Figure \ref{fig:z50-bp-comparison}. We find that running the model with this larger production target produces higher overall similarity: for example, mean \(J_w\) = 0.36 across all existing indices (Figure \ref{fig:z50-bp-comparison}, in blue), compared to mean \(J_w\) = 0.0223 for our primary analysis (\emph{bp}, in red). We expect higher similarity when a greater proportion of the country is converted, simply because there is less area left for disagreement. The pattern of relative differences between categories of variation stays the same, showing which sources of variation have the largest effect on land-use outcomes. Most importantly, we find low levels of agreement at this high production target scenario, even with such high production targets. For visual comparison of ensemble mean conversion areas for this \emph{z50} weighting specification, see Figure \ref{fig:facet-r-z50}.
+The relative similarity between these two production targets is shown in Figure 4 of the main text, and reproduced here as Figure \ref{fig:z50-bp-comparison}. We find that running the model with this larger production target produces higher overall similarity: for example, mean \(J_w\) = 0.36 across all existing indices (Figure \ref{fig:z50-bp-comparison}, in light green), compared to mean \(J_w\) = 0.0223 for our primary analysis (\emph{bp}, in dark purple). We expect higher similarity when a greater proportion of the country is converted, simply because there is less area left for disagreement. The pattern of relative differences between categories of variation stays the same, showing which sources of variation have the largest effect on land-use outcomes. Most importantly, we find low levels of agreement at this high production target scenario, even with such high production targets. For visual comparison of ensemble mean conversion areas for this \emph{z50} weighting specification, see Figure \ref{fig:facet-r-z50}.
 
 
 
 \begin{figure}
-\includegraphics[width=1\textwidth]{/Users/christophercrawford/Google Drive/_Projects/Zambia/agroEcoTradeoff/external/plots/ms_final/ms_fig_4_robustness_SI} \caption{Comparing the effect of production target on similarity results. Our main analysis (\emph{bp}) assumes a production target of \textasciitilde5\% of Zambia. For comparison, we show model results assuming a much larger production target (\emph{z50}), which converts \textasciitilde50\% of Zambia. Both model runs place 100\% model weight on biodiversity and using average, constant yields.}\label{fig:z50-bp-comparison}
+\includegraphics[width=1\textwidth]{/Users/christophercrawford/Google Drive/_Projects/Zambia/agroEcoTradeoff/external/plots/si/ms_fig_4_robustness_SI} \caption{Comparing the effect of production target on similarity results. Our main analysis (\emph{bp}) assumes a production target of \textasciitilde5\% of Zambia. For comparison, we show model results assuming a much larger production target (\emph{z50}), which converts \textasciitilde50\% of Zambia. Both model runs place 100\% model weight on biodiversity and using average, constant yields.}\label{fig:z50-bp-comparison}
 \end{figure}
 
 
 
 \begin{figure}
-\includegraphics[width=1\textwidth]{/Users/christophercrawford/Google Drive/_Projects/Zambia/agroEcoTradeoff/external/plots/ms_v5/SI_fig_facet_r_z50_wide} \caption{Mean conversion priorities assuming a production target that results in the conversion of \textasciitilde50\% of Zambia (\emph{z50}), placing 100\% weight in biodiversity and using average and constant yields across Zambia (compare with Fig. 2). The panels show biodiversity indices within five categories of variation: a) existing biodiversity indices (vertebrate endemism richness, Estes et al.~2016, Laurance et al.~2014, and Damania \& Wheeler 2015); b) taxonomic groups (mammals, birds, amphibians, and reptiles); c) species richness metrics (all species richness, endemism richness, and small-ranged species richness); d) index combination methods (average, geometric mean, maximum, and multiplication); and e) input resolutions (1 km, 10 km, and 110 km grids). Cell values correspond to the proportion of model runs using that particular factor that select a given cell for conversion. White areas within Zambia correspond to currently protected, cultivated, or settled areas.}\label{fig:facet-r-z50}
+\includegraphics[width=1\textwidth]{/Users/christophercrawford/Google Drive/_Projects/Zambia/agroEcoTradeoff/external/plots/si/SI_fig_facet_r_z50_wide} \caption{Mean conversion priorities assuming a production target that results in the conversion of \textasciitilde50\% of Zambia (\emph{z50}), placing 100\% weight in biodiversity and using average and constant yields across Zambia (compare with Fig. 2). The panels show biodiversity indices within five categories of variation: a) existing biodiversity indices (vertebrate endemism richness, Estes et al.~2016, Laurance et al.~2014, and Damania \& Wheeler 2015); b) taxonomic groups (mammals, birds, amphibians, and reptiles); c) species richness metrics (all species richness, endemism richness, and small-ranged species richness); d) index combination methods (average, geometric mean, maximum, and multiplication); and e) input resolutions (1 km, 10 km, and 110 km grids). Cell values correspond to the proportion of model runs using that particular factor that select a given cell for conversion. White areas within Zambia correspond to currently protected, cultivated, or settled areas.}\label{fig:facet-r-z50}
 \end{figure}
 
 \newpage
@@ -547,7 +547,7 @@ We found that the ensemble mean conversion map produced from the three vertebrat
 
 \begin{figure}
 
-{\centering \includegraphics[width=0.7\textwidth]{/Users/christophercrawford/Google Drive/_Projects/Zambia/agroEcoTradeoff/external/plots/ms_v5/SI_norm_order_plots} 
+{\centering \includegraphics[width=0.7\textwidth]{/Users/christophercrawford/Google Drive/_Projects/Zambia/agroEcoTradeoff/external/plots/si/SI_norm_order_plots} 
 
 }
 
@@ -566,11 +566,11 @@ We also directly compared the similarity of the order in which cells are priorit
 
 
 \begin{figure}
-\includegraphics[width=\textwidth]{/Users/christophercrawford/Google Drive/_Projects/Zambia/agroEcoTradeoff/external/plots/ms_v5/SI_fig_jac_w_order_conv} \caption{Similarity of the order in which cells are selected for conversion, starting with the least biodiverse cells.}\label{fig:order-conv}
+\includegraphics[width=\textwidth]{/Users/christophercrawford/Google Drive/_Projects/Zambia/agroEcoTradeoff/external/plots/si/SI_fig_jac_w_order_conv} \caption{Similarity of the order in which cells are selected for conversion, starting with the least biodiverse cells.}\label{fig:order-conv}
 \end{figure}
 
 \begin{figure}
-\includegraphics[width=\textwidth]{/Users/christophercrawford/Google Drive/_Projects/Zambia/agroEcoTradeoff/external/plots/ms_v5/SI_fig_jac_w_order_protect} \caption{Similarity of the order in which cells are selected for protection, starting with the most biodiverse cells.}\label{fig:order-protect}
+\includegraphics[width=\textwidth]{/Users/christophercrawford/Google Drive/_Projects/Zambia/agroEcoTradeoff/external/plots/si/SI_fig_jac_w_order_protect} \caption{Similarity of the order in which cells are selected for protection, starting with the most biodiverse cells.}\label{fig:order-protect}
 \end{figure}
 
 \newpage
@@ -611,7 +611,7 @@ These \emph{plants}, \emph{habitats}, and \emph{bird\_composite} indices were no
 
 
 \begin{figure}
-\includegraphics[width=1\textwidth]{/Users/christophercrawford/Google Drive/_Projects/Zambia/agroEcoTradeoff/external/plots/ms_v5/SI_fig_facet_r_extra_composites} \caption{Comparing the four existing composite indices included in our main text to three additional composites: four key habitat priorities (\emph{habitats}), plant species richness per ecoregion (\emph{plants}), and our own stylized bird conservation composite (\emph{bird\_composite}).}\label{fig:all-composites}
+\includegraphics[width=1\textwidth]{/Users/christophercrawford/Google Drive/_Projects/Zambia/agroEcoTradeoff/external/plots/si/SI_fig_facet_r_extra_composites} \caption{Comparing the four existing composite indices included in our main text to three additional composites: four key habitat priorities (\emph{habitats}), plant species richness per ecoregion (\emph{plants}), and our own stylized bird conservation composite (\emph{bird\_composite}).}\label{fig:all-composites}
 \end{figure}
 
 \newpage
@@ -662,27 +662,27 @@ Importantly, Figure \ref{fig:jac-w-all} also shows similarity between ensemble m
 The relative changes in similarity across the different weighting schemes are shown in Figure \ref{fig:jac-w-weights-line}. Diving into the results for each individual weighting specification, we test the influence of including accurate and spatially heterogenous yields in the calculation of biodiversity in terms of production efficiency, while placing 100\% of model weight on biodiversity (\emph{b}, Figure \ref{fig:jac-w-b}), then equally weighting biodiversity and yield (\emph{by}, Figure \ref{fig:jac-w-by}) in the model weighting specification. Figures \ref{fig:jac-w-bc} and \ref{fig:jac-w-bt} shows similarity results when equally weighting biodiversity and either carbon loss (\emph{bc}) or transportation cost (\emph{bt}). Figure \ref{fig:jac-w-byct} shows similarity when placing equal weight on all four constraints (\emph{byct}).
 
 \begin{figure}
-\includegraphics[width=1\textwidth]{/Users/christophercrawford/Google Drive/_Projects/Zambia/agroEcoTradeoff/external/plots/ms_v5/SI_fig_jac_w_all} \caption{Jaccard Similarities between ensemble means that average across all six weighting schemes (all assuming accurate, spatially heterogeneous yields except for \emph{bp} and \emph{z50}). \emph{bp} = 100\% biodiversity, average yields, \emph{b} = 100\% biodiversity, accurate, spatially heterogeneous yields, \emph{by} = 50\%/50\% biodiversity/yield, \emph{bc} = 50\%/50\% biodiversity/carbon, \emph{bt} = 50\%/50\% biodiversity/transportation cost, and \emph{byct} = 25\% weight on biodiversity, yield, carbon, and transportation cost. For reference, we also show similarity with \emph{z50}, representing a production target that converts a full 50\% of Zambia (with 100\% weight on biodiversity and assuming constant, average yields throughout Zambia).}\label{fig:jac-w-all}
+\includegraphics[width=1\textwidth]{/Users/christophercrawford/Google Drive/_Projects/Zambia/agroEcoTradeoff/external/plots/si/SI_fig_jac_w_all} \caption{Jaccard Similarities between ensemble means that average across all six weighting schemes (all assuming accurate, spatially heterogeneous yields except for \emph{bp} and \emph{z50}). \emph{bp} = 100\% biodiversity, average yields, \emph{b} = 100\% biodiversity, accurate, spatially heterogeneous yields, \emph{by} = 50\%/50\% biodiversity/yield, \emph{bc} = 50\%/50\% biodiversity/carbon, \emph{bt} = 50\%/50\% biodiversity/transportation cost, and \emph{byct} = 25\% weight on biodiversity, yield, carbon, and transportation cost. For reference, we also show similarity with \emph{z50}, representing a production target that converts a full 50\% of Zambia (with 100\% weight on biodiversity and assuming constant, average yields throughout Zambia).}\label{fig:jac-w-all}
 \end{figure}
 
 \begin{figure}
-\includegraphics[width=0.8\textwidth]{/Users/christophercrawford/Google Drive/_Projects/Zambia/agroEcoTradeoff/external/plots/ms_v5/SI_fig_jac_w_b} \caption{Jaccard Similarity between factors with 100\% weight on biodiversity, but incorporating accurate, spatially heterogeneous yields (\emph{b}).}\label{fig:jac-w-b}
+\includegraphics[width=0.8\textwidth]{/Users/christophercrawford/Google Drive/_Projects/Zambia/agroEcoTradeoff/external/plots/si/SI_fig_jac_w_b} \caption{Jaccard Similarity between factors with 100\% weight on biodiversity, but incorporating accurate, spatially heterogeneous yields (\emph{b}).}\label{fig:jac-w-b}
 \end{figure}
 
 \begin{figure}
-\includegraphics[width=0.8\textwidth]{/Users/christophercrawford/Google Drive/_Projects/Zambia/agroEcoTradeoff/external/plots/ms_v5/SI_fig_jac_w_by} \caption{Jaccard Similarity between factors with 50\% weight on biodiversity and yield (\emph{by}).}\label{fig:jac-w-by}
+\includegraphics[width=0.8\textwidth]{/Users/christophercrawford/Google Drive/_Projects/Zambia/agroEcoTradeoff/external/plots/si/SI_fig_jac_w_by} \caption{Jaccard Similarity between factors with 50\% weight on biodiversity and yield (\emph{by}).}\label{fig:jac-w-by}
 \end{figure}
 
 \begin{figure}
-\includegraphics[width=0.8\textwidth]{/Users/christophercrawford/Google Drive/_Projects/Zambia/agroEcoTradeoff/external/plots/ms_v5/SI_fig_jac_w_bc} \caption{Jaccard Similarity between factors with 50\% weight on biodiversity and carbon emissions due to conversion (\emph{bc}).}\label{fig:jac-w-bc}
+\includegraphics[width=0.8\textwidth]{/Users/christophercrawford/Google Drive/_Projects/Zambia/agroEcoTradeoff/external/plots/si/SI_fig_jac_w_bc} \caption{Jaccard Similarity between factors with 50\% weight on biodiversity and carbon emissions due to conversion (\emph{bc}).}\label{fig:jac-w-bc}
 \end{figure}
 
 \begin{figure}
-\includegraphics[width=0.8\textwidth]{/Users/christophercrawford/Google Drive/_Projects/Zambia/agroEcoTradeoff/external/plots/ms_v5/SI_fig_jac_w_bt} \caption{Jaccard Similarity between factors with 50\% weight on biodiversity and transportation costs (\emph{bt}).}\label{fig:jac-w-bt}
+\includegraphics[width=0.8\textwidth]{/Users/christophercrawford/Google Drive/_Projects/Zambia/agroEcoTradeoff/external/plots/si/SI_fig_jac_w_bt} \caption{Jaccard Similarity between factors with 50\% weight on biodiversity and transportation costs (\emph{bt}).}\label{fig:jac-w-bt}
 \end{figure}
 
 \begin{figure}
-\includegraphics[width=0.8\textwidth]{/Users/christophercrawford/Google Drive/_Projects/Zambia/agroEcoTradeoff/external/plots/ms_v5/SI_fig_jac_w_byct} \caption{Jaccard Similarity between factors with weight equally distributed among the four constraints (\emph{byct} = 25\% weight on biodiversity, yield, carbon, and transportation costs).}\label{fig:jac-w-byct}
+\includegraphics[width=0.8\textwidth]{/Users/christophercrawford/Google Drive/_Projects/Zambia/agroEcoTradeoff/external/plots/si/SI_fig_jac_w_byct} \caption{Jaccard Similarity between factors with weight equally distributed among the four constraints (\emph{byct} = 25\% weight on biodiversity, yield, carbon, and transportation costs).}\label{fig:jac-w-byct}
 \end{figure}
 
 In the real world, decision makers must consider factors other than biodiversity when making land-use decisions. When distributing weight from biodiversity to yield, carbon storage, and transportation costs, we found that the similarity between land-use recommendations increased overall, though the overall pattern of relative differences between factors in the different categories remained largely consistent. This is not so surprising, considering that we held these other three costs constant, so including them in our model reduced the amount of variation between model runs. However, we also found that different model weighting specifications produced recommendations that differed from each other by about the same amount as different existing indices and taxonomic groups (see Figure \ref{fig:jac-w-all}). This signals a relative lack of congruence between the four constraints themselves: the least-cost areas for biodiversity do not necessarily overlap with those that maximize yields, minimize transportation cost, or minimize carbon emissions.
@@ -712,27 +712,27 @@ Shown for 1 km grid resolution for illustrative purposes only.
 
 
 \begin{figure}
-\includegraphics[width=1\textwidth]{/Users/christophercrawford/Google Drive/_Projects/Zambia/agroEcoTradeoff/external/plots/ms_v5/conv_maps/basic_conv_maps_b_1} \caption{Modeled conversion maps, 1 km\(^2\) resolution, with 100\% weight on biodiversity and accurate, spatially heterogeneous yields (\emph{b}). See Section \ref{bd-inputs} for full descriptions of biodiversity indices.}\label{fig:conv-maps-1-b}
+\includegraphics[width=1\textwidth]{/Users/christophercrawford/Google Drive/_Projects/Zambia/agroEcoTradeoff/external/plots/si/conv_maps/basic_conv_maps_b_1} \caption{Modeled conversion maps, 1 km\(^2\) resolution, with 100\% weight on biodiversity and accurate, spatially heterogeneous yields (\emph{b}). See Section \ref{bd-inputs} for full descriptions of biodiversity indices.}\label{fig:conv-maps-1-b}
 \end{figure}
 
 \begin{figure}
-\includegraphics[width=1\textwidth]{/Users/christophercrawford/Google Drive/_Projects/Zambia/agroEcoTradeoff/external/plots/ms_v5/conv_maps/basic_conv_maps_by_1} \caption{Modeled conversion maps, 1 km\(^2\) resolution, with 50\%/50\% biodiversity, yield model weighting (\emph{by}). See Section \ref{bd-inputs} for full descriptions of biodiversity indices.}\label{fig:conv-maps-1-by}
+\includegraphics[width=1\textwidth]{/Users/christophercrawford/Google Drive/_Projects/Zambia/agroEcoTradeoff/external/plots/si/conv_maps/basic_conv_maps_by_1} \caption{Modeled conversion maps, 1 km\(^2\) resolution, with 50\%/50\% biodiversity, yield model weighting (\emph{by}). See Section \ref{bd-inputs} for full descriptions of biodiversity indices.}\label{fig:conv-maps-1-by}
 \end{figure}
 
 \begin{figure}
-\includegraphics[width=1\textwidth]{/Users/christophercrawford/Google Drive/_Projects/Zambia/agroEcoTradeoff/external/plots/ms_v5/conv_maps/basic_conv_maps_bc_1} \caption{Modeled conversion maps, 1 km\(^2\) resolution, with 50\%/50\% biodiversity, carbon model weighting (\emph{bc}). See Section \ref{bd-inputs} for full descriptions of biodiversity indices.}\label{fig:conv-maps-1-bc}
+\includegraphics[width=1\textwidth]{/Users/christophercrawford/Google Drive/_Projects/Zambia/agroEcoTradeoff/external/plots/si/conv_maps/basic_conv_maps_bc_1} \caption{Modeled conversion maps, 1 km\(^2\) resolution, with 50\%/50\% biodiversity, carbon model weighting (\emph{bc}). See Section \ref{bd-inputs} for full descriptions of biodiversity indices.}\label{fig:conv-maps-1-bc}
 \end{figure}
 
 \begin{figure}
-\includegraphics[width=1\textwidth]{/Users/christophercrawford/Google Drive/_Projects/Zambia/agroEcoTradeoff/external/plots/ms_v5/conv_maps/basic_conv_maps_bt_1} \caption{Modeled conversion maps, 1 km\(^2\) resolution, with 50\%/50\% biodiversity, transportation cost model weighting (\emph{bt}). See Section \ref{bd-inputs} for full descriptions of biodiversity indices.}\label{fig:conv-maps-1-bt}
+\includegraphics[width=1\textwidth]{/Users/christophercrawford/Google Drive/_Projects/Zambia/agroEcoTradeoff/external/plots/si/conv_maps/basic_conv_maps_bt_1} \caption{Modeled conversion maps, 1 km\(^2\) resolution, with 50\%/50\% biodiversity, transportation cost model weighting (\emph{bt}). See Section \ref{bd-inputs} for full descriptions of biodiversity indices.}\label{fig:conv-maps-1-bt}
 \end{figure}
 
 \begin{figure}
-\includegraphics[width=1\textwidth]{/Users/christophercrawford/Google Drive/_Projects/Zambia/agroEcoTradeoff/external/plots/ms_v5/conv_maps/basic_conv_maps_byct_1} \caption{Modeled conversion maps, 1 km\(^2\) resolution, with equal model weights (25\% weight on biodiversity, yield, carbon, and transportation cost, \emph{byct}). See Section \ref{bd-inputs} for full descriptions of biodiversity indices.}\label{fig:conv-maps-1-byct}
+\includegraphics[width=1\textwidth]{/Users/christophercrawford/Google Drive/_Projects/Zambia/agroEcoTradeoff/external/plots/si/conv_maps/basic_conv_maps_byct_1} \caption{Modeled conversion maps, 1 km\(^2\) resolution, with equal model weights (25\% weight on biodiversity, yield, carbon, and transportation cost, \emph{byct}). See Section \ref{bd-inputs} for full descriptions of biodiversity indices.}\label{fig:conv-maps-1-byct}
 \end{figure}
 
 \begin{figure}
-\includegraphics[width=1\textwidth]{/Users/christophercrawford/Google Drive/_Projects/Zambia/agroEcoTradeoff/external/plots/ms_v5/conv_maps/basic_conv_maps_z50_1} \caption{Modeled conversion maps, 1 km\(^2\) resolution, with 100\% weight on biodiversity, assuming average yields, but with a production target that converts 50\% of Zambia (\emph{z50}). See Section \ref{bd-inputs} for full descriptions of biodiversity indices.}\label{fig:conv-maps-1-z50}
+\includegraphics[width=1\textwidth]{/Users/christophercrawford/Google Drive/_Projects/Zambia/agroEcoTradeoff/external/plots/si/conv_maps/basic_conv_maps_z50_1} \caption{Modeled conversion maps, 1 km\(^2\) resolution, with 100\% weight on biodiversity, assuming average yields, but with a production target that converts 50\% of Zambia (\emph{z50}). See Section \ref{bd-inputs} for full descriptions of biodiversity indices.}\label{fig:conv-maps-1-z50}
 \end{figure}
 
 \newpage
@@ -759,35 +759,35 @@ Each of the following figures shows, from top to bottom: the distribution of val
 
 
 \begin{figure}
-\includegraphics[width=1\textwidth,height=1\textheight]{/Users/christophercrawford/Google Drive/_Projects/Zambia/agroEcoTradeoff/external/plots/ms_v5/conv_maps_by_ensemble/composites_1_conv_maps} \caption{Existing composites, including not only the four composites in our main text, but also three additional composites. From left to right, these composites are: rarity-weighted vertebrate endemism richness, plant species richness per ecoregion, Estes et al. (2016), Laurance et al. (2014), habitat priorities, our stylized bird conservation composite, and Damania and Wheeler (2015).}\label{fig:conv-maps-comp-1}
+\includegraphics[width=1\textwidth,height=1\textheight]{/Users/christophercrawford/Google Drive/_Projects/Zambia/agroEcoTradeoff/external/plots/si/conv_maps_by_category/composites_1_conv_maps} \caption{Existing composites, including not only the four composites in our main text, but also three additional composites. From left to right, these composites are: rarity-weighted vertebrate endemism richness, plant species richness per ecoregion, L. D. Estes et al. (2016), Laurance et al. (2014), habitat priorities, our stylized bird conservation composite, and Damania and Wheeler (2015).}\label{fig:conv-maps-comp-1}
 \end{figure}
 
 \begin{figure}
-\includegraphics[width=1\textwidth,height=0.85\textheight]{/Users/christophercrawford/Google Drive/_Projects/Zambia/agroEcoTradeoff/external/plots/ms_v5/conv_maps_by_ensemble/types_1_conv_maps} \caption{Types of richness metrics, shown for all vertebrate species combined. Note that this figure shows threatened species richness for all four taxonomic groups, even though reptiles have not been comprehensively assessed by IUCN. Threatened species richness is not included in our main analysis. See Section \ref{section-threat} for a comparison of all species richness, endemism richness, small-ranged species richness, and threatened species richness, using data for mammals, birds, and amphibians alone.}\label{fig:conv-maps-types-1}
+\includegraphics[width=1\textwidth,height=0.85\textheight]{/Users/christophercrawford/Google Drive/_Projects/Zambia/agroEcoTradeoff/external/plots/si/conv_maps_by_category/types_1_conv_maps} \caption{Types of richness metrics, shown for all vertebrate species combined. Note that this figure shows threatened species richness for all four taxonomic groups, even though reptiles have not been comprehensively assessed by IUCN. Threatened species richness is not included in our main analysis. See Section \ref{section-threat} for a comparison of all species richness, endemism richness, small-ranged species richness, and threatened species richness, using data for mammals, birds, and amphibians alone.}\label{fig:conv-maps-types-1}
 \end{figure}
 
 \begin{figure}
-\includegraphics[width=1\textwidth,height=0.9\textheight]{/Users/christophercrawford/Google Drive/_Projects/Zambia/agroEcoTradeoff/external/plots/ms_v5/conv_maps_by_ensemble/taxa_all_1_conv_maps} \caption{All species richness for mammal, bird, amphibian, and reptiles species.}\label{fig:conv-maps-taxa-all-1}
+\includegraphics[width=1\textwidth,height=0.9\textheight]{/Users/christophercrawford/Google Drive/_Projects/Zambia/agroEcoTradeoff/external/plots/si/conv_maps_by_category/taxa_all_1_conv_maps} \caption{All species richness for mammal, bird, amphibian, and reptiles species.}\label{fig:conv-maps-taxa-all-1}
 \end{figure}
 
 \begin{figure}
-\includegraphics[width=1\textwidth,height=0.9\textheight]{/Users/christophercrawford/Google Drive/_Projects/Zambia/agroEcoTradeoff/external/plots/ms_v5/conv_maps_by_ensemble/taxa_endemism_1_conv_maps} \caption{Endemism richness (rarity-weighted) for mammal, bird, amphibian, and reptiles species.}\label{fig:conv-maps-taxa-endemism-1}
+\includegraphics[width=1\textwidth,height=0.9\textheight]{/Users/christophercrawford/Google Drive/_Projects/Zambia/agroEcoTradeoff/external/plots/si/conv_maps_by_category/taxa_endemism_1_conv_maps} \caption{Endemism richness (rarity-weighted) for mammal, bird, amphibian, and reptiles species.}\label{fig:conv-maps-taxa-endemism-1}
 \end{figure}
 
 \begin{figure}
-\includegraphics[width=1\textwidth,height=0.9\textheight]{/Users/christophercrawford/Google Drive/_Projects/Zambia/agroEcoTradeoff/external/plots/ms_v5/conv_maps_by_ensemble/taxa_small_1_conv_maps} \caption{Small-ranged species richness for mammal, bird, amphibian, and reptiles species. Small-ranged species are those with ranges smaller than the global median range size within each taxonomic group.}\label{fig:conv-maps-taxa-small-1}
+\includegraphics[width=1\textwidth,height=0.9\textheight]{/Users/christophercrawford/Google Drive/_Projects/Zambia/agroEcoTradeoff/external/plots/si/conv_maps_by_category/taxa_small_1_conv_maps} \caption{Small-ranged species richness for mammal, bird, amphibian, and reptiles species. Small-ranged species are those with ranges smaller than the global median range size within each taxonomic group.}\label{fig:conv-maps-taxa-small-1}
 \end{figure}
 
 \begin{figure}
-\includegraphics[width=1\textwidth,height=0.9\textheight]{/Users/christophercrawford/Google Drive/_Projects/Zambia/agroEcoTradeoff/external/plots/ms_v5/conv_maps_by_ensemble/methods_mb_1_conv_maps} \caption{Methods for combining multiple layers the arithmetic mean (average), geometric mean, maximum, and multiplication, shown here for combining threatened mammal and bird species richness layers.}\label{fig:conv-maps-methods-mb-1}
+\includegraphics[width=1\textwidth,height=0.9\textheight]{/Users/christophercrawford/Google Drive/_Projects/Zambia/agroEcoTradeoff/external/plots/si/conv_maps_by_category/methods_mb_1_conv_maps} \caption{Methods for combining multiple layers the arithmetic mean (average), geometric mean, maximum, and multiplication, shown here for combining threatened mammal and bird species richness layers.}\label{fig:conv-maps-methods-mb-1}
 \end{figure}
 
 \begin{figure}
-\includegraphics[width=1\textwidth,height=0.9\textheight]{/Users/christophercrawford/Google Drive/_Projects/Zambia/agroEcoTradeoff/external/plots/ms_v5/conv_maps_by_ensemble/methods_vp_1_conv_maps} \caption{Methods for combining multiple layers the arithmetic mean (average), geometric mean, maximum, and multiplication, shown here for combining all vertebrate species richness and plant species richness.}\label{fig:conv-maps-methods-vp-1}
+\includegraphics[width=1\textwidth,height=0.9\textheight]{/Users/christophercrawford/Google Drive/_Projects/Zambia/agroEcoTradeoff/external/plots/si/conv_maps_by_category/methods_vp_1_conv_maps} \caption{Methods for combining multiple layers the arithmetic mean (average), geometric mean, maximum, and multiplication, shown here for combining all vertebrate species richness and plant species richness.}\label{fig:conv-maps-methods-vp-1}
 \end{figure}
 
 \begin{figure}
-\includegraphics[width=1\textwidth,height=0.9\textheight]{/Users/christophercrawford/Google Drive/_Projects/Zambia/agroEcoTradeoff/external/plots/ms_v5/conv_maps_by_ensemble/methods_ae_1_conv_maps} \caption{Methods for combining multiple layers the arithmetic mean (average), geometric mean, maximum, and multiplication, shown here for combining all vertebrate species richness and rarity-weighted endemism richness.}\label{fig:conv-maps-methods-ae-1}
+\includegraphics[width=1\textwidth,height=0.9\textheight]{/Users/christophercrawford/Google Drive/_Projects/Zambia/agroEcoTradeoff/external/plots/si/conv_maps_by_category/methods_ae_1_conv_maps} \caption{Methods for combining multiple layers the arithmetic mean (average), geometric mean, maximum, and multiplication, shown here for combining all vertebrate species richness and rarity-weighted endemism richness.}\label{fig:conv-maps-methods-ae-1}
 \end{figure}
 
 \newpage
@@ -798,17 +798,26 @@ Each of the following figures shows, from top to bottom: the distribution of val
 
 \hypertarget{refs}{}
 \begin{CSLReferences}{1}{0}
+\leavevmode\hypertarget{ref-R-rmarkdown}{}%
+Allaire, J J, Yihui Xie, Jonathan McPherson, Javier Luraschi, Kevin Ushey, Aron Atkins, Hadley Wickham, Joe Cheng, Winston Chang, and Richard Iannone. 2020. \emph{{rmarkdown: Dynamic Documents for R}}. \url{https://cran.r-project.org/package=rmarkdown}.
+
 \leavevmode\hypertarget{ref-Anderson2009}{}%
 Anderson, Barbara J., Paul R. Armsworth, Felix Eigenbrod, Chris D. Thomas, Simon Gillings, Andreas Heinemeyer, David B. Roy, and Kevin J. Gaston. 2009. {``{Spatial covariance between biodiversity and other ecosystem service priorities}.''} \emph{Journal of Applied Ecology} 46 (4): 888--96. \url{https://doi.org/10.1111/j.1365-2664.2009.01666.x}.
 
 \leavevmode\hypertarget{ref-Baccini2012}{}%
 Baccini, A., S. J. Goetz, W. S. Walker, N. T. Laporte, M. Sun, D. Sulla-Menashe, J. Hackler, et al. 2012. {``{Estimated carbon dioxide emissions from tropical deforestation improved by carbon-density maps}.''} \emph{Nature Climate Change} 2 (3): 182--85. \url{https://doi.org/10.1038/nclimate1354}.
 
+\leavevmode\hypertarget{ref-R-magrittr}{}%
+Bache, Stefan Milton, and Hadley Wickham. 2020. \emph{{magrittr: A Forward-Pipe Operator for R}}. \url{https://cran.r-project.org/package=magrittr}.
+
+\leavevmode\hypertarget{ref-R-spatstat}{}%
+Baddeley, Adrian, Rolf Turner, Ege Rubak, with substantial contributions of code by Kasper Klitgaard Berthelsen; Ottmar Cronie; Tilman Davies; Yongtao Guan; Ute Hahn; Abdollah Jalilian; Marie-Colette van Lieshout; Greg McSwiggan; Tuomas Rajala; Suman Rakshit; Dominic Schuhmacher; Rasmus Waagepete, Hangsheng Wang. Additional contributions by M. Adepeju; C. Anderson; Q.W. Ang; R. Arellano; J. Astrom; R. Aue; M. Austenfeld; S. Azaele; M. Baddeley; C. Beale; M. Bell; R. Bernhardt; T. Bendtsen; A. Bevan; B. Biggerstaff; A. Bilgrau; L. Bischof; C. Biscio; R. Bivand; J.M. Blanco Mo, and A Zeileis. 2020. \emph{{spatstat: Spatial Point Pattern Analysis, Model-Fitting, Simulation, Tests}}. \url{https://cran.r-project.org/package=spatstat}.
+
 \leavevmode\hypertarget{ref-BirdLife2018}{}%
 BirdLife International and Handbook of the Birds of the World. 2018. {``{Bird species distribution maps of the world}.''} Cambridge, United Kingdom: BirdLife International. \url{http://datazone.birdlife.org/species/requestdis}.
 
 \leavevmode\hypertarget{ref-R-rgdal}{}%
-Bivand, Roger, Tim Keitt, and Barry Rowlingson. 2020. \emph{{rgdal: Bindings for the 'Geospatial' Data Abstraction Library}}. \url{https://cran.r-project.org/package=rgdal}.
+Bivand, Roger, Tim Keitt, and Barry Rowlingson. 2021. \emph{{rgdal: Bindings for the Geospatial Data Abstraction Library}}. \url{https://cran.r-project.org/package=rgdal}.
 
 \leavevmode\hypertarget{ref-Brancalion2019}{}%
 Brancalion, Pedro H S, Aidin Niamir, Eben Broadbent, Renato Crouzeilles, Felipe S M Barros, Angelica M. Almeyda Zambrano, Alessandro Baccini, et al. 2019. {``{Global restoration opportunities in tropical rainforest landscapes}.''} \emph{Science Advances} 5 (7): eaav3223. \url{https://doi.org/10.1126/sciadv.aav3223}.
@@ -823,25 +832,28 @@ Butchart, Stuart H. M., Jörn P. W. Scharlemann, Mike I. Evans, Suhel Quader, Sa
 Damania, Richard, and David Wheeler. 2015. {``{Road improvement and deforestation in the Congo Basin countries.}''} \url{http://documents.worldbank.org/curated/en/762671467986281150/pdf/WPS7274.pdf}.
 
 \leavevmode\hypertarget{ref-R-data.table}{}%
-Dowle, Matt, and Arun Srinivasan. 2019. \emph{{data.table: Extension of `data.frame`}}. \url{https://cran.r-project.org/package=data.table}.
+Dowle, Matt, and Arun Srinivasan. 2021. \emph{{data.table: Extension of `data.frame`}}.
+
+\leavevmode\hypertarget{ref-R-lmisc}{}%
+Estes, Lyndon. 2020. \emph{{lmisc: Miscellaneous functions for plotting and performing various small tasks}}.
 
 \leavevmode\hypertarget{ref-Estes2015}{}%
 Estes, Lyndon D. 2015. {``{dtraster: Raster operations with data.table}.''}
-
-\leavevmode\hypertarget{ref-R-lmisc}{}%
----------. 2019. \emph{{lmisc: Miscellaneous functions for plotting and performing various small tasks}}.
 
 \leavevmode\hypertarget{ref-Estes2016a}{}%
 Estes, Lyndon D., Timothy D. Searchinger, Marcus Spiegel, D Tian, S Sichinga, M Mwale, Laura Kehoe, et al. 2016. {``{Reconciling agriculture, carbon and biodiversity in a savannah transformation frontier}.''} \emph{Philosophical Transactions of the Royal Society B: Biological Sciences} 371 (1703): 1--10. \url{https://doi.org/10.1098/rstb.2015.0316}.
 
 \leavevmode\hypertarget{ref-R-agroEcoTradeoff}{}%
-Estes, Lyndon D., and Marcus Spiegel. 2016. \emph{{agroEcoTradeoff: Landuse Tradeoff analysis model}}.
+Estes, Lyndon, and Marcus Spiegel. 2016. \emph{{agroEcoTradeoff: Landuse Tradeoff analysis model}}.
 
 \leavevmode\hypertarget{ref-Field2019}{}%
 Field, Christopher R, and Chris S Elphick. 2019. {``{Quantifying the return on investment of social and ecological data for conservation planning}.''} \emph{Environmental Research Letters} 14 (12): 124081. \url{https://doi.org/10.1088/1748-9326/ab5cae}.
 
+\leavevmode\hypertarget{ref-R-viridis}{}%
+Garnier, Simon. 2018. \emph{{viridis: Default Color Maps from 'matplotlib'}}. \url{https://cran.r-project.org/package=viridis}.
+
 \leavevmode\hypertarget{ref-R-gdalUtils}{}%
-Greenberg, Jonathan Asher, and Matteo Mattiuzzi. 2018. \emph{{gdalUtils: Wrappers for the Geospatial Data Abstraction Library (GDAL) Utilities}}. \url{https://cran.r-project.org/package=gdalUtils}.
+Greenberg, Jonathan Asher, and Matteo Mattiuzzi. 2020. \emph{{gdalUtils: Wrappers for the Geospatial Data Abstraction Library (GDAL) Utilities}}. \url{https://cran.r-project.org/package=gdalUtils}.
 
 \leavevmode\hypertarget{ref-R-raster}{}%
 Hijmans, Robert J. 2020. \emph{{raster: Geographic Data Analysis and Modeling}}. \url{https://cran.r-project.org/package=raster}.
@@ -895,16 +907,22 @@ Olson, David M., and Eric Dinerstein. 2002. {``{The Global 200: Priority ecoregi
 Pebesma, Edzer. 2019. \emph{{sf: Simple Features for R}}. \url{https://cran.r-project.org/package=sf}.
 
 \leavevmode\hypertarget{ref-R-sp}{}%
-Pebesma, Edzer, and Roger Bivand. 2020. \emph{{sp: Classes and Methods for Spatial Data}}. \url{https://cran.r-project.org/package=sp}.
+Pebesma, Edzer, and Roger Bivand. 2021. \emph{{sp: Classes and Methods for Spatial Data}}. \url{https://cran.r-project.org/package=sp}.
 
 \leavevmode\hypertarget{ref-R-rasterVis}{}%
-Perpinan Lamigueiro, Oscar, and Robert Hijmans. 2019. \emph{{rasterVis: Visualization Methods for Raster Data}}. \url{https://cran.r-project.org/package=rasterVis}.
+Perpinan Lamigueiro, Oscar, and Robert Hijmans. 2020. \emph{{rasterVis: Visualization Methods for Raster Data}}. \url{https://oscarperpinan.github.io/rastervis/}.
+
+\leavevmode\hypertarget{ref-R-base}{}%
+R Core Team. 2020. \emph{{R: A Language and Environment for Statistical Computing}}. Vienna, Austria: R Foundation for Statistical Computing. \url{https://www.r-project.org/}.
 
 \leavevmode\hypertarget{ref-Roll2017}{}%
 Roll, Uri, Anat Feldman, Maria Novosolov, Allen Allison, Aaron M. Bauer, Rodolphe Bernard, Monika Böhm, et al. 2017. {``{The global distribution of tetrapods reveals a need for targeted reptile conservation}.''} \emph{Nature Ecology and Evolution} 1 (11): 1677--82. \url{https://doi.org/10.1038/s41559-017-0332-2}.
 
-\leavevmode\hypertarget{ref-RStudioTeam2018}{}%
-RStudio Team. 2018. {``{RStudio: Integrated Development Environment for R}.''} Boston, MA: RStudio, Inc. \url{http://www.rstudio.com/}.
+\leavevmode\hypertarget{ref-R-fasterize}{}%
+Ross, Noam. 2020. \emph{{fasterize: Fast Polygon to Raster Conversion}}. \url{https://cran.r-project.org/package=fasterize}.
+
+\leavevmode\hypertarget{ref-RStudioTeam2020}{}%
+RStudio Team. 2020. {``{RStudio: Integrated Development Environment for R}.''} Boston, MA: RStudio, Inc. \url{http://www.rstudio.com/}.
 
 \leavevmode\hypertarget{ref-Soto-Navarro2020}{}%
 Soto-Navarro, C., C. Ravilious, A. Arnell, X. de Lamo, M. Harfoot, S. L. L. Hill, O. R. Wearn, et al. 2020. {``{Mapping co-benefits for carbon storage and biodiversity to inform conservation policy and action}.''} \emph{Philosophical Transactions of the Royal Society B: Biological Sciences} 375 (1794): 20190128. \url{https://doi.org/10.1098/rstb.2019.0128}.
@@ -921,11 +939,41 @@ Van Breugel, Paulo, Roeland Kindt, Jens Peter Barnekow Lillesø, and Michiel Van
 \leavevmode\hypertarget{ref-Waliczky2019}{}%
 Waliczky, Zoltan, Lincoln D. C. Fishpool, Stuart H. M. Butchart, David Thomas, Melanie F. Heath, Carolina Hazin, Paul F. Donald, Aida Kowalska, Maria P. Dias, and Tristram S. M. Allinson. 2019. {``{Important Bird and Biodiversity Areas (IBAs): their impact on conservation policy, advocacy and action}.''} \emph{Bird Conservation International} 29 (2): 199--215. \url{https://doi.org/10.1017/S0959270918000175}.
 
+\leavevmode\hypertarget{ref-R-reshape2}{}%
+Wickham, Hadley. 2017. \emph{{reshape2: Flexibly Reshape Data: A Reboot of the Reshape Package}}. \url{https://cran.r-project.org/package=reshape2}.
+
+\leavevmode\hypertarget{ref-R-pryr}{}%
+---------. 2018. \emph{{pryr: Tools for Computing on the Language}}. \url{https://cran.r-project.org/package=pryr}.
+
+\leavevmode\hypertarget{ref-R-tidyverse}{}%
+---------. 2019. \emph{{tidyverse: Easily Install and Load the 'Tidyverse'}}. \url{https://cran.r-project.org/package=tidyverse}.
+
+\leavevmode\hypertarget{ref-R-scales}{}%
+Wickham, Hadley, and Dana Seidel. 2020. \emph{{scales: Scale Functions for Visualization}}. \url{https://cran.r-project.org/package=scales}.
+
+\leavevmode\hypertarget{ref-R-cowplot}{}%
+Wilke, Claus O. 2020. \emph{{cowplot: Streamlined Plot Theme and Plot Annotations for ggplot2}}. \url{https://wilkelab.org/cowplot/}.
+
 \leavevmode\hypertarget{ref-Williams1996}{}%
 Williams, Paul, David Gibbons, Chris Margules, Anthony Rebelo, Chris Humphries, and Robert Pressey. 1996. {``{A comparison of richness hotspots, rarity hotspots, and complementary areas for conserving diversity of British birds}.''} \emph{Conservation Biology} 10 (1): 155--74. \url{https://doi.org/10.1046/j.1523-1739.1996.10010155.x}.
 
+\leavevmode\hypertarget{ref-R-bookdown}{}%
+Xie, Yihui. 2020. \emph{{bookdown: Authoring Books and Technical Documents with R Markdown}}. \url{https://cran.r-project.org/package=bookdown}.
+
+\leavevmode\hypertarget{ref-R-knitr}{}%
+---------. 2021. \emph{{knitr: A General-Purpose Package for Dynamic Report Generation in R}}. \url{https://yihui.org/knitr/}.
+
+\leavevmode\hypertarget{ref-Xie2018}{}%
+Xie, Yihui, J J Allaire, and Garrett Grolemund. 2018. \emph{{R Markdown: The Definitive Guide}}. Boca Raton, Florida: Chapman; Hall/CRC. \url{https://bookdown.org/yihui/rmarkdown}.
+
+\leavevmode\hypertarget{ref-Xie2020}{}%
+Xie, Yihui, Christophe Dervieux, and Emily Riederer. 2020. \emph{{R Markdown Cookbook}}. Boca Raton, Florida: Chapman; Hall/CRC. \url{https://bookdown.org/yihui/rmarkdown-cookbook}.
+
 \leavevmode\hypertarget{ref-Zachos2011}{}%
 Zachos, Frank E, and Jan Christian Habel, eds. 2011. \emph{{Biodiversity hotspots: distribution and protection of conservation priority areas}}. New York: Springer. \url{http://dx.doi.org/10.1007/978-3-642-20992-5}.
+
+\leavevmode\hypertarget{ref-R-kableExtra}{}%
+Zhu, Hao. 2020. \emph{{kableExtra: Construct Complex Table with kable and Pipe Syntax}}. \url{https://cran.r-project.org/package=kableExtra}.
 
 \end{CSLReferences}
 

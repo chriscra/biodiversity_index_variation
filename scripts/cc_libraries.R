@@ -2,12 +2,12 @@
 pkgs <- c("raster", "rgdal", "sf", "sp", "gdalUtils", "rasterVis", "data.table",
           "tictoc", "fasterize", "viridis", "lwgeom", "magrittr",
           "parallel", "reshape2", "cowplot", "tidyverse",
-          "knitr", "kableExtra", "spatstat", "rmarkdown","bookdown", "pryr") # main package names
+          "knitr", "kableExtra", "spatstat", "rmarkdown","bookdown", "pryr", "scales") # main package names
 
 pkgs_aux <- c("citr", "rticles", "mapview", "gdata", "GISTools",
           "rgeos", "RColorBrewer", "stringr",
           "maps", "rangeBuilder", "rnaturalearth", "spatialEco", "smoothr",
-          "ggnewscale", "plotly", "scales", "patchwork", "biomod2") # aux package names
+          "ggnewscale", "plotly", "patchwork", "biomod2") # aux package names
 
 
 # ------------------------- #

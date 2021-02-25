@@ -24,7 +24,7 @@ editor_options:
   chunk_output_type: console
 bibliography: /Users/christophercrawford/Google Drive/Library/library.bib
 nocite: |
-  @RStudioTeam2018, @R-agroEcoTradeoff, @Estes2015, @R-lmisc, @R-raster, @R-rasterVis, @R-rgdal, @R-sf, @R-sp, @R-gdalUtils, @R-rasterVis, @R-data.table, @R-tictoc, @fasterize, @lwgeom, @magrittr, @parallel, @reshape2, @cowplot, @tidyverse, @knitr, @spatstat, @rmarkdown, @bookdown, @pryr
+  @RStudioTeam2020, @R-base, @R-agroEcoTradeoff, @Estes2015, @R-lmisc, @R-raster, @R-rasterVis, @R-rgdal, @R-sf, @R-sp, @R-gdalUtils, @R-data.table, @R-tictoc, @R-fasterize, @lwgeom, @R-magrittr, @R-reshape2, @R-cowplot, @R-tidyverse, @R-knitr, @R-spatstat, @R-rmarkdown, @Xie2018, @Xie2020, @R-bookdown, @R-pryr, @R-kableExtra, @R-scales, @R-viridis
 ---
 \renewcommand{\thefigure}{S\arabic{figure}}
 \renewcommand{\thesection}{S\arabic{section}}
@@ -35,6 +35,7 @@ nocite: |
 ```{r misc, eval = FALSE, echo = FALSE}
 library(tinytex)
 tinytex::install_tinytex()
+citation("rmarkdown")
 ```
 ```{r start, eval = TRUE, echo = FALSE, include = FALSE}
 source("cc_functions.R")
@@ -296,7 +297,7 @@ In our analysis, we use this model to explore how a range of approaches for form
 (ref:caption-yield) Estimated maize and soy yields across Zambia, in tons/ha (with different scales for each crop). Average yields, used in the pure biodiversity (*bp*) and 50% conversion (*z50*) model weighting specifications, are 5.30 tons/ha for maize and 3.38 tons/ha for soy. See @Estes2016a for details on how yields were modeled.
 
 ```{r yield, fig.cap = '(ref:caption-yield)', echo=FALSE}
-knitr::include_graphics(fp(p_plots, "yield_maps.png"))
+knitr::include_graphics(fp(p_plots, "si/yield_maps.png"))
 ```
 
 ## Model weighting specifications {#model-weights}
@@ -441,11 +442,10 @@ In total, we produced 90 unique indices to cover the full range of permutations 
 
 Species range maps were filtered prior to the calculation of species richness in order to: exclude marine species; exclude species classified as “Extinct” (EX) or “Extinct in the Wild” (EW); include only ranges where species were considered “extant;” include only ranges where species are considered “native” or “reintroduced;” and include only portions of the range where species are “resident,” “breeding,” or “non-breeding” (i.e. wintering, excluding “passage” areas for migratory species).
 
-Range maps, species richness maps, and biodiversity indices were processed and calculated in RStudio using R version 3.6.0 (2019-04-26), using the `agroEcoTradeoff`, `dtraster`, `lmisc`, `raster`, `rgdal`, `sf`, `sp`, `gdalUtils`, `rasterVis`, `data.table`, `tictoc`, `fasterize`, `lwgeom`, `magrittr`, `parallel`, `reshape2`, `cowplot`, `tidyverse`, `knitr`, `spatstat`, `rmarkdown`, `bookdown`, and `pryr` packages.
-
+Species range maps, richness maps, biodiversity indices, and the resulting model outputs were processed in RStudio version `r rstudioapi::versionInfo()$version`, using `r R.Version()$version.string`, using the `agroEcoTradeoff`, `data.table`, `sf`, `raster`, `dtraster`, `fasterize`, `tidyverse`, `lmisc`,  `rgdal`, `sp`, `gdalUtils`, `rasterVis`, `tictoc`,  `lwgeom`, `magrittr`, `reshape2`, `cowplot`, `knitr`, `spatstat`, `rmarkdown`, `bookdown`, `pryr`, and `viridis` packages.
 
 ```{r packages-bib, include = FALSE, eval = FALSE}
-knitr::write_bib(x = c(pkgs, lyndon_pkgs, "RStudio"), file = 'packages_2020.bib')
+knitr::write_bib(x = c(pkgs, lyndon_pkgs), file = 'packages_2021.bib')
 ```
 
 Before running the `agroEcoTradeoff` model, each biodiversity index was cropped and masked to the outline of Zambia, removing large bodies of water, then rescaled to between 0-1, setting a given index’s maximum value to 1 and the minimum to 0. This involved taking the value of each cell, subtracting the index’s global minimum value, then dividing this value by the difference between the global maximum and the global minimum. 
@@ -459,15 +459,15 @@ See Figures \@ref(fig:bd-inputs-1), \@ref(fig:bd-inputs-10), and \@ref(fig:bd-in
 (ref:caption-bd-inputs-110) Raw biodiversity inputs, 110 km grid (12,100 km$^2$, ~1$^{\circ}$ latitude) resolution
 
 ```{r bd-inputs-1, fig.cap = '(ref:caption-bd-inputs-1)', echo=FALSE}
-knitr::include_graphics(fp(p_plots, "ms_v5/bd_input_maps_runs_1.png"))
+knitr::include_graphics(fp(p_plots, "si/bd_input_maps_1.png"))
 ```
 
 ```{r bd-inputs-10, fig.cap = '(ref:caption-bd-inputs-10)', echo=FALSE}
-knitr::include_graphics(fp(p_plots, "ms_v5/bd_input_maps_runs_10.png"))
+knitr::include_graphics(fp(p_plots, "si/bd_input_maps_10.png"))
 ```
 
 ```{r bd-inputs-110, fig.cap = '(ref:caption-bd-inputs-110)', echo=FALSE}
-knitr::include_graphics(fp(p_plots, "ms_v5/bd_input_maps_runs_110.png"))
+knitr::include_graphics(fp(p_plots, "si/bd_input_maps_110.png"))
 ```
 
 ## Conversion maps for *bp* weighting specification
@@ -479,15 +479,15 @@ Next, we show maps for only our primary model weighting specification, with 100%
 (ref:caption-conv-maps-110-bp) Modeled conversion maps, 110 km grid (12,100 km$^2$, $1^{\circ}\times1^{\circ}$  latitude) resolution, with 100% weight on biodiversity and average yields (*bp*)
 
 ```{r conv-maps-1-bp, fig.cap = '(ref:caption-conv-maps-1-bp)', echo=FALSE}
-knitr::include_graphics("/Users/christophercrawford/Google Drive/_Projects/Zambia/agroEcoTradeoff/external/plots/ms_v5/conv_maps/basic_conv_maps_bp_1.png")
+knitr::include_graphics("/Users/christophercrawford/Google Drive/_Projects/Zambia/agroEcoTradeoff/external/plots/si/conv_maps/basic_conv_maps_bp_1.png")
 ```
 
 ```{r conv-maps-10-bp, fig.cap = '(ref:caption-conv-maps-10-bp)', echo=FALSE}
-knitr::include_graphics("/Users/christophercrawford/Google Drive/_Projects/Zambia/agroEcoTradeoff/external/plots/ms_v5/conv_maps/basic_conv_maps_bp_10.png")
+knitr::include_graphics("/Users/christophercrawford/Google Drive/_Projects/Zambia/agroEcoTradeoff/external/plots/si/conv_maps/basic_conv_maps_bp_10.png")
 ```
 
 ```{r conv-maps-110-bp, fig.cap = '(ref:caption-conv-maps-110-bp)', echo=FALSE}
-knitr::include_graphics("/Users/christophercrawford/Google Drive/_Projects/Zambia/agroEcoTradeoff/external/plots/ms_v5/conv_maps/basic_conv_maps_bp_110.png")
+knitr::include_graphics("/Users/christophercrawford/Google Drive/_Projects/Zambia/agroEcoTradeoff/external/plots/si/conv_maps/basic_conv_maps_bp_110.png")
 ```
 
 \newpage
@@ -541,7 +541,7 @@ As an additional measure of spatial similarity, we calculate *adjacency*, as the
 (ref:caption-nnd-fig) Average distance to nearest neighbor (adjacency) for ensemble mean conversion areas across different categories of variation, assuming 100% weight on biodiversity and constant average yields throughout Zambia (*bp*).
 
 ```{r nnd-fig, echo=FALSE, fig.cap = '(ref:caption-nnd-fig)', echo=FALSE, out.height = "80%"}
-knitr::include_graphics(fp(p_plots, "ms_v5/SI_fig_nnd_bp.png"))
+knitr::include_graphics(fp(p_plots, "si/SI_fig_nnd_bp.png"))
 ```
 
 \newpage
@@ -559,7 +559,7 @@ We found a category mean $J_w$ = 0.10 for the three taxonomic groups (mammals, b
 (ref:caption-threat-richness) Comparing species richness metrics including threatened species richness. Because reptiles have not been comprehensively assessed by the IUCN, the ensemble means displayed here for the four richness metrics are calculated with *only* mammal, bird, and amphibian species.
 
 ```{r threat-richness, fig.cap = '(ref:caption-threat-richness)', out.width = "0.7\\textwidth", fig.align = 'center'}
-knitr::include_graphics(fp(p_plots, "ms_v5/SI_fig_facet_r_threat_combo.png"))
+knitr::include_graphics(fp(p_plots, "si/SI_fig_facet_r_threat_combo.png"))
 ```
 
 
@@ -569,7 +569,7 @@ knitr::include_graphics(fp(p_plots, "ms_v5/SI_fig_facet_r_threat_combo.png"))
 
 Our first robustness check involved assessing the influence of our production target on the similarity results, by increasing the production target from the baseline level of ~5% all the way to ~50% (while retaining 100% of the model weight on biodiversity, and assuming mean yields). Our original model run (*bp*), assumes a production target of ~5% based on current projections of demand and yield growth [@Estes2016a], amounting to about 22,000 km$^2$ of land (about the size of New Jersey). For comparison we run the model with a much higher production target, at ~50% (*z50*), in order to assess how similarity is affected by the size of the area being converted (and therefore, being compared). 
 
-The relative similarity between these two production targets is shown in Figure 4 of the main text, and reproduced here as Figure \@ref(fig:z50-bp-comparison). We find that running the model with this larger production target produces higher overall similarity: for example, mean $J_w$ = 0.36 across all existing indices (Figure \@ref(fig:z50-bp-comparison), in blue), compared to mean $J_w$ = 0.0223 for our primary analysis (*bp*, in red). We expect higher similarity when a greater proportion of the country is converted, simply because there is less area left for disagreement. The pattern of relative differences between categories of variation stays the same, showing which sources of variation have the largest effect on land-use outcomes. Most importantly, we find low levels of agreement at this high production target scenario, even with such high production targets. For visual comparison of ensemble mean conversion areas for this *z50* weighting specification, see Figure \@ref(fig:facet-r-z50).
+The relative similarity between these two production targets is shown in Figure 4 of the main text, and reproduced here as Figure \@ref(fig:z50-bp-comparison). We find that running the model with this larger production target produces higher overall similarity: for example, mean $J_w$ = 0.36 across all existing indices (Figure \@ref(fig:z50-bp-comparison), in light green), compared to mean $J_w$ = 0.0223 for our primary analysis (*bp*, in dark purple). We expect higher similarity when a greater proportion of the country is converted, simply because there is less area left for disagreement. The pattern of relative differences between categories of variation stays the same, showing which sources of variation have the largest effect on land-use outcomes. Most importantly, we find low levels of agreement at this high production target scenario, even with such high production targets. For visual comparison of ensemble mean conversion areas for this *z50* weighting specification, see Figure \@ref(fig:facet-r-z50).
 
 (ref:caption-z50-bp-comparison) Comparing the effect of production target on similarity results. Our main analysis (*bp*) assumes a production target of ~5% of Zambia. For comparison, we show model results assuming a much larger production target (*z50*), which converts ~50% of Zambia. Both model runs place 100% model weight on biodiversity and using average, constant yields.
 
@@ -586,13 +586,13 @@ knitr::include_graphics(fp(p_plots, "si/ms_fig_4_robustness_SI.png"))
 # (ref:caption-jaccard-z50) Similarity between conversion areas assuming a production target that results in the conversion of ~50% or the remaining unprotected, uncultivated, and undeveloped land in Zambia.
 
 # This is just the primary plot (fig. 3), but for z50.
-# knitr::include_graphics(fp(p_plots, "ms_v5/SI_fig_jac_w_z50.png"))
+# knitr::include_graphics(fp(p_plots, "si/SI_fig_jac_w_z50.png"))
 ```
 
 (ref:caption-facet-r-z50) Mean conversion priorities assuming a production target that results in the conversion of ~50% of Zambia (*z50*), placing 100% weight in biodiversity and using average and constant yields across Zambia (compare with Fig. 2). The panels show biodiversity indices within five categories of variation: a) existing biodiversity indices (vertebrate endemism richness, Estes et al. 2016, Laurance et al. 2014, and Damania & Wheeler 2015); b) taxonomic groups (mammals, birds, amphibians, and reptiles); c) species richness metrics (all species richness, endemism richness, and small-ranged species richness); d) index combination methods (average, geometric mean, maximum, and multiplication); and e) input resolutions (1 km, 10 km, and 110 km grids). Cell values correspond to the proportion of model runs using that particular factor that select a given cell for conversion. White areas within Zambia correspond to currently protected, cultivated, or settled areas.
 
 ```{r facet-r-z50, fig.cap = '(ref:caption-facet-r-z50)', out.width = "1\\textwidth"}
-knitr::include_graphics(fp(p_plots, "ms_v5/SI_fig_facet_r_z50_wide.png"))
+knitr::include_graphics(fp(p_plots, "si/SI_fig_facet_r_z50_wide.png"))
 ```
 
 \newpage
@@ -610,7 +610,7 @@ We found that the ensemble mean conversion map produced from the three vertebrat
 (ref:caption-norm-order) Overlap between ensemble mean conversion areas for two differing methods for combining vertebrate taxonomic groups, either normalizing within each taxon before combining ("norm_first", following @Brancalion2019), or combining all taxonomic groups before normalizing ("sum_first", following @Laurance2014a). Positive values show areas selected only by the "norm_first" method, and negative values show areas selected by only the "sum_first" method. Areas with a value of 0 are areas where the two approaches agree (either to convert or not to convert).
 
 ```{r norm-order, fig.cap = '(ref:caption-norm-order)', out.width = "0.7\\textwidth", fig.align = 'center'}
-knitr::include_graphics(fp(p_plots, "ms_v5/SI_norm_order_plots.png"))
+knitr::include_graphics(fp(p_plots, "si/SI_norm_order_plots.png"))
 ```
 
 \newpage
@@ -625,11 +625,11 @@ We also directly compared the similarity of the order in which cells are priorit
 
 ```{r order-conv, fig.cap = '(ref:caption-order-conv)', out.width = "\\textwidth"}
 # cross-reference with \@ref(fig:chunk_label)
-knitr::include_graphics(fp(p_plots, "ms_v5/SI_fig_jac_w_order_conv.png"))
+knitr::include_graphics(fp(p_plots, "si/SI_fig_jac_w_order_conv.png"))
 ```
 
 ```{r order-protect, fig.cap = '(ref:caption-order-protect)', out.width = "\\textwidth"}
-knitr::include_graphics(fp(p_plots, "ms_v5/SI_fig_jac_w_order_protect.png"))
+knitr::include_graphics(fp(p_plots, "si/SI_fig_jac_w_order_protect.png"))
 ```
 
 \newpage
@@ -658,14 +658,14 @@ facet_r_bp <- brick(fp(p_mod_output,"facet_r_bp.tif"))
 
 names(facet_r_bp) <- gsub("_bp", "", grep("_bp$", facet_names, value = TRUE))
 
-map_colors <- c("#F2F2F2", viridis(20, direction = -1)) # terrain.colors(50, rev = TRUE)
-
+# map_colors <- c("#F2F2F2", viridis(50, direction = -1)) # terrain.colors(50, rev = TRUE)
+map_colors
 
 p1 <- gplot(facet_r_bp[[c("vert_endemism", "estes", "laurance", "damania")]], 
             maxpixels = 5000000) + 
       geom_raster(aes(fill = value)) +
       facet_wrap(~ variable, nrow = 1) + 
-      scale_fill_gradientn(colors = terrain.colors(50, rev = TRUE), na.value = "white", limits = c(0, 1)) + 
+      scale_fill_gradientn(colors = map_colors, na.value = "white", limits = c(0, 1)) + 
       labs(y = "Existing Indices", x = NULL) + 
       theme(rect = element_blank(), line = element_blank(), 
             axis.line = element_blank(), axis.ticks = element_blank(), 
@@ -677,7 +677,7 @@ p2 <- gplot(facet_r_bp[[c("plants", "habitats", "bird_composite")]],
             maxpixels = 5000000) + 
       geom_raster(aes(fill = value)) +
       facet_wrap(~ variable, nrow = 1) + 
-      scale_fill_gradientn(colors = terrain.colors(50, rev = TRUE), na.value = "white", limits = c(0, 1)) + 
+      scale_fill_gradientn(colors = map_colors, na.value = "white", limits = c(0, 1)) + 
       labs(y = "Additional \nIndices", x = NULL) + 
       theme(rect = element_blank(), line = element_blank(), 
             axis.line = element_blank(), axis.ticks = element_blank(), 
@@ -696,11 +696,10 @@ p3 <- ggplot() +
   geom_point(data = filter(jac_w_melt_full, weight == "bp", comparison == "indices"), 
              mapping = aes(x = facet, y = jac_w), #color = "black", show.legend = FALSE,
              alpha = 0.15) + 
-  #facet_grid(cols = vars(comparison), scales = "free_x", switch = "x", 
-  #           space = "free_x") + 
-  scale_colour_discrete("Mean Values") #+ theme(legend.text = element_text("1", "2", "3", "4", "5"))
+  scale_colour_viridis("Mean Values", discrete = T) # for color blindness
+  
 
-png(paste0(p_plots, "/ms_v5/","SI_fig_facet_r_extra_composites.png"),    
+png(paste0(p_plots, "/si/","SI_fig_facet_r_extra_composites.png"),    
     width = 8, height = 7,
     units = "in", res = 300)
 
@@ -712,7 +711,7 @@ rm(p1, p2, p3)
 
 ```
 ```{r all-composites, fig.cap = '(ref:caption-all-composites)'}
-knitr::include_graphics(fp(p_plots, "ms_v5/SI_fig_facet_r_extra_composites.png"))
+knitr::include_graphics(fp(p_plots, "si/SI_fig_facet_r_extra_composites.png"))
 ```
 
 \newpage
@@ -805,27 +804,27 @@ Importantly, Figure \@ref(fig:jac-w-all) also shows similarity between ensemble 
 The relative changes in similarity across the different weighting schemes are shown in Figure \@ref(fig:jac-w-weights-line). Diving into the results for each individual weighting specification, we test the influence of including accurate and spatially heterogenous yields in the calculation of biodiversity in terms of production efficiency, while placing 100% of model weight on biodiversity (*b*, Figure \@ref(fig:jac-w-b)), then equally weighting biodiversity and yield (*by*, Figure \@ref(fig:jac-w-by)) in the model weighting specification. Figures \@ref(fig:jac-w-bc) and \@ref(fig:jac-w-bt) shows similarity results when equally weighting biodiversity and either carbon loss (*bc*) or transportation cost (*bt*). Figure \@ref(fig:jac-w-byct) shows similarity when placing equal weight on all four constraints (*byct*).
 
 ```{r jac-w-all, fig.cap = '(ref:caption-jac-w-all)'}
-knitr::include_graphics(fp(p_plots, "ms_v5/SI_fig_jac_w_all.png"))
+knitr::include_graphics(fp(p_plots, "si/SI_fig_jac_w_all.png"))
 ```
 
 ```{r jac-w-b, fig.cap = '(ref:caption-jac-w-b)', out.width = "0.8\\textwidth"}
-knitr::include_graphics(fp(p_plots, "ms_v5/SI_fig_jac_w_b.png"))
+knitr::include_graphics(fp(p_plots, "si/SI_fig_jac_w_b.png"))
 ```
 
 ```{r jac-w-by, fig.cap = '(ref:caption-jac-w-by)', out.width = "0.8\\textwidth"}
-knitr::include_graphics(fp(p_plots, "ms_v5/SI_fig_jac_w_by.png"))
+knitr::include_graphics(fp(p_plots, "si/SI_fig_jac_w_by.png"))
 ```
 
 ```{r jac-w-bc, fig.cap = '(ref:caption-jac-w-bc)', out.width = "0.8\\textwidth"}
-knitr::include_graphics(fp(p_plots, "ms_v5/SI_fig_jac_w_bc.png"))
+knitr::include_graphics(fp(p_plots, "si/SI_fig_jac_w_bc.png"))
 ```
 
 ```{r jac-w-bt, fig.cap = '(ref:caption-jac-w-bt)', out.width = "0.8\\textwidth"}
-knitr::include_graphics(fp(p_plots, "ms_v5/SI_fig_jac_w_bt.png"))
+knitr::include_graphics(fp(p_plots, "si/SI_fig_jac_w_bt.png"))
 ```
 
 ```{r jac-w-byct, fig.cap = '(ref:caption-jac-w-byct)', out.width = "0.8\\textwidth"}
-knitr::include_graphics(fp(p_plots, "ms_v5/SI_fig_jac_w_byct.png"))
+knitr::include_graphics(fp(p_plots, "si/SI_fig_jac_w_byct.png"))
 ```
 
 In the real world, decision makers must consider factors other than biodiversity when making land-use decisions. When distributing weight from biodiversity to yield, carbon storage, and transportation costs, we found that the similarity between land-use recommendations increased overall, though the overall pattern of relative differences between factors in the different categories remained largely consistent. This is not so surprising, considering that we held these other three costs constant, so including them in our model reduced the amount of variation between model runs. However, we also found that different model weighting specifications produced recommendations that differed from each other by about the same amount as different existing indices and taxonomic groups (see Figure \@ref(fig:jac-w-all)). This signals a relative lack of congruence between the four constraints themselves: the least-cost areas for biodiversity do not necessarily overlap with those that maximize yields, minimize transportation cost, or minimize carbon emissions. 
@@ -853,27 +852,27 @@ Shown for 1 km grid resolution for illustrative purposes only.
 (ref:caption-conv-maps-1-z50) Modeled conversion maps, 1 km$^2$ resolution, with 100% weight on biodiversity, assuming average yields, but with a production target that converts 50% of Zambia (*z50*). See Section \@ref(bd-inputs) for full descriptions of biodiversity indices.
 
 ```{r conv-maps-1-b, fig.cap = '(ref:caption-conv-maps-1-b)', echo=FALSE}
-knitr::include_graphics("/Users/christophercrawford/Google Drive/_Projects/Zambia/agroEcoTradeoff/external/plots/ms_v5/conv_maps/basic_conv_maps_b_1.png")
+knitr::include_graphics("/Users/christophercrawford/Google Drive/_Projects/Zambia/agroEcoTradeoff/external/plots/si/conv_maps/basic_conv_maps_b_1.png")
 ```
 
 ```{r conv-maps-1-by, fig.cap = '(ref:caption-conv-maps-1-by)', echo=FALSE}
-knitr::include_graphics("/Users/christophercrawford/Google Drive/_Projects/Zambia/agroEcoTradeoff/external/plots/ms_v5/conv_maps/basic_conv_maps_by_1.png")
+knitr::include_graphics("/Users/christophercrawford/Google Drive/_Projects/Zambia/agroEcoTradeoff/external/plots/si/conv_maps/basic_conv_maps_by_1.png")
 ```
 
 ```{r conv-maps-1-bc, fig.cap = '(ref:caption-conv-maps-1-bc)', echo=FALSE}
-knitr::include_graphics("/Users/christophercrawford/Google Drive/_Projects/Zambia/agroEcoTradeoff/external/plots/ms_v5/conv_maps/basic_conv_maps_bc_1.png")
+knitr::include_graphics("/Users/christophercrawford/Google Drive/_Projects/Zambia/agroEcoTradeoff/external/plots/si/conv_maps/basic_conv_maps_bc_1.png")
 ```
 
 ```{r conv-maps-1-bt, fig.cap = '(ref:caption-conv-maps-1-bt)', echo=FALSE}
-knitr::include_graphics("/Users/christophercrawford/Google Drive/_Projects/Zambia/agroEcoTradeoff/external/plots/ms_v5/conv_maps/basic_conv_maps_bt_1.png")
+knitr::include_graphics("/Users/christophercrawford/Google Drive/_Projects/Zambia/agroEcoTradeoff/external/plots/si/conv_maps/basic_conv_maps_bt_1.png")
 ```
 
 ```{r conv-maps-1-byct, fig.cap = '(ref:caption-conv-maps-1-byct)', echo=FALSE}
-knitr::include_graphics("/Users/christophercrawford/Google Drive/_Projects/Zambia/agroEcoTradeoff/external/plots/ms_v5/conv_maps/basic_conv_maps_byct_1.png")
+knitr::include_graphics("/Users/christophercrawford/Google Drive/_Projects/Zambia/agroEcoTradeoff/external/plots/si/conv_maps/basic_conv_maps_byct_1.png")
 ```
 
 ```{r conv-maps-1-z50, fig.cap = '(ref:caption-conv-maps-1-z50)', echo=FALSE}
-knitr::include_graphics("/Users/christophercrawford/Google Drive/_Projects/Zambia/agroEcoTradeoff/external/plots/ms_v5/conv_maps/basic_conv_maps_z50_1.png")
+knitr::include_graphics("/Users/christophercrawford/Google Drive/_Projects/Zambia/agroEcoTradeoff/external/plots/si/conv_maps/basic_conv_maps_z50_1.png")
 ```
 
 \newpage
@@ -899,35 +898,35 @@ Each of the following figures shows, from top to bottom: the distribution of val
 (ref:caption-conv-maps-methods-ae-1) Methods for combining multiple layers the arithmetic mean (average), geometric mean, maximum, and multiplication, shown here for combining all vertebrate species richness and rarity-weighted endemism richness.
 
 ```{r conv-maps-comp-1, fig.cap = '(ref:caption-conv-maps-comp-1)', echo=FALSE, out.height = "1\\textheight"}
-knitr::include_graphics("/Users/christophercrawford/Google Drive/_Projects/Zambia/agroEcoTradeoff/external/plots/ms_v5/conv_maps_by_ensemble/composites_1_conv_maps.png")
+knitr::include_graphics("/Users/christophercrawford/Google Drive/_Projects/Zambia/agroEcoTradeoff/external/plots/si/conv_maps_by_category/composites_1_conv_maps.png")
 ```
 
 ```{r conv-maps-types-1, fig.cap = '(ref:caption-conv-maps-types-1)', echo=FALSE, out.height = "0.85\\textheight"}
-knitr::include_graphics("/Users/christophercrawford/Google Drive/_Projects/Zambia/agroEcoTradeoff/external/plots/ms_v5/conv_maps_by_ensemble/types_1_conv_maps.png")
+knitr::include_graphics("/Users/christophercrawford/Google Drive/_Projects/Zambia/agroEcoTradeoff/external/plots/si/conv_maps_by_category/types_1_conv_maps.png")
 ```
 
 ```{r conv-maps-taxa-all-1, fig.cap = '(ref:caption-conv-maps-taxa-all-1)', echo=FALSE, out.height = "0.9\\textheight"}
-knitr::include_graphics("/Users/christophercrawford/Google Drive/_Projects/Zambia/agroEcoTradeoff/external/plots/ms_v5/conv_maps_by_ensemble/taxa_all_1_conv_maps.png")
+knitr::include_graphics("/Users/christophercrawford/Google Drive/_Projects/Zambia/agroEcoTradeoff/external/plots/si/conv_maps_by_category/taxa_all_1_conv_maps.png")
 ```
 
 ```{r conv-maps-taxa-endemism-1, fig.cap = '(ref:caption-conv-maps-taxa-endemism-1)', echo=FALSE, out.height = "0.9\\textheight"}
-knitr::include_graphics("/Users/christophercrawford/Google Drive/_Projects/Zambia/agroEcoTradeoff/external/plots/ms_v5/conv_maps_by_ensemble/taxa_endemism_1_conv_maps.png")
+knitr::include_graphics("/Users/christophercrawford/Google Drive/_Projects/Zambia/agroEcoTradeoff/external/plots/si/conv_maps_by_category/taxa_endemism_1_conv_maps.png")
 ```
 
 ```{r conv-maps-taxa-small-1, fig.cap = '(ref:caption-conv-maps-taxa-small-1)', echo=FALSE, out.height = "0.9\\textheight"}
-knitr::include_graphics("/Users/christophercrawford/Google Drive/_Projects/Zambia/agroEcoTradeoff/external/plots/ms_v5/conv_maps_by_ensemble/taxa_small_1_conv_maps.png")
+knitr::include_graphics("/Users/christophercrawford/Google Drive/_Projects/Zambia/agroEcoTradeoff/external/plots/si/conv_maps_by_category/taxa_small_1_conv_maps.png")
 ```
 
 ```{r conv-maps-methods-mb-1, fig.cap = '(ref:caption-conv-maps-methods-mb-1)', echo=FALSE, out.height = "0.9\\textheight"}
-knitr::include_graphics("/Users/christophercrawford/Google Drive/_Projects/Zambia/agroEcoTradeoff/external/plots/ms_v5/conv_maps_by_ensemble/methods_mb_1_conv_maps.png")
+knitr::include_graphics("/Users/christophercrawford/Google Drive/_Projects/Zambia/agroEcoTradeoff/external/plots/si/conv_maps_by_category/methods_mb_1_conv_maps.png")
 ```
 
 ```{r conv-maps-methods-vp-1, fig.cap = '(ref:caption-conv-maps-methods-vp-1)', echo=FALSE, out.height = "0.9\\textheight"}
-knitr::include_graphics("/Users/christophercrawford/Google Drive/_Projects/Zambia/agroEcoTradeoff/external/plots/ms_v5/conv_maps_by_ensemble/methods_vp_1_conv_maps.png")
+knitr::include_graphics("/Users/christophercrawford/Google Drive/_Projects/Zambia/agroEcoTradeoff/external/plots/si/conv_maps_by_category/methods_vp_1_conv_maps.png")
 ```
 
 ```{r conv-maps-methods-ae-1, fig.cap = '(ref:caption-conv-maps-methods-ae-1)', echo=FALSE, out.height = "0.9\\textheight"}
-knitr::include_graphics("/Users/christophercrawford/Google Drive/_Projects/Zambia/agroEcoTradeoff/external/plots/ms_v5/conv_maps_by_ensemble/methods_ae_1_conv_maps.png")
+knitr::include_graphics("/Users/christophercrawford/Google Drive/_Projects/Zambia/agroEcoTradeoff/external/plots/si/conv_maps_by_category/methods_ae_1_conv_maps.png")
 ```
 
 \newpage
