@@ -22,7 +22,6 @@ See Appendix S1 for full details.
 source("scripts/cc_libraries.R")
 source("scripts/cc_functions.R")
 source("scripts/cc_pathnames.R")
-source("scripts/cc_plot_things.R")
 ```
 
 
