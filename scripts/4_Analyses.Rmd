@@ -128,45 +128,59 @@ conv_bt_dt <- fread(file = fp(p_mod_output, "conv_bt_dt.csv"))
 conv_byct_dt <- fread(file = fp(p_mod_output, "conv_byct_dt.csv"))
 conv_z50_dt <- fread(file = fp(p_mod_output, "conv_z50_dt.csv"))
 
+conv_extras_bp_dt <- fread(file = fp(p_mod_output, "conv_extras_bp_dt.csv"))
+
+
 object_size(conv_b_dt)
-object_size(conv_b_dt, conv_b_pure_dt, conv_bc_dt, conv_bt_dt, conv_by_dt, conv_byct_dt, conv_z50_dt)
+object_size(bd_dt)
+object_size(bd_dt, conv_b_pure_dt, conv_b_dt, conv_by_dt, conv_bc_dt, conv_bt_dt, conv_byct_dt, conv_z50_dt, conv_extras_bp_dt)
 
 ```
 
 
 
 ```{r save-raw-data.tables}
-bd_dt # showing all bd scores, for unprotected areas 
-
-# save data.tables as backup, and as .RData files
-
-
-# save data.tables:
-save(bd_dt, # showing all bd scores 
-     conv_b_pure_dt,
-     conv_b_dt,
-     conv_by_dt,
-     conv_bc_dt,
-     conv_bt_dt,
-     conv_byct_dt,
-     conv_z50_dt,
-     
-     file = fp(p_mod_output, "mod_results_backup.RData")
-)
-
-fwrite(conv_b_pure_dt, file = fp(p_mod_output, "mod_result_backup_conv_b_pure_dt.csv"))
-fwrite(conv_b_dt, file = fp(p_mod_output, "mod_result_backup_conv_b_dt.csv"))
-fwrite(conv_by_dt, file = fp(p_mod_output, "mod_result_backup_conv_by_dt.csv"))
-fwrite(conv_bc_dt, file = fp(p_mod_output, "mod_result_backup_conv_bc_dt.csv"))
-fwrite(conv_bt_dt, file = fp(p_mod_output, "mod_result_backup_conv_bt_dt.csv"))
-fwrite(conv_byct_dt, file = fp(p_mod_output, "mod_result_backup_conv_byct_dt.csv"))
-fwrite(conv_z50_dt, file = fp(p_mod_output, "mod_result_backup_conv_z50_dt.csv"))
-
+# commented for safety!!
+# 
+# # save data.tables as backup
+# save(bd_dt, # showing all bd scores 
+#      conv_b_pure_dt,
+#      conv_b_dt,
+#      conv_by_dt,
+#      conv_bc_dt,
+#      conv_bt_dt,
+#      conv_byct_dt,
+#      conv_z50_dt,
+#      conv_extras_bp_dt,
+#      file = fp(p_mod_output, "mod_results_backup.RData"))
+# 
+# # save individual data.tables:
+# fwrite(bd_dt, file = fp(p_mod_output, "mod_results_backup_bd_dt.csv"))
+# fwrite(conv_b_pure_dt, file = fp(p_mod_output, "mod_results_backup_conv_b_pure_dt.csv"))
+# fwrite(conv_b_dt, file = fp(p_mod_output, "mod_results_backup_conv_b_dt.csv"))
+# fwrite(conv_by_dt, file = fp(p_mod_output, "mod_results_backup_conv_by_dt.csv"))
+# fwrite(conv_bc_dt, file = fp(p_mod_output, "mod_results_backup_conv_bc_dt.csv"))
+# fwrite(conv_bt_dt, file = fp(p_mod_output, "mod_results_backup_conv_bt_dt.csv"))
+# fwrite(conv_byct_dt, file = fp(p_mod_output, "mod_results_backup_conv_byct_dt.csv"))
+# fwrite(conv_z50_dt, file = fp(p_mod_output, "mod_results_backup_conv_z50_dt.csv"))
+# fwrite(conv_extras_bp_dt, file = fp(p_mod_output, "mod_results_backup_conv_extras_bp_dt.csv"))
+# 
+# 
+# # load back in:
+# bd_dt <- fread(file = fp(p_mod_output, "mod_results_backup_bd_dt.csv"))
+# conv_b_pure_dt <- fread(file = fp(p_mod_output, "mod_results_backup_conv_b_pure_dt.csv"))
+# conv_b_dt <- fread(file = fp(p_mod_output, "mod_results_backup_conv_b_dt.csv"))
+# conv_by_dt <- fread(file = fp(p_mod_output, "mod_results_backup_conv_by_dt.csv"))
+# conv_bc_dt <- fread(file = fp(p_mod_output, "mod_results_backup_conv_bc_dt.csv"))
+# conv_bt_dt <- fread(file = fp(p_mod_output, "mod_results_backup_conv_bt_dt.csv"))
+# conv_byct_dt <- fread(file = fp(p_mod_output, "mod_results_backup_conv_byct_dt.csv"))
+# conv_z50_dt <- fread(file = fp(p_mod_output, "mod_results_backup_conv_z50_dt.csv"))
+# conv_extras_bp_dt <- fread(file = fp(p_mod_output, "mod_results_backup_conv_extras_bp_dt.csv"))
 ```
 
-```{r rename-dt}
+```{r rename-dts}
 # rename and merge data.tables
-# load the data.tables: see chunk {r load data.tables}
+# load the data.tables: see chunk {r load-raw-data.tables}
 
 dt_bp <- copy(conv_b_pure_dt)
 dt_b <- copy(conv_b_dt) 
@@ -247,7 +261,7 @@ fwrite(dt_byct, file = fp(p_mod_output, "dt_byct.csv"))
 fwrite(dt_z50, file = fp(p_mod_output, "dt_z50.csv"))
 
 
-rm(dt_bp, dt_b, dt_by, dt_bc, dt_bt, dt_byct, dt_z50)
+rm(dt_w_threat, dt_bp, dt_b, dt_by, dt_bc, dt_bt, dt_byct, dt_z50)
 
 
 
@@ -257,14 +271,16 @@ length(dt)
 dt[, (grep("threat", names(dt), value = TRUE)) := NULL]
 
 fwrite(dt, file = fp(p_mod_output, "dt.csv")) # this is the file I'll use going forward, containing results for all 7 model weighting scenarios, but excluding threatened species richness.
+
+
+# save a backup version of this file:
+# fwrite(dt, file = fp(p_mod_output, "mod_results_backup_dt.csv"))
 ```
 
 
 ```{r load-prepped-dts}
 # load it back in
 dt <- fread(file = fp(p_mod_output, "dt.csv"))  # note: this file contains model conversion results for all runs (excluding threatened species runs) for all 7 model weighting scenarios. This is the primary data.table from which I calculate ensemble means, below.  
-
-
 
 dt_w_threat <- fread(file = fp(p_mod_output, "dt_w_threat.csv")) 
 dt_bp <- fread(file = fp(p_mod_output, "dt_bp.csv"))
@@ -609,13 +625,24 @@ dt_m[, z50 := rowMeans(dt[, grep("_z50$", names(dt)), with = FALSE])]
 
 # save the dt_m
 object_size(dt_m)
+
 fwrite(dt_m, file = fp(p_mod_output, "dt_m.csv"))
 fwrite(dt_m_w_threat, file = fp(p_mod_output, "dt_m_w_threat.csv"))
 
 
 
-# load in dt_m, the data.table consisting of only the ensemble means across the decision categories
-dt_m <- fread(file = fp(p_mod_output, "dt_m.csv"))
+# # check against previous version:
+# dt_m0 <- fread(file = fp(p_mod_output, "dt_m.csv")) # as of 2020.06.11
+# identical(dt_m, dt_m0)
+# 
+# digits_to_round <- 13
+# for (i in seq_along(dt_m)) {
+#   cat("column", i)
+#   print(identical(
+#     round(dt_m[[i]], digits_to_round), 
+#     round(dt_m0[[i]], digits_to_round)
+#     ))
+# } # passes muster
 ```
 
 
