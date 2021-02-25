@@ -16,22 +16,20 @@ This repository houses scripts with data and analyses for:
 We explore how variation in the design of biodiversity indices affects the outcome of land-use prioritization. We use the [`agroEcoTradeoff`](https://github.com/PrincetonUniversity/agroEcoTradeoff) land-use prioritization model (Estes and Spiegel 2016), a trade-off model designed to identify areas for agricultural expansion that meet a given production target at the least environmental cost, and apply the  model to a case study in Zambia. The `agroEcoTradeoff` model allows users to minimize four constraints -- 1) biodiversity loss, 2) total agricultural area (maximizing yields), 3) carbon loss, and 4) transportation costs. Our analysis focuses on how biodiversity loss is modeled: specifically, we assess agreement between the least biodiverse areas in Zambia as identified by biodiversity indices that vary in their construction. We explore results for a wide range of criteria and methods that biologists and land-use planners have used, including: published composite indices, vertebrate taxonomic groups, metrics of species richness, methods for combining layers, and spatial resolutions.
 
 
-
 ## Components of this Repository
 
 This repository has one primary directory, housing the scripts used in our analysis. Because the data sources are all either publicly available or available upon request from the appropriate organizations, this repository does not include the raw data itself.
 
-The five primary .Rmd scripts are numbered based on the order in which parts of the analysis were conducted. Note that these .Rmd scripts are intended to be run interactively chunk by chunk (sometimes line by line), not knit together all at once:
+The five primary .Rmd scripts are numbered based on the order in which parts of the analysis were conducted. Note that these .Rmd scripts are intended to be run interactively chunk by chunk (sometimes line by line), not knit together all at once. These files include:
 
-- **1_Start.Rmd** contains 
-- **2_BD_input_prep.Rmd** 
-- **3_Model_Runs.Rmd** 
-- **4_Analyses.Rmd** 
-- **5_SI.Rmd** contains supplementary text, figures, and tables that make up Appendix S1.
+- **1_Start.Rmd** serves as a useful working starting place, loading required packages, custom functions, useful GIS components, and derived data products produced at various points of the project. (This script is not strictly necessary for reproducing the analysis.)
+- **2_BD_input_prep.Rmd** outlines the process of preparing the various biodiversity inputs explored in this project directly from data sources.
+- **3_Model_Runs.Rmd** takes these biodiversity inputs and runs them through the `agroEcoTradeoff` model, applying seven primary model weighting specifications (distributing weight between biodiversity and other constraints like yield, carbon loss, and travel cost). This also includes model runs for a range of robustness checks.
+- **4_Analyses.Rmd** analyzes the model outputs, most notably extracting and merging model conversion recommendations, calculating weighted Jaccard Similarity values, and extracting a range of summary statistics. This script also contains code to produce a wide range of figures, including those in our main text and a larger number for the Appendix S1.
+- **5_SI.Rmd** is a stand-alone document to produce our supplementary material, "Appendix S1."
 
-Scripts starting with "cc_" serve as utility scripts, housing paths, custom functions, and packages used in the analysis:
+Scripts starting with "cc_" serve as utility scripts, housing the packages (**cc_libraries.R**), custom functions (**cc_functions.R**), and file path names (**cc_pathnames.R**) used in the analysis. Note that **cc_plot_things.R** includes code serving various plotting functions throughout the analysis.
 
-- **cc_plot_things.R** includes code serving various plotting functions throughout the analysis
 
 
 ## Downloading agroEcoTradeoff
