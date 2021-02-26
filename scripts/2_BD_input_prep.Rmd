@@ -11,7 +11,7 @@ In order, the biodiversity layers produced here are:
 
 - Vertebrate richness layers, including mammals, birds, amphibians, and reptiles
 - Plant species richness
-- habitat rasters, including biodiversity hotspots, important and endemic bird habitats, WWF global 200 ecoregions, high biodiversity wilderness areas, and frontier forests.
+- Habitat rasters, including biodiversity hotspots, important and endemic bird habitats, WWF global 200 ecoregions, high biodiversity wilderness areas, and frontier forests.
 
 See Appendix S1 for full details. 
 
@@ -1094,7 +1094,7 @@ save(bird_zambia, file = "/Users/christophercrawford/Google Drive/_Projects/Zamb
 ```
 
 
-```{r bird_list_final}
+```{r bird-list-final}
 nrow(bird_valid_summary) # 10936 bird species globally (even)
 nrow(bird_zambia_summary) # 738 bird species in Zambia (even)
 
@@ -1644,7 +1644,7 @@ save(rep_valid, file = "/Users/christophercrawford/Google Drive/_Projects/Zambia
 
 
 #####
-# >>>> now, it's ready to be put through cc_make_raster
+# >>>> now, it's ready to be put through cc_make_raster8
 #####
 ```
 
@@ -2109,22 +2109,6 @@ load(file = fp(p_datnew, "1_IUCN_dev/vert_zambia_summaries.RData"), verbose = TR
 ```
 
 
-```{r prep-zambia}
-
-r1 <- cc_prep_zambia(mam_zambia_threat_richness)
-r2 <- cc_prep_zambia(bird_zambia_threat_richness)
-r3 <- cc_prep_zambia(amp_zambia_threat_richness)
-r4 <- cc_prep_zambia(rep_zambia_threat_richness)
-v <- r1 + r2 + r3 + r4
-plot(v)
-plot(amp_zambia_threat_richness)
-plot(test)
-
-output_raster <- crop(output_raster, extent(msk))
-output_raster[is.na(output_raster)] <- 0 # replace NAs with 0s
-output_raster <- raster::mask(output_raster, msk)
-```
-
 ```{r vert_bricks}
 # Save the final versions of the four taxonomic groups. Note that this includes two versions for reptiles:
 # rep which uses exclusively IUCN data
@@ -2142,8 +2126,6 @@ vert_bricks <- list(
   gard = gard_brick
 )
 
-
-
 plot(rep_brick$all_richness)
 plot(gard_brick$all_richness)
 plot(log(rep_brick$endemism_richness))
@@ -2156,7 +2138,7 @@ plot(rep_brick$threat_richness)
 
 ```
 
-```{r sum_norm_rescale_+_save}
+```{r sum-norm-rescale+save}
 # This script does four things: sum the vertebrate taxa, normalize them, rescale them, and finally save the bricks to file.
 # This produces 8 multi layer raster bricks (.tif files) for the 8 richness metrics, each with multiple taxonomic groups, resolutions, and combinations.
 
@@ -2277,35 +2259,6 @@ for(i in seq_along(vert_r)) {
 # ------------------------------------------------------------------------------------
 ```
 
-```{r bilinear_and_coarser_fasterize}
-# testing the bilinear interpolation method
-# & testing directly fasterizing into a coarser resolution msk raster 
-
-raster_rescaled <- raster::aggregate(vert_r$all_richness$mam, fact = 110, fun = mean)
-mam_110_bilinear <- disaggregate(raster_rescaled, fact = 110, method = 'bilinear') %>%
-  crop(extent(msk)) %>% raster::mask(msk)
-
-plot(vert_r$all_richness$mam)
-plot(raster_rescaled)
-plot(mam_110_bilinear)
-
-# testing directly fasterizing into a coarser resolution msk raster 
-msk_110 <- raster::aggregate(msk, fact = 110, fun = mean)
-msk_110 <- msk_110 %>% crop(extent(msk))
-plot(msk_110)
-mask_filled <- msk_110
-  mask_filled[is.na(mask_filled)] <- 0 # replace NAs with 0s
-plot(mask_filled)
-
-mam_richness_110_manual <- 
-  fasterize(mam_list$reprojected_all, mask_filled, field = NULL, fun = 'sum')
-
-plot(mam_richness_110_manual)
-plot(vert_r$all_richness$mam_110)
-
-```
-
-
 
 
 
@@ -2363,7 +2316,7 @@ dev.off()
 ```
 
 
-Note that the filtered lists (i.e. mam_list) are the ones I should use for this table. They've been filtered based on presence, origin, seasonal, etc., whereas the mam_zambia sf files haven't. 
+Note that the filtered lists (i.e. mam_list) are the ones that should be used for this table. They've been filtered based on presence, origin, seasonal, etc., whereas the mam_zambia sf files haven't. 
 
 ```{r species-occurence-table}
 load(file = fp(p_datnew, "vert_lists.RData"), verbose = TRUE)
@@ -2434,98 +2387,6 @@ species_occurrence <- data.frame(
 
 
 ggpubr::ggtexttable(species_occurrence, rows = NULL)
-```
-
-
-Combining all four rasters into a single layer for use in the tradeoff model.
-```{r}
-# fancy, combining all the polygons prior to rasterizing them.
-names(mam_list$reprojected_sf)
-names(bird_list$reprojected_sf)
-names(amp_list$reprojected_sf)
-names(rep_list$reprojected_sf)
-ncell(mam_list$reprojected_sf)
-ncell(bird_list$reprojected_sf)
-ncell(amp_list$reprojected_sf)
-ncell(rep_list$reprojected_sf)
-
-mam_pre_merge <- mam_list$reprojected_sf %>%
-  mutate(family_name = NA, common_name = NA) %>%
-  select(id_no, binomial, presence, origin, seasonal, compiler, citation, dist_comm, tax_comm, 
-         kingdom, phylum, class, order_, family, family_name, genus, common_name, category, 
-         marine, terrestial, freshwater, key)
-
-amp_pre_merge <- amp_list$reprojected_sf %>% 
-  mutate(family_name = NA, common_name = NA) %>%
-  select(id_no, binomial, presence, origin, seasonal, compiler, citation, dist_comm, tax_comm, 
-         kingdom, phylum, class, order_, family, family_name, genus, common_name, category, 
-         marine, terrestial, freshwater, key)
-
-rep_pre_merge <- rep_list$reprojected_sf %>%
-  mutate(family_name = NA, common_name = NA) %>%
-  select(id_no, binomial, presence, origin, seasonal, compiler, citation, dist_comm, tax_comm, 
-         kingdom, phylum, class, order_, family, family_name, genus, common_name, category, 
-         marine, terrestial, freshwater, key)
-
-bird_pre_merge <- bird_list$reprojected_sf %>% 
-  mutate(class = "AVES", genus = NA, kingdom = NA, phylum = NA, 
-         marine = NA, terrestial = NA, freshwater = NA) %>%
-  rename(id_no = SISID,
-         # category = RedListCategory, presence = PRESENCE, origin = ORIGIN, seasonal = SEASONAL
-         binomial = SCINAME, source = SOURCE, compiler = COMPILER, citation = CITATION, dist_comm = DIST_COM, 
-         tax_comm = TAX_COM, order_ = Order_, family = FamilyName, family_name = Family, 
-         common_name = CommonName, geometry = Shape) %>%
-  select(id_no, binomial, presence, origin, seasonal, compiler, citation, dist_comm, tax_comm, 
-         kingdom, phylum, class, order_, family, family_name, genus, common_name, category, 
-         marine, terrestial, freshwater, key)
-
-vert_merge <- rbind(mam_pre_merge, bird_pre_merge, amp_pre_merge, rep_pre_merge)
-vert_merge %>% as_tibble()
-
-# cc_make_raster vertebrates --- --- --- ---
-vert_list <- cc_make_raster(input_sf = vert_merge, run_filter = FALSE, run_clip = FALSE, run_reproject = FALSE)
-vert_zambia_r_test <- vert_list$output_raster
-
-# Test that it's the same as the original rasters all added together. 
-vert_add <- mam_zambia_threat_richness + bird_zambia_threat_richness + amp_zambia_threat_richness + rep_zambia_threat_richness
-plot(vert_add)
-plot(vert_zambia_r_test)
-plot(vert_add - vert_zambia_r_test); freq(vert_add - vert_zambia_r_test)
-
-rm(vert_zambia_r_test)
-rm(vert_add)
-
-
-vert_zambia_threat_richness <- vert_list$output_raster
-plot(vert_zambia_threat_richness)
-ncell(vert_zambia_threat_richness)
-ncell(vert_zambia_threat_richness[!is.na(vert_zambia_threat_richness)])
-ncell(msk[!is.na(msk)])
-ncell(vert_add[!is.na(vert_add)])
-
-# `cc_write_reload_raster` --------------------------------------
-vert_zambia_threat_richness <- cc_write_reload_raster(vert_zambia_threat_richness, "vert_zambia_threat_richness", p_iucn_dev)
-vert_zambia_threat_richness <- cc_write_reload_raster(vert_zambia_threat_richness, "vert_zambia_threat_richness", p_final_inputs)
-```
-
-
-Meta-data about the files created above. 
-```{r}
-####################
-# threatened mammal terrestrial species richness
-####################
-mam_terr_threat <- st_read(fp(p_iucn_dev,"mam_terr_threat.shp")) # subset of mammal IUCN dataset, filtering by presence, origin, threatenedness, terrestrial, and full species. This recreates the Laurance et al. 2014 global dataset, though it includes near threatened (NT) species, not just threatened, vulnerable, and endangered species.
-mam_terr_threat_richness <- raster(fp(p_iucn_dev,"mam_terr_threat_richness.tif")) # global richness map created using fasterize, 1 km resolution
-mam_zambia_terr_threat_richness <- raster(fp(p_iucn_dev,"mam_zambia_terr_threat_richness.tif")) # richness map for threatened terrestrial mammal species, in Zambia, 1 km resolution
-mam_terr_threat_richness_10km <- raster(fp(p_iucn_dev,"mam_terr_threat_richness_10km.tif")) # same as above, but 10 km resolution
-mam_zambia_terr_threat_richness_10km <- raster(fp(p_iucn_dev,"mam_zambia_terr_threat_richness_10km.tif")) # same as above, but 10 km resolution
-mam_terr_threat_richness_110km <- raster(fp(p_iucn_dev,"mam_terr_threat_richness_110km.tif")) # same as above, but 110 km resolution
-mam_zambia_terr_threat_richness_110km <- raster(fp(p_iucn_dev,"mam_zambia_terr_threat_richness_110km.tif")) # same as above, but 110 km resolution
-
-
-mam_terr_all_richness
-mam_terr_small_richness
-
 ```
 
 
@@ -2600,98 +2461,6 @@ save(plants_zambia_4deg_buff, file = "/Users/christophercrawford/Google Drive/_P
 
 ```
 
-
-```{r manual-rasterization}
-library(spatialEco)
-norm1 <- normalize(plants_r)
-norm2 <- raster.transformation(plants_r, trans = "norm") # checks out - normalize works as it should.
-plot(norm1 - norm2); freq(norm1 - norm2, digits = 2)
-
-
-
-# rasterize --- --- --- --- --- --- --- --- --- --- --- --- --- ---
-plants_r <- plants %>%
-#plants_r_adj <- plants %>%
-  filter(plant_spcs >= 0) %>%
-  st_intersection(st_union(africa)) %>% st_cast("MULTIPOLYGON") %>%
-  st_transform(aaeac) %>%
-  fasterize(., extend(msk, extent(.), value = 0), field = "plant_spcs", fun = 'last') #  raster(., res = 1)
-#  fasterize(., extend(msk, extent(.), value = 0), field = "adj_richness", fun = 'last') #  raster(., res = 1)
-
-plants_r <- plants_r %>% crop(extent(msk)) 
-plants_r[is.na(plants_r)] <- 0 # replace NAs with 0s
-plants_r <- plants_r %>% raster::mask(msk) # masking, in order to set all cells in hotspots_r to NA where msk is NA.
-
-
-
-ncell(vert_zambia_threat_richness)
-ncell(vert_zambia_threat_richness[!is.na(vert_zambia_threat_richness)])
-ncell(msk[!is.na(msk)])
-ncell(vert_add[!is.na(vert_add)])
-
-
-plot(s2)
-plot(s2_ZA_resample)
-plot(plants_r)
-cellStats(plants_r, "min")
-
-plot(normalize(plants_r))
-plants_r[plants_r == 0] <- -100
-plot(plants_r)
-freq(normalize(plants_r), value = 0)
-freq(plants_r, digits = 10)
-ncell()
-
-plot(normalize(plants_r_adj))
-plot(plants_list$output_raster)
-ncell(plants_list$output_raster)
-
-
-
-plot(plants_r)
-plot(normalize(plants_r))
-plot(s2)
-freq(s2, digits = 2)
-values(s2, row = 120)
-
-```
-
-
-```{r}
-run_clip <- TRUE
-clip_area <- msk_sf_ll_noholes
-input_sf <- amp_valid
-
-mask_filled <- msk
-mask_filled[is.na(mask_filled)] <- 0 # replace NAs with 0s
-
-msk_sf_ll_noholes
-class(clip_area)
-
-extent(msk_shp)
-
-template_raster_extent <- 
-    {if (run_clip) clip_area else input_sf} %>%
-    st_transform(., aaeac) %>%
-    {if (class(x)[1] == "sf") as_Spatial(.) else .} %>%
-    extent(.)
-
-template_raster <- extend(mask_filled, template_raster_extent, value = 0)
-
-
-template_raster2 <- extend(mask_filled, value = 0,
-                            extent(
-                              as_Spatial(
-                                st_transform(
-                                  {if (run_clip) clip_area else input_sf}, aaeac)
-                                )
-                              )
-                            )
-
-
-```
-
-
 ```{r plants-final}
 # `cc_make_raster` ---------------------------------------------
 plants_list <- plants %>% 
@@ -2749,9 +2518,6 @@ test <- plants_list$output_raster %>%
   raster::mask(., msk)
 ncell(test[!is.na(test)])
 
-
-
-
 # ---------------------------------------------------------------------------
 
 # save list, etc.
@@ -2760,59 +2526,6 @@ save(plants_list, file = "/Users/christophercrawford/Google Drive/_Projects/Zamb
 # `cc_write_reload_raster` --------------------------------------
 plants_zambia_r <- cc_write_reload_raster(plants_zambia_r, "plants_zambia_r", p_plants_dev)
 plants_zambia_r <- cc_write_reload_raster(plants_zambia_r, "plants_zambia_r", p_final_inputs)
-```
-
-```{r species-area-exponent}
-# check areas
-summary(plants$AREA)
-names(plants)
-area_test <- plants %>%
-  st_transform(crs_mollweide) %>%  # convert to moll projection, then calculate area from polygons in the Albers equal area projection
-  mutate(., area_km2 = st_area(.["geometry"]) %>% units::set_units(km^2))
-
-area_test %>%
-  select(ECO_NAME, AREA, area_km2) %>%
-  as_tibble()
-
-plot(area_test[3,]$geometry, add = TRUE, col = "red", border = "red",  lwd = 2)
-plot(st_transform(world$geometry, crs_mollweide), add = F)
-
-plot(msk, col = viridis(100))
-
-#####
-# Now group by species, and calculate the sum of the various polygons, i.e. the total range area for each species. 
-## due to polygons with self-intersections, first I implement a buffer of distance 0, to resolve that. 
-area_summary_test <- area_test %>%
-  group_by(ECO_NAME) %>% 
-  dplyr::summarize(total_area_old = sum(AREA, na.rm = TRUE), 
-                   total_area_new = sum(area_km2, na.rm = TRUE),
-                   plant_spcs = min(plant_spcs),
-                   n_polygons = n()) %>%
-  st_drop_geometry()
-
-View(area_summary_test)
-
-dat <- area_summary_test %>%
-  filter(plant_spcs >= 0)
-
-plot(log(area_summary_test$plant_spcs) ~ log(area_summary_test$total_area_new))
-plot(area_summary_test$plant_spcs ~ log(area_summary_test$total_area_old))
-plot()
-
-
-plants %>%
-  arrange(ECO_NAME) %>%
-  st_drop_geometry() %>%
-  select(ECO_NAME, plant_spcs) %>%
-  View()
-
-summary(area_summary_test$plant_spcs)
-names(plants)
-
-
-exponential.model <- lm(log(plant_spcs) ~ log(total_area_old), data = dat)
-summary(exponential.model)
-plot(exponential.model)
 ```
 
 
@@ -2991,114 +2704,6 @@ crs(Afromontane)
 ```
 
 
-```{r fasterize-hotspots}
-install.packages("fasterize")
-library(fasterize)
-
-###########
-#### load in as sf
-hotspots_sf <- st_read(fp(p_dat_hab, "CI_bd_hotspots_2011_zip/data/commondata/data0/hotspots_2011_polygons.shp"))
-mapView(hotspots_sf)
-
-
-###########
-#### subset
-levels(hotspots_sf$NAME)[c(3, 8, 10, 12, 14, 18, 20, 21, 30)] # the African hotspots to subset
-
-Afromontane_sf <- hotspots_sf[hotspots_sf$NAME == "Eastern Afromontane", ]
-plot(Afromontane_sf["NAME"])
-
-names(hotspots_sf)
-mapView(filter(hotspots_sf, NAME == "Mountains of Southwest China"))
-mapView(filter(hotspots_sf, TYPE == "hotspot_area"))
-
-hotspots_sf$TYPE
-hotspots_sf_terr <- subset(hotspots_sf, TYPE == "hotspot_area")
-plot(hotspots_sf_terr["NAME"])
-
-test <- filter(hotspots_sf, NAME %in% levels(hotspots_sf$NAME)[c(3, 8, 10, 12, 14, 18, 20, 21, 30)]) # the African hotspots to subset
-plot(test["NAME"])
-
-c("Cape Floristic Region", "Coastal Forests of Eastern Africa", "Eastern Afromontane", "Guinean Forests of West Africa", "Horn of Africa", "Madagascar and the Indian Ocean Islands", "Maputaland-Pondoland-Albany", "Mediterranean Basin",  "Succulent Karoo")
-africa_hotspots_sf <- subset(hotspots_sf, 
-                          (NAME == "Cape Floristic Region") |
-                          (NAME == "Coastal Forests of Eastern Africa") |
-                          (NAME == "Eastern Afromontane") |
-                          (NAME == "Guinean Forests of West Africa") |
-                          (NAME == "Horn of Africa") |
-                          (NAME == "Madagascar and the Indian Ocean Islands") |
-                          (NAME == "Maputaland-Pondoland-Albany") |
-                          (NAME == "Mediterranean Basin") |
-                          (NAME == "Succulent Karoo")
-                          )
-
-africa_hotspots_sf_terr <- subset(hotspots_sf_terr, 
-                          (NAME == "Cape Floristic Region") |
-                          (NAME == "Coastal Forests of Eastern Africa") |
-                          (NAME == "Eastern Afromontane") |
-                          (NAME == "Guinean Forests of West Africa") |
-                          (NAME == "Horn of Africa") |
-                          (NAME == "Madagascar and the Indian Ocean Islands") |
-                          (NAME == "Maputaland-Pondoland-Albany") |
-                          (NAME == "Mediterranean Basin") |
-                          (NAME == "Succulent Karoo")
-                          )
-plot(africa_hotspots_sf["NAME"])
-plot(africa_hotspots_sf_terr["NAME"])
-
-#alternatively, you can just plot the geometries of the sf objects
-plot(st_geometry(africa_hotspots_sf_terr))
-
-# this is convenient because you can add these to existing plot() calls, using add = TRUE
-plot(africa_hotspots_r)
-
-plot(st_geometry(africa_hotspots_sf_terr_aea))
-
-
-###########
-#### reproject sf file
-africa_hotspots_sf_terr_aea <- st_transform(africa_hotspots_sf_terr, crs(msk_shp))
-plot(africa_hotspots_sf_terr_aea["NAME"])
-
-# how different are the files produced in sf than those produced in sp?
-africa_hotspots_terr_aea_sf_test <- st_read(fp(p_hotspot_dev,"africa_hotspots_terr_aea.shp"))
-head(africa_hotspots_terr_aea_sf_test)
-head(africa_hotspots_sf_terr_aea)
-plot(africa_hotspots_terr_aea_sf_test["NAME"])
-
-#they plot slightly differently, one with an automatic legend, but i can't quite figure out why.
-
-
-###########
-#### fasterize()
-africa_hotspots_r_fast <- fasterize(africa_hotspots_sf_terr_aea, africa_r, fun = 'count') #
-plot(africa_hotspots_r_fast)
-plot(africa_hotspots_r) # this is the one made from fun = 'last', with the filled Lake Tanganyika.
-plot(africa_hotspots_r_fast, ext = ext)
-plot(msk_shp, add = T)
-plot(msk_shp)
-plot(africa_hotspots_r_fast, add = T, ext = extent(msk_shp))
-plot(africa_hotspots_terr_aea)
-
-
-###########
-#### converting sf to sp
-plot(africa_hotspots_sf_terr_aea["NAME"])
-
-# see https://r-spatial.github.io/sf/reference/coerce-methods.html
-africa_hotspots_sf_terr_aea$NAME
-test_sp_sf <- as_Spatial(africa_hotspots_sf_terr_aea, IDs = africa_hotspots_sf_terr_aea$NAME)
-
-plot(test_sp_sf)
-plot(msk_shp, add = T)
-
-
-###########
-#### write to file
-writeRaster(africa_hotspots_r_fast,fp(p_datnew,"africa_hotspots_r_fast.tif"), overwrite=TRUE)
-rm(africa_hotspots_r_fast)
-africa_hotspots_r_fast <- raster(fp(p_datnew,"africa_hotspots_r_fast.tif"))
-```
 
 
 # 5. Bird habitats (IBAs + EBAs)
@@ -3268,58 +2873,6 @@ plot(st_geometry(eba_africa), border="blue", add = T) # African EBAs
 plot(msk_shp, add = T)
 
 
-
-
-
-
-
-################################
-# ------------------------------
-# Extras
-# ------------------------------
-ncell(msk) # has 1,362,244 cells
-ncell(msk[!is.na(msk)]) # has 742,821 cells with values (i.e. that are not NA)
-ncell(msk[msk>=0]) # 742,821 cells with values (greater than or equal to 0)
-ncell(msk[msk==0]) # has 0 cells with a value of 0.
-
-ncell(iba_zambia_r) # has 1,362,244 cells
-ncell(iba_zambia_r[!is.na(iba_zambia_r)]) # has 742,821 cells with values (i.e. that are not NA)
-ncell(iba_zambia_r[iba_zambia_r>=0]) # 742,821 cells with values (greater than or equal to 0)
-ncell(iba_zambia_r[iba_zambia_r==0]) # has 0 cells with a value of 0.
-
-# simplifying the geometries
-iba_simpl <- st_simplify(iba_sf, dTolerance = 0.5, preserveTopology = TRUE)
-eba_simpl <- st_simplify(eba_sf, dTolerance = 0.5, preserveTopology = TRUE)
-plot(st_geometry(iba_simpl))
-
-# transforming msk_shp to latlong
-msk_ll <- st_transform(msk_sf, wgs$prj4)
-plot(st_geometry(msk_ll))
-plot(st_geometry(iba_sf), add = T)
-
-
-# alternative to filtering by country: 
-# clip to Zambia shapefile
-msk_sf <- st_read(fp(p_datnew,"msk.shp"))
-
-iba_zam_test <- iba_sf %>%
-  st_buffer(0.0) %>% # run a buffer with distance of 0.
-  st_intersection(msk_sf) # this returns the geometries where the two sf objects overlap.
-
-valid <- st_make_valid(iba_sf) # this makes the geometries "valid", as an alternative to running the buffer
-iba_zam_test1 <- valid %>% # one 
-  st_intersection(msk_ll) # this returns the geometries where the two sf objects overlap.
-
-
-
-iba_zam_test1 %>%
-  st_transform(crs(msk_shp)) %>%
-  st_geometry() %T>%
-  plot(col="blue")
-plot(st_geometry(iba_zam_test1))
-plot(st_geometry(msk_sf), add = T)
-plot(st_geometry(iba_zam_test))
-plot(st_geometry(iba_z), border="red", add = T) # Zambia subset of the IBAs
 ```
 
 ```{r merge_ibas_ebas}
@@ -3454,9 +3007,6 @@ plot(s6); plot(msk_shp, add = T) # original Laurance datasets
 s6_Af_aaeac <- projectRaster(s6_Af, crs = crs(msk))
 plot(s6_Af_aaeac, ext = extent(msk_sf_10kmbuff)); plot(msk_shp, add = T)
 
-plot(msk_sf$geometry)
-
-
 ```
 
 
@@ -3491,49 +3041,6 @@ ecoregions_africa %>%
 
 ```
 
-```{r manual-testing}
-# -------------------------------
-# Pipe and fasterize ecoregions
-# -------------------------------
-ecoregions_africa_r <- 
-  ecoregions_sf %>% # all ecoregions
-  st_intersection(st_union(africa)) %>% st_cast("MULTIPOLYGON") %>%  # using the intersection method
-  st_transform(aaeac) %>% # reproject
-  fasterize(., extend(msk, extent(.), value = 0), fun = 'last') # then rasterize.
-  
-
-# view results
-plot(ecoregions_africa_r)
-ecoregions_africa %>%
-  st_transform(aaeac) %>%
-  st_geometry() %T>%
-  plot(border="blue", add = T) # African g200 ecoregions
-plot(msk_shp, add = T)
-
-# save results
-ecoregions_africa_r <- cc_write_reload_raster(ecoregions_africa_r, "ecoregions_africa_r", p_ecoreg_dev)
-# writeRaster(ecoregions_africa_r, fp(p_ecoreg_dev,"ecoregions_africa_r.tif"), overwrite=TRUE)
-# rm(ecoregions_africa_r)
-# ecoregions_africa_r <- raster(fp(p_ecoreg_dev,"ecoregions_africa_r.tif"))
-
-###########
-## final prep for toff, ecoregions
-###########
-ecoregions_zambia_r <- crop(ecoregions_africa_r, extent(msk)) # crop to (almost) the right extent
-ecoregions_zambia_r[is.na(ecoregions_zambia_r)] <- 0 # replace NAs with 0s
-ecoregions_zambia_r <- raster::mask(ecoregions_zambia_r, msk) # masking, in order to set all cells in hotspots_r to NA where msk is NA.
-plot(ecoregions_zambia_r); plot(msk_shp, add = T)
-plot(s6)
-
-ecoregions_zambia_r <- cc_write_reload_raster(ecoregions_zambia_r, "ecoregions_zambia_r", p_ecoreg_dev)
-# writeRaster(ecoregions_zambia_r, fp(p_ecoreg_dev,"ecoregions_zambia_r.tif"), overwrite=TRUE)
-# rm(ecoregions_zambia_r)
-# ecoregions_zambia_r <- raster(fp(p_ecoreg_dev,"ecoregions_zambia_r.tif"))
-
-plot(ecoregions_africa_r)
-plot(ecoregions_zambia_r)
-plot(msk_shp, add = T)
-```
 
 ```{r inverse_ecoregion_size}
 # load in all 814 something ecoregions:
@@ -3593,13 +3100,8 @@ plot(ecoregions_weighted_rarity)
 
 
 # save file: 
-
 ecoregions_weighted_rarity <- cc_write_reload_raster(ecoregions_weighted_rarity, "ecoregions_weighted_rarity", p_ecoreg_dev)
 ecoregions_weighted_rarity <- cc_write_reload_raster(ecoregions_weighted_rarity, "ecoregions_weighted_rarity", p_final_inputs)
-
-
-
-
 ```
 
 
