@@ -29,7 +29,7 @@ The five primary `.Rmd` scripts are numbered based on the order in which parts o
 - **4_Analyses.Rmd** analyzes the model outputs, most notably extracting and merging model conversion recommendations, calculating weighted Jaccard Similarity values, and producing a range of summary statistics. This script also contains code to produce a wide range of figures, including those in our main text and a larger number for the Appendix S1.
 - **5_SI.Rmd** is a stand-alone document to produce our supplementary material, "Appendix S1."
 
-Scripts starting with "cc_" serve as utility scripts, housing the packages (**cc_libraries.R**), custom functions (**cc_functions.R**), and file path names (**cc_pathnames.R**) used in the analysis. Note that **cc_plot_things.R** includes code serving various plotting functions throughout the analysis.
+Scripts starting with "cc_" serve as utility scripts, housing the packages (**cc_libraries.R**), custom functions (**cc_functions.R**), and file path names (**cc_pathnames.R**) used in the analysis.
 
 ## Downloading agroEcoTradeoff
 
