@@ -3,9 +3,9 @@
 ## Overview
 
 This repository houses scripts with data and analyses for:
-> Crawford C.L.[^\*], Estes L.D., Searchinger T.D., and Wilcove, D.S. 2021. Consequences of under-explored variation in biodiversity indices used for land-use prioritization. *Ecological Applications.*
+> Crawford C.L.\*, Estes L.D., Searchinger T.D., and Wilcove, D.S. 2021. Consequences of under-explored variation in biodiversity indices used for land-use prioritization. *Ecological Applications.*
 
-[^\*]: Corresponding Author, @chriscra, ccrawford@princeton.edu, Robertson Hall, Princeton University, Princeton, NJ
+\*Corresponding Author, @chriscra, ccrawford@princeton.edu, Robertson Hall, Princeton University, Princeton, NJ
 
 We explore how variation in the design of biodiversity indices affects the outcome of land-use prioritization. We use the [`agroEcoTradeoff`](https://github.com/PrincetonUniversity/agroEcoTradeoff) land-use prioritization model (Estes and Spiegel 2016), a trade-off model designed to identify areas for agricultural expansion that meet a given production target at the least environmental cost, and apply the  model to a case study in Zambia. The [`agroEcoTradeoff`](https://github.com/PrincetonUniversity/agroEcoTradeoff) model allows users to minimize four constraints -- 1) biodiversity loss, 2) total agricultural area (maximizing yields), 3) carbon loss, and 4) transportation costs. Our analysis focuses on how biodiversity loss is modeled: specifically, we assess agreement between the least biodiverse areas in Zambia as identified by biodiversity indices that vary in their construction. We explore results for a wide range of criteria and methods that biologists and land-use planners have used, including: published composite indices, vertebrate taxonomic groups, metrics of species richness, methods for combining layers, and spatial resolutions.
 
