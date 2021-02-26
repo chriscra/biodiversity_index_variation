@@ -8,7 +8,7 @@ editor_options:
 This R Markdown file 1) outlines the primary analyses conducted on the tradeoff model runs completed in "3_Model_Runs.Rmd," and 2) details the production of a series of figures for the main manuscript and the supplemental Appendix. 
 
 The analysis is broadly separated into the following sections:
-- First, loading the raw data outputs from the tradeoff model, combining results for maize and soy into a single binary conversion recommendation for each model run, and then combining all model runs into a single data.table for each model weighting specification. These data.tables have one row for each pixel in Zambia (1 km2 resolution), and one column for each model run, with either a 1 or 0 representing the model's recommendation to convert that pixel (or not);
+- First, loading the raw data outputs from the tradeoff model, which have combined results for maize and soy into a single binary conversion recommendation for each model run, and combined all model runs into a single data.table for each model weighting specification. These data.tables have one row for each pixel in Zambia (1 km2 resolution), and one column for each model run, with either a 1 or 0 representing the model's recommendation to convert that pixel (or not);
 - Calculating ensemble means for facets within each decision category, based on runs that hold a given factor constant;
 - Converting data.tables to simple rasters, for visualization and the production of figures;
 - Calculating the weighted Jaccard Similarity index that serves as the main metric of similarity between model results in our manuscript, along with a range of other summary statistics; and
@@ -30,8 +30,6 @@ source("scripts/cc_pathnames.R")
 ```
 
 # Analysis
-
-## Construct conversion data.tables
 
 ```{r bd_dt}
 # -----------
@@ -81,12 +79,6 @@ names(bd_raw_dt)[3:10] <- paste0(runs[1:8], "_raw")
 bd_raw_dt <- bd_raw_dt[valinds, ] 
 # check it out.
 bd_raw_dt %>% dt_to_raster(., CRSobj) %T>% plot()
-
-
-
-length(bd_dt)
-names(bd_dt)
-# bd_dt <- bd_dt[,1:56]
 
 
 # -----------------------------------------------

@@ -54,7 +54,6 @@ msk_filled <- msk
 msk_filled[is.na(msk_filled)] <- 0 # replace NAs with 0s
 plot(msk_filled)
 
-
 # basemaps ------------------------------------------------------------------------------------
 load(fp(p_basemaps,"basemaps.RData"), verbose = TRUE)
 ```
@@ -2949,8 +2948,6 @@ plot(iba_eba_zambia_r); freq(iba_eba_zambia_r) # no need to fix the 2s, because 
 plot(iba_eba_zambia_r_test - iba_eba_zambia_r)
 freq(iba_eba_zambia_r_test - iba_eba_zambia_r) # checks out. Sweet!!
 
-
-
 iba_eba_zambia_r <- iba_eba_list$output_raster
 # `cc_write_reload_raster` --------------------------------------
 iba_eba_zambia_r <- cc_write_reload_raster(iba_eba_zambia_r, "iba_eba_zambia_r", p_IBA_dev)
@@ -2966,7 +2963,6 @@ names(kba_sf)
 table(kba_sf$EBADATABAS)
 nrow(kba_sf)
 levels(kba_sf$EBANAME)
-
 
 # ------------------------------------------------------
 # KBAs
