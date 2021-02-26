@@ -2244,7 +2244,7 @@ names(brick)
 # create layer names object
 layer_names <- c("mam", "bird", "amp", "rep", "sum", "sum_norm", "norm_sum", "mam_10", "bird_10", "amp_10", "rep_10", "norm_sum_10", "mam_110", "bird_110", "amp_110", "rep_110", "norm_sum_110")
 
-conv_eq_dt
+richness_names <- c("all_richness", "endemism_richness", "endemism_zam_richness", "threat_richness", "threat_weighted_richness", "small_richness", "small_zam_richness", "small_threat_richness")
 
 # load in as a list of all rasters
 vert_r <- list(
@@ -2263,6 +2263,7 @@ for(i in seq_along(vert_r)) {
   names(vert_r[[i]]) <- layer_names
 }
 
+
 # to load in individually
 # all_richness <- brick(paste0(p_iucn_dev, "/", richness_names[1], ".tif"))
 # endemism_richness <- brick(paste0(p_iucn_dev, "/", richness_names[2], ".tif"))
@@ -2273,8 +2274,6 @@ for(i in seq_along(vert_r)) {
 # small_zam_richness <- brick(paste0(p_iucn_dev, "/", richness_names[7], ".tif"))
 # small_threat_richness <- brick(paste0(p_iucn_dev, "/", richness_names[8], ".tif"))
 
-  
-  
 # ------------------------------------------------------------------------------------
 ```
 
@@ -4056,66 +4055,7 @@ dev.off()
 ```
 
 
-```{r final-zambia-files}
-# note, these are old files: for the most 
-
-# threatened vertebrates ----------------------------------------------------
-mam_zambia_threat_richness <- raster(fp(p_iucn_dev, "mam_zambia_threat_richness.tif"))
-bird_zambia_threat_richness <- raster(fp(p_iucn_dev, "bird_zambia_threat_richness.tif"))
-amp_zambia_threat_richness <- raster(fp(p_iucn_dev, "amp_zambia_threat_richness.tif"))
-rep_zambia_threat_richness <- raster(fp(p_iucn_dev, "rep_zambia_threat_richness.tif"))
-
-vert_zambia_threat_richness <- raster(fp(p_iucn_dev, "vert_zambia_threat_richness.tif"))
-plot(s1)
-plot(vert_zambia_threat_richness)
-
-
-# plants ----------------------------------------------------
-plants_zambia_r <- raster(fp(p_plants_dev, "plants_zambia_r.tif"))
-plot(s2)
-plot(plants_zambia_r)
-
-# hotspots ----------------------------------------------------
-hotspots_zambia_r <- raster(fp(p_hotspot_dev,"hotspots_zambia_r.tif")) # Zambia raster - final, with 0s and 1s only.
-
-plot(s4)
-plot(hotspots_zambia_r)
-
-# Bird Habitats - IBAs and EBAs -------------------------------
-iba_eba_zambia_r <- raster(fp(p_IBA_dev,"iba_eba_zambia_r.tif")) # combined raster of Zambian IBAs and EBAs, 0s and 1s, ready for the tradeoff model.
-
-plot(s5)
-plot(iba_eba_zambia_r)
-
-# ecoregions --------------------------------------------------
-ecoregions_zambia_r <- raster(fp(p_ecoreg_dev,"ecoregions_zambia_r.tif"))
-
-plot(s6)
-plot(ecoregions_zambia_r)
-
-
-# wilderness --------------------------------------------------
-wilderness_zambia_r <- raster(fp(p_wilder_dev,"wilderness_zambia_r.tif"))
-
-plot(s7); plot(msk_shp, add = T)
-plot(wilderness_zambia_r)
-plot(msk_sf$geometry, add = T)
-
-# save final Zambia layers ------------------------------------
-save(vert_all_richness_brick,
-     vert_threat_richness_brick,
-     vert_small_richness_brick,
-     vert_small_threat_richness_brick,
-     plants_zambia_r,
-     hotspots_zambia_r,
-     iba_eba_zambia_r,
-     ecoregions_zambia_r,
-     wilderness_zambia_r,
-     file = fp(p_datnew,"final-rasters-zambia.RData"))
-```
-
-
-```{r intermediary-products}
+```{r intermediary-vert-products}
 # a collection of intermediary data produced throughout this .Rmd file.
 
 # vertebrate files -------------------------------------------------------------------------------------
@@ -4145,12 +4085,16 @@ load(file = fp(p_iucn_dev, "mam_list.RData"))  # updated jan. 31 2020
 load(file = fp(p_iucn_dev, "bird_list.RData"))  # updated jan. 31 2020 
 load(file = fp(p_iucn_dev, "amp_list.RData"))  # updated jan. 31 2020 
 load(file = fp(p_iucn_dev, "rep_list.RData"))  # updated jan. 31 2020 
+# note, this rep_list file includes only data from IUCN, not from GARD. See GARD list for the most up to date files. The richness metric .tifs have all been updated to use GARD (or IUCN in the case of threatened species richness). These are the finaly data files used in the analysis.
+
+load(file = "/Users/christophercrawford/Google Drive/_Projects/Zambia/agroEcoTradeoff/external/data_new/1_IUCN_dev/gard_list.RData", verbose = TRUE) #
+
+
 
 # load-vert-bricks -------------------------------------------------------------------------------
 load(file = fp(p_datnew, "vert_bricks.Rdata"), verbose = TRUE) # this includes all four taxonomic groups, including both GARD and the IUCN rep brick file. This is the most up to date version, from May 2020.
-
-
 ```
+
 
 ```{r final-input-datasets}
 # ----------------------------------------------------------------------------
@@ -4217,7 +4161,6 @@ load(file = fp(p_datnew,"habitat_lists.RData"), verbose = TRUE) # hotspots_list,
 # final zambia rasters:
 load(file = fp(p_datnew,"final-rasters-zambia.RData"), verbose = TRUE)
 ```
-
 
 
 # Methods
