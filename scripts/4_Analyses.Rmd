@@ -3187,9 +3187,9 @@ hist(log(vert_r$endemism_richness$rep),
 # note about what's driving the rep_endemism map
 # ------------------------------------------------ #
 
-load(file = "/Users/christophercrawford/Google Drive/_Projects/Zambia/agroEcoTradeoff/external/data_new/1_IUCN_dev/gard_prep.RData", verbose = TRUE) # contains gard_prep, which is gard, made valid, joined to IUCN table, and prepped for use in small species, endemism, etc. This entailed joining the table of red list categories, changing some of the column names, adding a column for area, totalling area for parts of the range we're using, and adding a column ranking the range size to allow things to be subset for small ranged species analyses.
+load(file = "/Users/christophercrawford/Google_Drive/_Projects/Zambia/agroEcoTradeoff/external/data_new/1_IUCN_dev/gard_prep.RData", verbose = TRUE) # contains gard_prep, which is gard, made valid, joined to IUCN table, and prepped for use in small species, endemism, etc. This entailed joining the table of red list categories, changing some of the column names, adding a column for area, totalling area for parts of the range we're using, and adding a column ranking the range size to allow things to be subset for small ranged species analyses.
 
-load(file = "/Users/christophercrawford/Google Drive/_Projects/Zambia/agroEcoTradeoff/external/data_new/1_IUCN_dev/gard_list.RData", verbose = TRUE)
+load(file = "/Users/christophercrawford/Google_Drive/_Projects/Zambia/agroEcoTradeoff/external/data_new/1_IUCN_dev/gard_list.RData", verbose = TRUE)
 gard_list$filtered_small %>%
   st_drop_geometry() %>%
   filter(range_size_quantile < 0.5) %>% # do <= if nrow is even, and < if nrow is odd.

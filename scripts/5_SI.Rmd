@@ -22,7 +22,7 @@ date:
     \today 
 editor_options:
   chunk_output_type: console
-bibliography: /Users/christophercrawford/Google Drive/Library/library.bib
+bibliography: /Users/christophercrawford/Google_Drive/Library/library.bib
 nocite: |
   @RStudioTeam2020, @R-base, @R-agroEcoTradeoff, @Estes2015, @R-lmisc, @R-raster, @R-rasterVis, @R-rgdal, @R-sf, @R-sp, @R-gdalUtils, @R-data.table, @R-tictoc, @R-fasterize, @lwgeom, @R-magrittr, @R-reshape2, @R-cowplot, @R-tidyverse, @R-knitr, @R-spatstat, @R-rmarkdown, @Xie2018, @Xie2020, @R-bookdown, @R-pryr, @R-kableExtra, @R-scales, @R-viridis
 ---
@@ -270,7 +270,7 @@ knitr::opts_chunk$set(out.width = "1\\textwidth", #comment=NA #fig.width=6, fig.
 ```
 ```{r include-graphics, eval=FALSE, echo=FALSE, fig.cap="A caption", out.width = '100%'}
 # this is a chunk for including a pre-existing plot or graphic.
-#knitr::include_graphics("/Users/christophercrawford/Google Drive/_Projects/Zambia/agroEcoTradeoff/external/plots/Estes-plots_test.png")
+#knitr::include_graphics("/Users/christophercrawford/Google_Drive/_Projects/Zambia/agroEcoTradeoff/external/plots/Estes-plots_test.png")
 
 # https://bookdown.org/yihui/rmarkdown-cookbook/cross-ref.html
 # cross reference in line with: #\@ref(fig:cars-plot) (or eq:label, or tab:label)
@@ -479,15 +479,15 @@ Next, we show maps for only our primary model weighting specification, with 100%
 (ref:caption-conv-maps-110-bp) Modeled conversion maps, 110 km grid (12,100 km$^2$, $1^{\circ}\times1^{\circ}$  latitude) resolution, with 100% weight on biodiversity and average yields (*bp*)
 
 ```{r conv-maps-1-bp, fig.cap = '(ref:caption-conv-maps-1-bp)', echo=FALSE}
-knitr::include_graphics("/Users/christophercrawford/Google Drive/_Projects/Zambia/agroEcoTradeoff/external/plots/si/conv_maps/basic_conv_maps_bp_1.png")
+knitr::include_graphics("/Users/christophercrawford/Google_Drive/_Projects/Zambia/agroEcoTradeoff/external/plots/si/conv_maps/basic_conv_maps_bp_1.png")
 ```
 
 ```{r conv-maps-10-bp, fig.cap = '(ref:caption-conv-maps-10-bp)', echo=FALSE}
-knitr::include_graphics("/Users/christophercrawford/Google Drive/_Projects/Zambia/agroEcoTradeoff/external/plots/si/conv_maps/basic_conv_maps_bp_10.png")
+knitr::include_graphics("/Users/christophercrawford/Google_Drive/_Projects/Zambia/agroEcoTradeoff/external/plots/si/conv_maps/basic_conv_maps_bp_10.png")
 ```
 
 ```{r conv-maps-110-bp, fig.cap = '(ref:caption-conv-maps-110-bp)', echo=FALSE}
-knitr::include_graphics("/Users/christophercrawford/Google Drive/_Projects/Zambia/agroEcoTradeoff/external/plots/si/conv_maps/basic_conv_maps_bp_110.png")
+knitr::include_graphics("/Users/christophercrawford/Google_Drive/_Projects/Zambia/agroEcoTradeoff/external/plots/si/conv_maps/basic_conv_maps_bp_110.png")
 ```
 
 \newpage
@@ -852,27 +852,27 @@ Shown for 1 km grid resolution for illustrative purposes only.
 (ref:caption-conv-maps-1-z50) Modeled conversion maps, 1 km$^2$ resolution, with 100% weight on biodiversity, assuming average yields, but with a production target that converts 50% of Zambia (*z50*). See Section \@ref(bd-inputs) for full descriptions of biodiversity indices.
 
 ```{r conv-maps-1-b, fig.cap = '(ref:caption-conv-maps-1-b)', echo=FALSE}
-knitr::include_graphics("/Users/christophercrawford/Google Drive/_Projects/Zambia/agroEcoTradeoff/external/plots/si/conv_maps/basic_conv_maps_b_1.png")
+knitr::include_graphics("/Users/christophercrawford/Google_Drive/_Projects/Zambia/agroEcoTradeoff/external/plots/si/conv_maps/basic_conv_maps_b_1.png")
 ```
 
 ```{r conv-maps-1-by, fig.cap = '(ref:caption-conv-maps-1-by)', echo=FALSE}
-knitr::include_graphics("/Users/christophercrawford/Google Drive/_Projects/Zambia/agroEcoTradeoff/external/plots/si/conv_maps/basic_conv_maps_by_1.png")
+knitr::include_graphics("/Users/christophercrawford/Google_Drive/_Projects/Zambia/agroEcoTradeoff/external/plots/si/conv_maps/basic_conv_maps_by_1.png")
 ```
 
 ```{r conv-maps-1-bc, fig.cap = '(ref:caption-conv-maps-1-bc)', echo=FALSE}
-knitr::include_graphics("/Users/christophercrawford/Google Drive/_Projects/Zambia/agroEcoTradeoff/external/plots/si/conv_maps/basic_conv_maps_bc_1.png")
+knitr::include_graphics("/Users/christophercrawford/Google_Drive/_Projects/Zambia/agroEcoTradeoff/external/plots/si/conv_maps/basic_conv_maps_bc_1.png")
 ```
 
 ```{r conv-maps-1-bt, fig.cap = '(ref:caption-conv-maps-1-bt)', echo=FALSE}
-knitr::include_graphics("/Users/christophercrawford/Google Drive/_Projects/Zambia/agroEcoTradeoff/external/plots/si/conv_maps/basic_conv_maps_bt_1.png")
+knitr::include_graphics("/Users/christophercrawford/Google_Drive/_Projects/Zambia/agroEcoTradeoff/external/plots/si/conv_maps/basic_conv_maps_bt_1.png")
 ```
 
 ```{r conv-maps-1-byct, fig.cap = '(ref:caption-conv-maps-1-byct)', echo=FALSE}
-knitr::include_graphics("/Users/christophercrawford/Google Drive/_Projects/Zambia/agroEcoTradeoff/external/plots/si/conv_maps/basic_conv_maps_byct_1.png")
+knitr::include_graphics("/Users/christophercrawford/Google_Drive/_Projects/Zambia/agroEcoTradeoff/external/plots/si/conv_maps/basic_conv_maps_byct_1.png")
 ```
 
 ```{r conv-maps-1-z50, fig.cap = '(ref:caption-conv-maps-1-z50)', echo=FALSE}
-knitr::include_graphics("/Users/christophercrawford/Google Drive/_Projects/Zambia/agroEcoTradeoff/external/plots/si/conv_maps/basic_conv_maps_z50_1.png")
+knitr::include_graphics("/Users/christophercrawford/Google_Drive/_Projects/Zambia/agroEcoTradeoff/external/plots/si/conv_maps/basic_conv_maps_z50_1.png")
 ```
 
 \newpage
@@ -898,35 +898,35 @@ Each of the following figures shows, from top to bottom: the distribution of val
 (ref:caption-conv-maps-methods-ae-1) Methods for combining multiple layers the arithmetic mean (average), geometric mean, maximum, and multiplication, shown here for combining all vertebrate species richness and rarity-weighted endemism richness.
 
 ```{r conv-maps-comp-1, fig.cap = '(ref:caption-conv-maps-comp-1)', echo=FALSE, out.height = "1\\textheight"}
-knitr::include_graphics("/Users/christophercrawford/Google Drive/_Projects/Zambia/agroEcoTradeoff/external/plots/si/conv_maps_by_category/composites_1_conv_maps.png")
+knitr::include_graphics("/Users/christophercrawford/Google_Drive/_Projects/Zambia/agroEcoTradeoff/external/plots/si/conv_maps_by_category/composites_1_conv_maps.png")
 ```
 
 ```{r conv-maps-types-1, fig.cap = '(ref:caption-conv-maps-types-1)', echo=FALSE, out.height = "0.85\\textheight"}
-knitr::include_graphics("/Users/christophercrawford/Google Drive/_Projects/Zambia/agroEcoTradeoff/external/plots/si/conv_maps_by_category/types_1_conv_maps.png")
+knitr::include_graphics("/Users/christophercrawford/Google_Drive/_Projects/Zambia/agroEcoTradeoff/external/plots/si/conv_maps_by_category/types_1_conv_maps.png")
 ```
 
 ```{r conv-maps-taxa-all-1, fig.cap = '(ref:caption-conv-maps-taxa-all-1)', echo=FALSE, out.height = "0.9\\textheight"}
-knitr::include_graphics("/Users/christophercrawford/Google Drive/_Projects/Zambia/agroEcoTradeoff/external/plots/si/conv_maps_by_category/taxa_all_1_conv_maps.png")
+knitr::include_graphics("/Users/christophercrawford/Google_Drive/_Projects/Zambia/agroEcoTradeoff/external/plots/si/conv_maps_by_category/taxa_all_1_conv_maps.png")
 ```
 
 ```{r conv-maps-taxa-endemism-1, fig.cap = '(ref:caption-conv-maps-taxa-endemism-1)', echo=FALSE, out.height = "0.9\\textheight"}
-knitr::include_graphics("/Users/christophercrawford/Google Drive/_Projects/Zambia/agroEcoTradeoff/external/plots/si/conv_maps_by_category/taxa_endemism_1_conv_maps.png")
+knitr::include_graphics("/Users/christophercrawford/Google_Drive/_Projects/Zambia/agroEcoTradeoff/external/plots/si/conv_maps_by_category/taxa_endemism_1_conv_maps.png")
 ```
 
 ```{r conv-maps-taxa-small-1, fig.cap = '(ref:caption-conv-maps-taxa-small-1)', echo=FALSE, out.height = "0.9\\textheight"}
-knitr::include_graphics("/Users/christophercrawford/Google Drive/_Projects/Zambia/agroEcoTradeoff/external/plots/si/conv_maps_by_category/taxa_small_1_conv_maps.png")
+knitr::include_graphics("/Users/christophercrawford/Google_Drive/_Projects/Zambia/agroEcoTradeoff/external/plots/si/conv_maps_by_category/taxa_small_1_conv_maps.png")
 ```
 
 ```{r conv-maps-methods-mb-1, fig.cap = '(ref:caption-conv-maps-methods-mb-1)', echo=FALSE, out.height = "0.9\\textheight"}
-knitr::include_graphics("/Users/christophercrawford/Google Drive/_Projects/Zambia/agroEcoTradeoff/external/plots/si/conv_maps_by_category/methods_mb_1_conv_maps.png")
+knitr::include_graphics("/Users/christophercrawford/Google_Drive/_Projects/Zambia/agroEcoTradeoff/external/plots/si/conv_maps_by_category/methods_mb_1_conv_maps.png")
 ```
 
 ```{r conv-maps-methods-vp-1, fig.cap = '(ref:caption-conv-maps-methods-vp-1)', echo=FALSE, out.height = "0.9\\textheight"}
-knitr::include_graphics("/Users/christophercrawford/Google Drive/_Projects/Zambia/agroEcoTradeoff/external/plots/si/conv_maps_by_category/methods_vp_1_conv_maps.png")
+knitr::include_graphics("/Users/christophercrawford/Google_Drive/_Projects/Zambia/agroEcoTradeoff/external/plots/si/conv_maps_by_category/methods_vp_1_conv_maps.png")
 ```
 
 ```{r conv-maps-methods-ae-1, fig.cap = '(ref:caption-conv-maps-methods-ae-1)', echo=FALSE, out.height = "0.9\\textheight"}
-knitr::include_graphics("/Users/christophercrawford/Google Drive/_Projects/Zambia/agroEcoTradeoff/external/plots/si/conv_maps_by_category/methods_ae_1_conv_maps.png")
+knitr::include_graphics("/Users/christophercrawford/Google_Drive/_Projects/Zambia/agroEcoTradeoff/external/plots/si/conv_maps_by_category/methods_ae_1_conv_maps.png")
 ```
 
 \newpage

@@ -68,7 +68,7 @@ cp_raster <- raster(fp(p_datnew,"cons-priorities_from_csv.tif"))
 
 ```{r input-files, eval=FALSE}
 # final zambia rasters:
-p_datnew <- "/Users/christophercrawford/Google Drive/_Projects/Zambia/agroEcoTradeoff/external/data_new"
+p_datnew <- "/Users/christophercrawford/Google_Drive/_Projects/Zambia/agroEcoTradeoff/external/data_new"
 load(file = fp(p_datnew,"final-rasters-zambia.RData"), verbose = TRUE)
 
 
@@ -140,7 +140,7 @@ load(file = fp(p_iucn_dev, "rep_zambia_4deg_buff.RData"), verbose = TRUE)
 
 
 
-load(file = "/Users/christophercrawford/Google Drive/_Projects/Zambia/agroEcoTradeoff/external/data_new/2_plants_dev/plants_list.RData", verbose = TRUE)
+load(file = "/Users/christophercrawford/Google_Drive/_Projects/Zambia/agroEcoTradeoff/external/data_new/2_plants_dev/plants_list.RData", verbose = TRUE)
 load(file = fp(p_plants_dev, "plants_valid.RData"), verbose = TRUE) # this includes plants, which has been made valid.
 
 load(file = fp(p_plants_dev, "plants_zambia.RData"), verbose = TRUE)

@@ -236,12 +236,12 @@ plot(Z, add = T, col= "red")
 ```
 
 ```{r IUCN-RedList-assessments}
-redlist_assessments_lc <- read_csv("/Users/christophercrawford/Google Drive/_Projects/data/Bd/IUCN_RedList/RedList_LC_Plants+Animals_allregions/assessments.csv")
-redlist_assessments_nonlc <- read_csv("/Users/christophercrawford/Google Drive/_Projects/data/Bd/IUCN_RedList/RedList_NonLC_Plants+Animals_allregions/assessments.csv")
+redlist_assessments_lc <- read_csv("/Users/christophercrawford/Google_Drive/_Projects/data/Bd/IUCN_RedList/RedList_LC_Plants+Animals_allregions/assessments.csv")
+redlist_assessments_nonlc <- read_csv("/Users/christophercrawford/Google_Drive/_Projects/data/Bd/IUCN_RedList/RedList_NonLC_Plants+Animals_allregions/assessments.csv")
 redlist_assessments <- rbind(redlist_assessments_lc, redlist_assessments_nonlc)
 
-redlist_summary_lc <- read_csv("/Users/christophercrawford/Google Drive/_Projects/data/Bd/IUCN_RedList/RedList_LC_Plants+Animals_allregions/simple_summary.csv")
-redlist_summary_nonlc <- read_csv("/Users/christophercrawford/Google Drive/_Projects/data/Bd/IUCN_RedList/RedList_NonLC_Plants+Animals_allregions/simple_summary.csv")
+redlist_summary_lc <- read_csv("/Users/christophercrawford/Google_Drive/_Projects/data/Bd/IUCN_RedList/RedList_LC_Plants+Animals_allregions/simple_summary.csv")
+redlist_summary_nonlc <- read_csv("/Users/christophercrawford/Google_Drive/_Projects/data/Bd/IUCN_RedList/RedList_NonLC_Plants+Animals_allregions/simple_summary.csv")
 redlist_summary <- rbind(redlist_summary_lc, redlist_summary_nonlc)
 
 names(redlist_assessments)
@@ -350,7 +350,7 @@ library(parallel)
 library(pryr)
 
 tic("load data")
-dat <- st_read(dsn = "/Users/christophercrawford/Google Drive/_Projects/data/Bd/IUCN_RedList/MAMMALS/MAMMALS.shp")
+dat <- st_read(dsn = "/Users/christophercrawford/Google_Drive/_Projects/data/Bd/IUCN_RedList/MAMMALS/MAMMALS.shp")
 toc(log = TRUE)
 
 tic("add row number")
@@ -390,7 +390,7 @@ nrow(dat)
 
 mam_valid <- dat
 tic("write dat_par file")
-save(mam_valid, file = "/Users/christophercrawford/Google Drive/_Projects/Zambia/agroEcoTradeoff/external/data_new/1_IUCN_dev/mam_valid_par.RData")
+save(mam_valid, file = "/Users/christophercrawford/Google_Drive/_Projects/Zambia/agroEcoTradeoff/external/data_new/1_IUCN_dev/mam_valid_par.RData")
 toc(log = TRUE)
 
 toc(log = TRUE)
@@ -406,7 +406,7 @@ tic.log(format = TRUE)
 # ------------------------------------------------------------
 
 # Mammals -------
-load(file = "/Users/christophercrawford/Google Drive/_Projects/Zambia/agroEcoTradeoff/external/data_new/1_IUCN_dev/mam_valid_par.RData", verbose = TRUE) # includes mam_valid (1.62 gb), which was made in the chunk "mam-valid-parallel". This is the one I used going forward.
+load(file = "/Users/christophercrawford/Google_Drive/_Projects/Zambia/agroEcoTradeoff/external/data_new/1_IUCN_dev/mam_valid_par.RData", verbose = TRUE) # includes mam_valid (1.62 gb), which was made in the chunk "mam-valid-parallel". This is the one I used going forward.
 
 
 #####
@@ -496,7 +496,7 @@ object_size(mam_valid)
 
 # ------------------------------------------------------------
 # save the file
-save(mam_valid, file = "/Users/christophercrawford/Google Drive/_Projects/Zambia/agroEcoTradeoff/external/data_new/1_IUCN_dev/mam_valid_prepped.RData") # contains mam_valid (1.62 gb), but prepped for use in small species, etc. This entailed joining the table of red list categories, changing some of the column names, adding a column for area, totalling area for parts of the range we're using, and adding a column ranking the range size to allow things to be subset for small ranged species analyses.
+save(mam_valid, file = "/Users/christophercrawford/Google_Drive/_Projects/Zambia/agroEcoTradeoff/external/data_new/1_IUCN_dev/mam_valid_prepped.RData") # contains mam_valid (1.62 gb), but prepped for use in small species, etc. This entailed joining the table of red list categories, changing some of the column names, adding a column for area, totalling area for parts of the range we're using, and adding a column ranking the range size to allow things to be subset for small ranged species analyses.
 
 
 #####
@@ -507,7 +507,7 @@ save(mam_valid, file = "/Users/christophercrawford/Google Drive/_Projects/Zambia
 
 ```{r mam-clip}
 # load prepped mam_valid
-load("/Users/christophercrawford/Google Drive/_Projects/Zambia/agroEcoTradeoff/external/data_new/1_IUCN_dev/mam_valid_prepped.RData", verbose = TRUE)
+load("/Users/christophercrawford/Google_Drive/_Projects/Zambia/agroEcoTradeoff/external/data_new/1_IUCN_dev/mam_valid_prepped.RData", verbose = TRUE)
 
 # --------------------------------------------------------
 # clip to Zambia
@@ -581,7 +581,7 @@ mam_zambia <- mam_zambia %>%
 
 
 # -------------------------------------------------------------
-save(mam_zambia, file = "/Users/christophercrawford/Google Drive/_Projects/Zambia/agroEcoTradeoff/external/data_new/1_IUCN_dev/mam_zambia.RData") # includes mam_zambia, which has had area added, been prepped, and then clipped to zambia
+save(mam_zambia, file = "/Users/christophercrawford/Google_Drive/_Projects/Zambia/agroEcoTradeoff/external/data_new/1_IUCN_dev/mam_zambia.RData") # includes mam_zambia, which has had area added, been prepped, and then clipped to zambia
 
 ```
 
@@ -728,7 +728,7 @@ plot(mam_list$brick$small_zam_richness)
 plot(mam_list$brick$small_threat_richness)
 
 
-save(mam_list, file = "/Users/christophercrawford/Google Drive/_Projects/Zambia/agroEcoTradeoff/external/data_new/1_IUCN_dev/mam_list.RData")
+save(mam_list, file = "/Users/christophercrawford/Google_Drive/_Projects/Zambia/agroEcoTradeoff/external/data_new/1_IUCN_dev/mam_list.RData")
 
 mam_brick <- writeRaster(mam_list$brick, filename = fp(p_iucn_dev, "mam_brick.tif"), overwrite = TRUE)
 names(mam_brick) <- names(mam_list$brick)
@@ -759,11 +759,11 @@ After this, I used the function raster::aggregate to produce species richness ma
 # Load prepped rdata (bird_threat_sf,bird_threat_made_valid, bird_terr_threat, bird_america_threat, bird_africa_threat, bird_zambia_threat) ----------------------------------------------------------
 load(fp(p_iucn_dev,"bird_files.RData"), verbose = TRUE) #(bird_threat_sf,bird_threat_made_valid, bird_terr_threat, bird_america_threat, bird_africa_threat, bird_zambia_threat)
 
-load(file = "/Users/christophercrawford/Google Drive/_Projects/Zambia/agroEcoTradeoff/external/data_new/1_IUCN_dev/bird_valid.RData", verbose = TRUE) # this has "bird_valid", an sf object made by splitting bird_sf into three files, and running cc_make_valid on each in parallel, the using rbind to put them back together. it's 6.9 gb.
+load(file = "/Users/christophercrawford/Google_Drive/_Projects/Zambia/agroEcoTradeoff/external/data_new/1_IUCN_dev/bird_valid.RData", verbose = TRUE) # this has "bird_valid", an sf object made by splitting bird_sf into three files, and running cc_make_valid on each in parallel, the using rbind to put them back together. it's 6.9 gb.
 
-load(file = "/Users/christophercrawford/Google Drive/_Projects/Zambia/agroEcoTradeoff/external/data_new/1_IUCN_dev/bird_valid_prepped.RData", verbose = TRUE) # contains bird_valid (7.22 gb), but prepped for use in small species, etc. This entailed joining the table of red list categories, changing some of the column names, adding a column for area, totalling area for parts of the range we're using, and adding a column ranking the range size to allow things to be subset for small ranged species analyses.
+load(file = "/Users/christophercrawford/Google_Drive/_Projects/Zambia/agroEcoTradeoff/external/data_new/1_IUCN_dev/bird_valid_prepped.RData", verbose = TRUE) # contains bird_valid (7.22 gb), but prepped for use in small species, etc. This entailed joining the table of red list categories, changing some of the column names, adding a column for area, totalling area for parts of the range we're using, and adding a column ranking the range size to allow things to be subset for small ranged species analyses.
 
-load(file = "/Users/christophercrawford/Google Drive/_Projects/Zambia/agroEcoTradeoff/external/data_new/1_IUCN_dev/bird_zambia.RData", verbose = TRUE) # includes bird_zambia, which has had area added, been prepped, and then clipped to zambia
+load(file = "/Users/christophercrawford/Google_Drive/_Projects/Zambia/agroEcoTradeoff/external/data_new/1_IUCN_dev/bird_zambia.RData", verbose = TRUE) # includes bird_zambia, which has had area added, been prepped, and then clipped to zambia
 
 # ----------------------------------
 
@@ -821,7 +821,7 @@ library(pryr)
 library(parallel)
 library(tictoc)
 
-bird_sf <- st_read(dsn = "/Users/christophercrawford/Google Drive/_Projects/data/Bd/IUCN_RedList/Birds/BOTW/BOTW.gdb", layer = "All_Species")
+bird_sf <- st_read(dsn = "/Users/christophercrawford/Google_Drive/_Projects/data/Bd/IUCN_RedList/Birds/BOTW/BOTW.gdb", layer = "All_Species")
 
 bird_sf <- bird_sf %>%
   mutate(key = row_number()) %>%
@@ -866,23 +866,23 @@ bird_valid <- rbind(dat1_final, dat2_final, dat3_final)
 
 
 # save(dat1_par, dat1_final, dat2_par, dat2_final, #dat3_par, dat3_final, 
-#      file = "/Users/christophercrawford/Google Drive/_Projects/Zambia/agroEcoTradeoff/external/data_new/1_IUCN_dev/bird_par_files.RData")
+#      file = "/Users/christophercrawford/Google_Drive/_Projects/Zambia/agroEcoTradeoff/external/data_new/1_IUCN_dev/bird_par_files.RData")
 
 tic("save dat_final 1, 2, and 3")
-save(dat1_final, dat2_final, dat3_final, file = "/Users/christophercrawford/Google Drive/_Projects/Zambia/agroEcoTradeoff/external/data_new/1_IUCN_dev/bird_dat_finals.RData")
+save(dat1_final, dat2_final, dat3_final, file = "/Users/christophercrawford/Google_Drive/_Projects/Zambia/agroEcoTradeoff/external/data_new/1_IUCN_dev/bird_dat_finals.RData")
 toc(log = TRUE) # 487.205 sec elapsed
 
 tic("save bird_valid")
-save(bird_valid, file = "/Users/christophercrawford/Google Drive/_Projects/Zambia/agroEcoTradeoff/external/data_new/1_IUCN_dev/bird_valid.RData")
+save(bird_valid, file = "/Users/christophercrawford/Google_Drive/_Projects/Zambia/agroEcoTradeoff/external/data_new/1_IUCN_dev/bird_valid.RData")
 toc(log = TRUE)
 tic.log(format = TRUE) # 409.253 sec elapsed
 
-load(file = "/Users/christophercrawford/Google Drive/_Projects/Zambia/agroEcoTradeoff/external/data_new/1_IUCN_dev/bird_valid.RData", verbose = TRUE) # this has "bird_valid", an sf object made by splitting bird_sf into three files, and running cc_make_valid on each in parallel, the using rbind to put them back together. it's 6.9 gb.
+load(file = "/Users/christophercrawford/Google_Drive/_Projects/Zambia/agroEcoTradeoff/external/data_new/1_IUCN_dev/bird_valid.RData", verbose = TRUE) # this has "bird_valid", an sf object made by splitting bird_sf into three files, and running cc_make_valid on each in parallel, the using rbind to put them back together. it's 6.9 gb.
 
 ```
 
 ```{r bird-prep}
-load(file = "/Users/christophercrawford/Google Drive/_Projects/Zambia/agroEcoTradeoff/external/data_new/1_IUCN_dev/bird_valid.RData", verbose = TRUE) # this has "bird_valid", an sf object made by splitting bird_sf into three files, and running cc_make_valid on each in parallel, the using rbind to put them back together. it's 6.9 gb.
+load(file = "/Users/christophercrawford/Google_Drive/_Projects/Zambia/agroEcoTradeoff/external/data_new/1_IUCN_dev/bird_valid.RData", verbose = TRUE) # this has "bird_valid", an sf object made by splitting bird_sf into three files, and running cc_make_valid on each in parallel, the using rbind to put them back together. it's 6.9 gb.
 
 # ------------------------------------------------------
 #  join the bird_valid file to the red_list file
@@ -1004,7 +1004,7 @@ bird_valid %>%
   arrange(desc(total_range_area))  
 
 # -----------------------------------------------------
-save(bird_valid, file = "/Users/christophercrawford/Google Drive/_Projects/Zambia/agroEcoTradeoff/external/data_new/1_IUCN_dev/bird_valid_prepped.RData") # contains bird_valid (7.22 gb), but prepped for use in small species, etc. This entailed joining the table of red list categories, changing some of the column names, adding a column for area, totalling area for parts of the range we're using, and adding a column ranking the range size to allow things to be subset for small ranged species analyses.
+save(bird_valid, file = "/Users/christophercrawford/Google_Drive/_Projects/Zambia/agroEcoTradeoff/external/data_new/1_IUCN_dev/bird_valid_prepped.RData") # contains bird_valid (7.22 gb), but prepped for use in small species, etc. This entailed joining the table of red list categories, changing some of the column names, adding a column for area, totalling area for parts of the range we're using, and adding a column ranking the range size to allow things to be subset for small ranged species analyses.
 
 
 #####
@@ -1014,7 +1014,7 @@ save(bird_valid, file = "/Users/christophercrawford/Google Drive/_Projects/Zambi
 
 
 ```{r bird-clip}
-load(file = "/Users/christophercrawford/Google Drive/_Projects/Zambia/agroEcoTradeoff/external/data_new/1_IUCN_dev/bird_valid_prepped.RData", verbose = TRUE)
+load(file = "/Users/christophercrawford/Google_Drive/_Projects/Zambia/agroEcoTradeoff/external/data_new/1_IUCN_dev/bird_valid_prepped.RData", verbose = TRUE)
 
 # --------------------------------------------------------
 # clip to Zambia
@@ -1088,7 +1088,7 @@ bird_zambia <- bird_zambia %>%
 
 
 # -------------------------------------------------------------
-save(bird_zambia, file = "/Users/christophercrawford/Google Drive/_Projects/Zambia/agroEcoTradeoff/external/data_new/1_IUCN_dev/bird_zambia.RData") # includes bird_zambia, which has had area added, been prepped, and then clipped to zambia
+save(bird_zambia, file = "/Users/christophercrawford/Google_Drive/_Projects/Zambia/agroEcoTradeoff/external/data_new/1_IUCN_dev/bird_zambia.RData") # includes bird_zambia, which has had area added, been prepped, and then clipped to zambia
 
 ```
 
@@ -1119,7 +1119,7 @@ plot(bird_list$brick$small_zam_richness)
 plot(bird_list$brick$small_threat_richness)
 
 
-save(bird_list, file = "/Users/christophercrawford/Google Drive/_Projects/Zambia/agroEcoTradeoff/external/data_new/1_IUCN_dev/bird_list.RData")
+save(bird_list, file = "/Users/christophercrawford/Google_Drive/_Projects/Zambia/agroEcoTradeoff/external/data_new/1_IUCN_dev/bird_list.RData")
 
 bird_brick <- writeRaster(bird_list$brick, filename = fp(p_iucn_dev, "bird_brick.tif"), overwrite = TRUE)
 names(bird_brick) <- names(bird_list$brick)
@@ -1161,7 +1161,7 @@ library(parallel)
 library(pryr)
 
 tic("load data")
-dat <- st_read(dsn = "/Users/christophercrawford/Google Drive/_Projects/data/Bd/IUCN_RedList/AMPHIBIANS/AMPHIBIANS.shp")
+dat <- st_read(dsn = "/Users/christophercrawford/Google_Drive/_Projects/data/Bd/IUCN_RedList/AMPHIBIANS/AMPHIBIANS.shp")
 toc(log = TRUE)
 
 tic("add row number")
@@ -1201,7 +1201,7 @@ nrow(dat)
 
 amp_valid <- dat
 tic("write dat_par file")
-save(amp_valid, file = "/Users/christophercrawford/Google Drive/_Projects/Zambia/agroEcoTradeoff/external/data_new/1_IUCN_dev/amp_valid_par.RData")
+save(amp_valid, file = "/Users/christophercrawford/Google_Drive/_Projects/Zambia/agroEcoTradeoff/external/data_new/1_IUCN_dev/amp_valid_par.RData")
 toc(log = TRUE)
 
 toc(log = TRUE)
@@ -1220,7 +1220,7 @@ tic.log(format = TRUE)
 # amphibians ---------
 # load(fp(p_iucn_dev,"amphibian_valid_files.RData"), verbose = TRUE) # amp_sf_valid
 
-load(file = "/Users/christophercrawford/Google Drive/_Projects/Zambia/agroEcoTradeoff/external/data_new/1_IUCN_dev/amp_valid_par.RData", verbose= T) # includes amp_valid (755 mb), which was created via "amp-valid-parallel" in parallel. This is the one I used going forward.
+load(file = "/Users/christophercrawford/Google_Drive/_Projects/Zambia/agroEcoTradeoff/external/data_new/1_IUCN_dev/amp_valid_par.RData", verbose= T) # includes amp_valid (755 mb), which was created via "amp-valid-parallel" in parallel. This is the one I used going forward.
 
 
 #####
@@ -1319,7 +1319,7 @@ amp_valid %>%
 
 
 # ------------------------------------------------------------
-save(amp_valid, file = "/Users/christophercrawford/Google Drive/_Projects/Zambia/agroEcoTradeoff/external/data_new/1_IUCN_dev/amp_valid_prepped.RData") # contains amp_valid (756 mb), but prepped for use in small species, etc. This entailed joining the table of red list categories, changing some of the column names, adding a column for area, totalling area for parts of the range we're using, and adding a column ranking the range size to allow things to be subset for small ranged species analyses.
+save(amp_valid, file = "/Users/christophercrawford/Google_Drive/_Projects/Zambia/agroEcoTradeoff/external/data_new/1_IUCN_dev/amp_valid_prepped.RData") # contains amp_valid (756 mb), but prepped for use in small species, etc. This entailed joining the table of red list categories, changing some of the column names, adding a column for area, totalling area for parts of the range we're using, and adding a column ranking the range size to allow things to be subset for small ranged species analyses.
 
 
 #####
@@ -1328,7 +1328,7 @@ save(amp_valid, file = "/Users/christophercrawford/Google Drive/_Projects/Zambia
 ```
 
 ```{r amp-clip}
-load(file = "/Users/christophercrawford/Google Drive/_Projects/Zambia/agroEcoTradeoff/external/data_new/1_IUCN_dev/amp_valid_prepped.RData", verbose = TRUE)
+load(file = "/Users/christophercrawford/Google_Drive/_Projects/Zambia/agroEcoTradeoff/external/data_new/1_IUCN_dev/amp_valid_prepped.RData", verbose = TRUE)
 
 
 # --------------------------------------------------------
@@ -1405,7 +1405,7 @@ amp_zambia <- amp_zambia %>%
 
 
 # -------------------------------------------------------------
-save(amp_zambia, file = "/Users/christophercrawford/Google Drive/_Projects/Zambia/agroEcoTradeoff/external/data_new/1_IUCN_dev/amp_zambia.RData") # includes amp_zambia, which has had area added, been prepped, and then clipped to zambia
+save(amp_zambia, file = "/Users/christophercrawford/Google_Drive/_Projects/Zambia/agroEcoTradeoff/external/data_new/1_IUCN_dev/amp_zambia.RData") # includes amp_zambia, which has had area added, been prepped, and then clipped to zambia
 
 ```
 
@@ -1434,7 +1434,7 @@ plot(amp_list$brick$small_zam_richness)
 plot(amp_list$brick$small_threat_richness)
 
 
-save(amp_list, file = "/Users/christophercrawford/Google Drive/_Projects/Zambia/agroEcoTradeoff/external/data_new/1_IUCN_dev/amp_list.RData")
+save(amp_list, file = "/Users/christophercrawford/Google_Drive/_Projects/Zambia/agroEcoTradeoff/external/data_new/1_IUCN_dev/amp_list.RData")
 
 amp_brick <- writeRaster(amp_list$brick, filename = fp(p_iucn_dev, "amp_brick.tif"), overwrite = TRUE)
 names(amp_brick) <- names(amp_list$brick)
@@ -1446,7 +1446,7 @@ names(amp_brick) <- names(amp_list$brick)
 
 ```{r reptiles-start}
 load(file = fp(p_iucn_dev,"rep_valid_prepped.RData"), verbose = TRUE)
-load(file = "/Users/christophercrawford/Google Drive/_Projects/Zambia/agroEcoTradeoff/external/data_new/1_IUCN_dev/rep_zambia.RData", verbose = TRUE)
+load(file = "/Users/christophercrawford/Google_Drive/_Projects/Zambia/agroEcoTradeoff/external/data_new/1_IUCN_dev/rep_zambia.RData", verbose = TRUE)
 
 st_layers(fp(p_rep,"REPTILES.shp")) # what layers are there in the file? 
 rep_sf <- st_read(dsn = fp(p_rep,"REPTILES.shp"))
@@ -1477,8 +1477,8 @@ library(parallel)
 library(pryr)
 
 tic("load data")
-# dat <- st_read(dsn = "/Users/christophercrawford/Google Drive/_Projects/data/Bd/IUCN_RedList/REPTILES/REPTILES.shp")
-dat <- st_read(dsn = "/Users/christophercrawford/Google Drive/_Projects/data/Bd/GARD/GARD1.1_dissolved_ranges/modeled_reptiles.shp") # update to new GARD source
+# dat <- st_read(dsn = "/Users/christophercrawford/Google_Drive/_Projects/data/Bd/IUCN_RedList/REPTILES/REPTILES.shp")
+dat <- st_read(dsn = "/Users/christophercrawford/Google_Drive/_Projects/data/Bd/GARD/GARD1.1_dissolved_ranges/modeled_reptiles.shp") # update to new GARD source
 
 toc(log = TRUE)
 
@@ -1522,9 +1522,9 @@ nrow(dat)
 gard_valid <- dat
 
 tic("write dat_par file")
-# save(rep_valid, file = "/Users/christophercrawford/Google Drive/_Projects/Zambia/agroEcoTradeoff/external/data_new/1_IUCN_dev/rep_valid_par.RData")
+# save(rep_valid, file = "/Users/christophercrawford/Google_Drive/_Projects/Zambia/agroEcoTradeoff/external/data_new/1_IUCN_dev/rep_valid_par.RData")
 
-save(gard_valid, file = "/Users/christophercrawford/Google Drive/_Projects/Zambia/agroEcoTradeoff/external/data_new/1_IUCN_dev/gard_valid.RData")
+save(gard_valid, file = "/Users/christophercrawford/Google_Drive/_Projects/Zambia/agroEcoTradeoff/external/data_new/1_IUCN_dev/gard_valid.RData")
 toc(log = TRUE)
 
 toc(log = TRUE)
@@ -1551,7 +1551,7 @@ tic.log(format = TRUE)
 
 # reptiles  ---------
 # load(fp(p_iucn_dev, "reptile_valid_files.RData"), verbose = TRUE) # rep_sf_valid
-load(file = "/Users/christophercrawford/Google Drive/_Projects/Zambia/agroEcoTradeoff/external/data_new/1_IUCN_dev/rep_valid_par.RData", verbose = TRUE) # includes rep_valid (1.33 gb), which was made in the chunk "mam-valid-parallel". This is the one I used going forward.
+load(file = "/Users/christophercrawford/Google_Drive/_Projects/Zambia/agroEcoTradeoff/external/data_new/1_IUCN_dev/rep_valid_par.RData", verbose = TRUE) # includes rep_valid (1.33 gb), which was made in the chunk "mam-valid-parallel". This is the one I used going forward.
 object_size(rep_valid)
 
 
@@ -1639,7 +1639,7 @@ rep_valid %>%
   as_tibble()
 
 # ------------------------------------------------------------
-save(rep_valid, file = "/Users/christophercrawford/Google Drive/_Projects/Zambia/agroEcoTradeoff/external/data_new/1_IUCN_dev/rep_valid_prepped.RData") # contains rep_valid (1.3 gb), but prepped for use in small species, etc. This entailed joining the table of red list categories, changing some of the column names, adding a column for area, totalling area for parts of the range we're using, and adding a column ranking the range size to allow things to be subset for small ranged species analyses.
+save(rep_valid, file = "/Users/christophercrawford/Google_Drive/_Projects/Zambia/agroEcoTradeoff/external/data_new/1_IUCN_dev/rep_valid_prepped.RData") # contains rep_valid (1.3 gb), but prepped for use in small species, etc. This entailed joining the table of red list categories, changing some of the column names, adding a column for area, totalling area for parts of the range we're using, and adding a column ranking the range size to allow things to be subset for small ranged species analyses.
 
 
 #####
@@ -1719,7 +1719,7 @@ rep_zambia <- rep_zambia %>%
 
 
 # -------------------------------------------------------------
-save(rep_zambia, file = "/Users/christophercrawford/Google Drive/_Projects/Zambia/agroEcoTradeoff/external/data_new/1_IUCN_dev/rep_zambia.RData") # includes rep_zambia, which has had area added, been prepped, and then clipped to zambia
+save(rep_zambia, file = "/Users/christophercrawford/Google_Drive/_Projects/Zambia/agroEcoTradeoff/external/data_new/1_IUCN_dev/rep_zambia.RData") # includes rep_zambia, which has had area added, been prepped, and then clipped to zambia
 
 
 
@@ -1733,7 +1733,7 @@ rep_zambia_4deg_buff <- rep_valid %>%
   st_intersection(., st_union(msk_sf_ll_4deg_buff)) %>%
   st_collection_extract(., "POLYGON")
 plot(rep_zambia_4deg_buff$geometry)
-save(rep_zambia_4deg_buff, file = "/Users/christophercrawford/Google Drive/_Projects/Zambia/agroEcoTradeoff/external/data_new/1_IUCN_dev/rep_zambia_4deg_buff.RData") # includes rep_zambia, which has had area added, been prepped, and then clipped to zambia
+save(rep_zambia_4deg_buff, file = "/Users/christophercrawford/Google_Drive/_Projects/Zambia/agroEcoTradeoff/external/data_new/1_IUCN_dev/rep_zambia_4deg_buff.RData") # includes rep_zambia, which has had area added, been prepped, and then clipped to zambia
 ```
 
 ```{r rep-list-final}
@@ -1761,10 +1761,10 @@ plot(rep_list$brick$small_threat_richness)
 
 
 # note, this rep_list file includes only data from IUCN, not from GARD. See GARD list for the most up to date files. The richness metric .tifs have all been updated to use GARD (or IUCN in the case of threatened species richness). These are the finaly data files used in the analysis.
-save(rep_list, file = "/Users/christophercrawford/Google Drive/_Projects/Zambia/agroEcoTradeoff/external/data_new/1_IUCN_dev/rep_list.RData")
+save(rep_list, file = "/Users/christophercrawford/Google_Drive/_Projects/Zambia/agroEcoTradeoff/external/data_new/1_IUCN_dev/rep_list.RData")
 
 
-load(file = "/Users/christophercrawford/Google Drive/_Projects/Zambia/agroEcoTradeoff/external/data_new/1_IUCN_dev/rep_list.RData", verbose = TRUE)
+load(file = "/Users/christophercrawford/Google_Drive/_Projects/Zambia/agroEcoTradeoff/external/data_new/1_IUCN_dev/rep_list.RData", verbose = TRUE)
 
 rep_brick <- writeRaster(rep_list$brick, filename = fp(p_iucn_dev, "rep_brick.tif"), overwrite = TRUE)
 names(rep_brick) <- names(rep_list$brick)
@@ -1777,12 +1777,12 @@ names(rep_brick) <- names(rep_list$brick)
 # load data
 # note that GARD has ranges for all reptile species, but not all reptile species have been assessed by the IUCN. Therefore, only a small subset can be included in the threatened species rasters. 
 # --------------------------------------------------------------------------------
-gard <- st_read(dsn = "/Users/christophercrawford/Google Drive/_Projects/data/Bd/GARD/GARD1.1_dissolved_ranges/modeled_reptiles.shp")
+gard <- st_read(dsn = "/Users/christophercrawford/Google_Drive/_Projects/data/Bd/GARD/GARD1.1_dissolved_ranges/modeled_reptiles.shp")
 
 
 ## make sure to make valid, below 
 # --------------------------------------------------------------------------------
-load(file = "/Users/christophercrawford/Google Drive/_Projects/Zambia/agroEcoTradeoff/external/data_new/1_IUCN_dev/gard_valid.RData", verbose = TRUE) # contains gard_valid
+load(file = "/Users/christophercrawford/Google_Drive/_Projects/Zambia/agroEcoTradeoff/external/data_new/1_IUCN_dev/gard_valid.RData", verbose = TRUE) # contains gard_valid
 gard_valid
 
 object_size(gard_valid)
@@ -1792,8 +1792,8 @@ table(rep_valid$category)
 
 # load and join to IUCN threat data
 # --------------------------------------------------------------------------------
-iucn_csv_non_lc <- read_csv("/Users/christophercrawford/Google Drive/_Projects/data/Bd/IUCN_RedList/RedList_NonLC_Plants+Animals_allregions/simple_summary.csv")
-iucn_csv_lc <- read_csv("/Users/christophercrawford/Google Drive/_Projects/data/Bd/IUCN_RedList/RedList_LC_Plants+Animals_allregions/simple_summary.csv")
+iucn_csv_non_lc <- read_csv("/Users/christophercrawford/Google_Drive/_Projects/data/Bd/IUCN_RedList/RedList_NonLC_Plants+Animals_allregions/simple_summary.csv")
+iucn_csv_lc <- read_csv("/Users/christophercrawford/Google_Drive/_Projects/data/Bd/IUCN_RedList/RedList_LC_Plants+Animals_allregions/simple_summary.csv")
 
 iucn_csv_non_lc %>% filter(className == "REPTILIA")
 iucn_csv_lc %>% filter(className == "REPTILIA")
@@ -1879,7 +1879,7 @@ gard_prep %>%
   as_tibble()
 
 # ------------------------------------------------------------
-save(gard_prep, file = "/Users/christophercrawford/Google Drive/_Projects/Zambia/agroEcoTradeoff/external/data_new/1_IUCN_dev/gard_prep.RData") # contains gard_prep, which is gard, made valid, joined to IUCN table, and prepped for use in small species, endemism, etc. This entailed joining the table of red list categories, changing some of the column names, adding a column for area, totalling area for parts of the range we're using, and adding a column ranking the range size to allow things to be subset for small ranged species analyses.
+save(gard_prep, file = "/Users/christophercrawford/Google_Drive/_Projects/Zambia/agroEcoTradeoff/external/data_new/1_IUCN_dev/gard_prep.RData") # contains gard_prep, which is gard, made valid, joined to IUCN table, and prepped for use in small species, endemism, etc. This entailed joining the table of red list categories, changing some of the column names, adding a column for area, totalling area for parts of the range we're using, and adding a column ranking the range size to allow things to be subset for small ranged species analyses.
 
 
 gard_prep
@@ -1991,7 +1991,7 @@ gard_list$brick <- dropLayer(gard_list$brick, c(3, 4, 5,7, 8))
 # --------------------------------------------------------------------------------
 # save
 
-save(gard_list, file = "/Users/christophercrawford/Google Drive/_Projects/Zambia/agroEcoTradeoff/external/data_new/1_IUCN_dev/gard_list.RData")
+save(gard_list, file = "/Users/christophercrawford/Google_Drive/_Projects/Zambia/agroEcoTradeoff/external/data_new/1_IUCN_dev/gard_list.RData")
 
 gard_brick <- writeRaster(gard_list$brick, filename = fp(p_iucn_dev, "gard_brick.tif"), overwrite = TRUE)
 names(gard_brick) <- names(gard_list$brick) # c("all_richness", "endemism_richness", "small_richness")
@@ -2001,11 +2001,11 @@ names(gard_brick) <- names(gard_list$brick) # c("all_richness", "endemism_richne
 # --------------------------------------------------------------------------------
 # load stuff back in
 
-load(file = "/Users/christophercrawford/Google Drive/_Projects/Zambia/agroEcoTradeoff/external/data_new/1_IUCN_dev/gard_valid.RData", verbose = TRUE) # contains gard_valid
+load(file = "/Users/christophercrawford/Google_Drive/_Projects/Zambia/agroEcoTradeoff/external/data_new/1_IUCN_dev/gard_valid.RData", verbose = TRUE) # contains gard_valid
 
-load(file = "/Users/christophercrawford/Google Drive/_Projects/Zambia/agroEcoTradeoff/external/data_new/1_IUCN_dev/gard_prep.RData", verbose = TRUE) # contains gard_prep, which is gard, made valid, joined to IUCN table, and prepped for use in small species, endemism, etc. This entailed joining the table of red list categories, changing some of the column names, adding a column for area, totaling area for parts of the range we're using, and adding a column ranking the range size to allow things to be subset for small ranged species analyses.
+load(file = "/Users/christophercrawford/Google_Drive/_Projects/Zambia/agroEcoTradeoff/external/data_new/1_IUCN_dev/gard_prep.RData", verbose = TRUE) # contains gard_prep, which is gard, made valid, joined to IUCN table, and prepped for use in small species, endemism, etc. This entailed joining the table of red list categories, changing some of the column names, adding a column for area, totaling area for parts of the range we're using, and adding a column ranking the range size to allow things to be subset for small ranged species analyses.
 
-load(file = "/Users/christophercrawford/Google Drive/_Projects/Zambia/agroEcoTradeoff/external/data_new/1_IUCN_dev/gard_list.RData", verbose = TRUE)
+load(file = "/Users/christophercrawford/Google_Drive/_Projects/Zambia/agroEcoTradeoff/external/data_new/1_IUCN_dev/gard_list.RData", verbose = TRUE)
 
 
 # count the number of species in different groups, for the species occurrence table:
@@ -2036,9 +2036,9 @@ gard_list$filtered_all %>%
 
 
 # note about what's driving the rep_endemism map
-load(file = "/Users/christophercrawford/Google Drive/_Projects/Zambia/agroEcoTradeoff/external/data_new/1_IUCN_dev/gard_prep.RData", verbose = TRUE) # contains gard_prep, which is gard, made valid, joined to IUCN table, and prepped for use in small species, endemism, etc. This entailed joining the table of red list categories, changing some of the column names, adding a column for area, totalling area for parts of the range we're using, and adding a column ranking the range size to allow things to be subset for small ranged species analyses.
+load(file = "/Users/christophercrawford/Google_Drive/_Projects/Zambia/agroEcoTradeoff/external/data_new/1_IUCN_dev/gard_prep.RData", verbose = TRUE) # contains gard_prep, which is gard, made valid, joined to IUCN table, and prepped for use in small species, endemism, etc. This entailed joining the table of red list categories, changing some of the column names, adding a column for area, totalling area for parts of the range we're using, and adding a column ranking the range size to allow things to be subset for small ranged species analyses.
 
-load(file = "/Users/christophercrawford/Google Drive/_Projects/Zambia/agroEcoTradeoff/external/data_new/1_IUCN_dev/gard_list.RData", verbose = TRUE)
+load(file = "/Users/christophercrawford/Google_Drive/_Projects/Zambia/agroEcoTradeoff/external/data_new/1_IUCN_dev/gard_list.RData", verbose = TRUE)
 gard_list$filtered_small %>%
   st_drop_geometry() %>%
   filter(range_size_quantile < 0.5) %>% # do <= if nrow is even, and < if nrow is odd.
@@ -2396,8 +2396,8 @@ They cite:
 8. Moore, J. et al. Integrating costs into conservation planning across Africa. Biol. Conserv. 117, 343-350. (2004).
 
 ```{r plants-start}
-plants <- st_read("/Users/christophercrawford/Google Drive/_Projects/data/Bd/Plant Richness (Kier et al. 2005)/data/commondata/data0/wwf_ecos_plant_spcs.shp")
-plants_1 <- st_read("/Users/christophercrawford/Google Drive/_Projects/data/Bd/Number of Plant Species by Terrestrial Ecoregion/Number of Plant Species by Terrestrial Ecoregion/commondata/data0/wwf_ecos_plant_spcs.shp")
+plants <- st_read("/Users/christophercrawford/Google_Drive/_Projects/data/Bd/Plant Richness (Kier et al. 2005)/data/commondata/data0/wwf_ecos_plant_spcs.shp")
+plants_1 <- st_read("/Users/christophercrawford/Google_Drive/_Projects/data/Bd/Number of Plant Species by Terrestrial Ecoregion/Number of Plant Species by Terrestrial Ecoregion/commondata/data0/wwf_ecos_plant_spcs.shp")
 
 object_size(plants)
 st_crs(plants)
@@ -2436,7 +2436,7 @@ plants <- plants %>%
 
 # save prepped plants file
 
-save(plants, file = "/Users/christophercrawford/Google Drive/_Projects/Zambia/agroEcoTradeoff/external/data_new/2_plants_dev/plants_prepped.RData") # contains plants_valid (71.3 mb), but prepped by cc_make_valid(), and adding a column for adj_richness. 
+save(plants, file = "/Users/christophercrawford/Google_Drive/_Projects/Zambia/agroEcoTradeoff/external/data_new/2_plants_dev/plants_prepped.RData") # contains plants_valid (71.3 mb), but prepped by cc_make_valid(), and adding a column for adj_richness. 
 ```
 
 ```{r plants-clip}
@@ -2448,7 +2448,7 @@ plants_zambia <- plants %>%
 plot(plants_zambia$geometry)
 
 
-save(plants_zambia, file = "/Users/christophercrawford/Google Drive/_Projects/Zambia/agroEcoTradeoff/external/data_new/2_plants_dev/plants_zambia.RData") # includes plants_zambia, which has had a column for adj_richness added, been prepped, and then clipped to zambia
+save(plants_zambia, file = "/Users/christophercrawford/Google_Drive/_Projects/Zambia/agroEcoTradeoff/external/data_new/2_plants_dev/plants_zambia.RData") # includes plants_zambia, which has had a column for adj_richness added, been prepped, and then clipped to zambia
 
 
 # clip to buffer
@@ -2456,7 +2456,7 @@ plants_zambia_4deg_buff <- plants %>%
   st_intersection(., st_union(msk_sf_ll_4deg_buff)) %>%
   st_collection_extract(., "POLYGON")
 plot(plants_zambia_4deg_buff$geometry)
-save(plants_zambia_4deg_buff, file = "/Users/christophercrawford/Google Drive/_Projects/Zambia/agroEcoTradeoff/external/data_new/2_plants_dev/plants_zambia_4deg_buff.RData") # includes plants_zambia, which has had area adj richness added, been prepped, and then clipped to zambia.
+save(plants_zambia_4deg_buff, file = "/Users/christophercrawford/Google_Drive/_Projects/Zambia/agroEcoTradeoff/external/data_new/2_plants_dev/plants_zambia_4deg_buff.RData") # includes plants_zambia, which has had area adj richness added, been prepped, and then clipped to zambia.
 
 ```
 
@@ -2520,7 +2520,7 @@ ncell(test[!is.na(test)])
 # ---------------------------------------------------------------------------
 
 # save list, etc.
-save(plants_list, file = "/Users/christophercrawford/Google Drive/_Projects/Zambia/agroEcoTradeoff/external/data_new/2_plants_dev/plants_list.RData")
+save(plants_list, file = "/Users/christophercrawford/Google_Drive/_Projects/Zambia/agroEcoTradeoff/external/data_new/2_plants_dev/plants_list.RData")
 
 # `cc_write_reload_raster` --------------------------------------
 plants_zambia_r <- cc_write_reload_raster(plants_zambia_r, "plants_zambia_r", p_plants_dev)
@@ -2955,7 +2955,7 @@ iba_eba_zambia_r <- cc_write_reload_raster(iba_eba_zambia_r, "iba_eba_zambia_r",
 ```
 
 ```{r kba}
-kba_sf <- st_read("/Users/christophercrawford/Google Drive/_Projects/data/Habitats/BirdLife-KBAs/KBAsGlobal_2019_March_01/KbaGlobal_2019_01_March_POL.shp")
+kba_sf <- st_read("/Users/christophercrawford/Google_Drive/_Projects/data/Habitats/BirdLife-KBAs/KBAsGlobal_2019_March_01/KbaGlobal_2019_01_March_POL.shp")
 msk_sf <- st_read(fp(p_datnew,"msk.shp"))
 
 kba_sf <- cc_make_valid(kba_sf)
@@ -3040,7 +3040,7 @@ ecoregions_africa %>%
 
 ```{r inverse_ecoregion_size}
 # load in all 814 something ecoregions:
-ecoregions_all <- st_read("/Users/christophercrawford/Google Drive/_Projects/data/Habitats/terr-ecoregions-TNC/tnc_terr_ecoregions.shp")
+ecoregions_all <- st_read("/Users/christophercrawford/Google_Drive/_Projects/data/Habitats/terr-ecoregions-TNC/tnc_terr_ecoregions.shp")
 
 # make them valid
 ecoregions_all <- cc_make_valid(ecoregions_all)
@@ -3160,7 +3160,7 @@ plot(msk_sf$geometry, add= T, border = "red")
 msk_sf <- st_read(fp(p_datnew,"msk.shp"))
 
 # exploring the datasets
-s7_globe <- raster("/Users/christophercrawford/Google Drive/_Projects/Zambia/agroEcoTradeoff/external/data_new/Laurance_et_al_rasters/s7/w001001.adf")
+s7_globe <- raster("/Users/christophercrawford/Google_Drive/_Projects/Zambia/agroEcoTradeoff/external/data_new/Laurance_et_al_rasters/s7/w001001.adf")
 plot(s7_globe)
 # s7_globe_aaeac <- projectRaster(s7_globe, crs = crs(msk)) # ok, there is no input projection. And, even when I do the reprojection with the raster cropped to Africa, it doesn't quite work. 
 plot(s7); plot(msk_shp, add = T) # original Laurance datasets
@@ -3585,7 +3585,7 @@ load(file = fp(p_iucn_dev, "amp_list.RData"))  # updated jan. 31 2020
 load(file = fp(p_iucn_dev, "rep_list.RData"))  # updated jan. 31 2020 
 # note, this rep_list file includes only data from IUCN, not from GARD. See GARD list for the most up to date files. The richness metric .tifs have all been updated to use GARD (or IUCN in the case of threatened species richness). These are the finaly data files used in the analysis.
 
-load(file = "/Users/christophercrawford/Google Drive/_Projects/Zambia/agroEcoTradeoff/external/data_new/1_IUCN_dev/gard_list.RData", verbose = TRUE) #
+load(file = "/Users/christophercrawford/Google_Drive/_Projects/Zambia/agroEcoTradeoff/external/data_new/1_IUCN_dev/gard_list.RData", verbose = TRUE) #
 
 
 
@@ -3637,7 +3637,7 @@ ecoregions_weighted_rarity <- raster(fp(p_ecoreg_dev, "ecoregions_weighted_rarit
 
 
 # load plants ----------------------------------------------------------------------------
-load(file = "/Users/christophercrawford/Google Drive/_Projects/Zambia/agroEcoTradeoff/external/data_new/2_plants_dev/plants_list.RData", verbose = TRUE)
+load(file = "/Users/christophercrawford/Google_Drive/_Projects/Zambia/agroEcoTradeoff/external/data_new/2_plants_dev/plants_list.RData", verbose = TRUE)
 load(file = fp(p_plants_dev, "plants_valid.RData"), verbose = TRUE) # this includes plants, which has been made valid.
 
 load(file = fp(p_plants_dev, "plants_zambia.RData"), verbose = TRUE)

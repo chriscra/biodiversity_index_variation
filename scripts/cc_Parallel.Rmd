@@ -31,7 +31,7 @@ library(purrr)
 ```{r pathnames}
 ## Pathnames
 # Zambia specific file path names
-p_proj <- "/Users/christophercrawford/Google Drive/_Projects/Zambia/agroEcoTradeoff"
+p_proj <- "/Users/christophercrawford/Google_Drive/_Projects/Zambia/agroEcoTradeoff"
 p_dat <-     fp(p_proj,"external/data") # this has the "input_key" folders: ZA
 p_ZA <-      fp(p_dat,"ZA")
 p_datnew <-  fp(p_proj,"external/data_new")
@@ -39,7 +39,7 @@ p_datnew <-  fp(p_proj,"external/data_new")
 p_basedat <- fp(p_proj,"external/base_data")
 
 # for General data sources
-p_dat_main <- "/Users/christophercrawford/Google Drive/_Projects/data"
+p_dat_main <- "/Users/christophercrawford/Google_Drive/_Projects/data"
 p_dat_bd <-  fp(p_dat_main,"Bd")
 p_mam <-  fp(p_dat_bd,"IUCN_RedList/MAMMALS")
 p_rep <-  fp(p_dat_bd,"IUCN_RedList/REPTILES")
@@ -485,7 +485,7 @@ system.time(
 
 ```{r bare-workflow}
 # define data ----------------
-amp_sf <- st_read(dsn = "/Users/christophercrawford/Google Drive/_Projects/data/Bd/IUCN_RedList/AMPHIBIANS/AMPHIBIANS.shp")
+amp_sf <- st_read(dsn = "/Users/christophercrawford/Google_Drive/_Projects/data/Bd/IUCN_RedList/AMPHIBIANS/AMPHIBIANS.shp")
 
 dat <- amp_sf[1:100,] # however you want to define the dataset
 dat <- dat %>%
@@ -558,7 +558,7 @@ dat
 
 ```{r 10-row-par}
 # define data ----------------
-amp_sf <- st_read(dsn = "/Users/christophercrawford/Google Drive/_Projects/data/Bd/IUCN_RedList/AMPHIBIANS/AMPHIBIANS.shp")
+amp_sf <- st_read(dsn = "/Users/christophercrawford/Google_Drive/_Projects/data/Bd/IUCN_RedList/AMPHIBIANS/AMPHIBIANS.shp")
 
 dat <- amp_sf[1:337,] # however you want to define the dataset
 dat <- dat %>%
@@ -809,7 +809,7 @@ Rscript ./scripts/make_valid_par_test.R # load an Rscript, at the following loca
 
 test
 ```{r cluster-output-tester}
-load(file = "/Users/christophercrawford/Google Drive/_Projects/Zambia/cluster/data_derived/dat_par_test0.RData", verbose = TRUE)
+load(file = "/Users/christophercrawford/Google_Drive/_Projects/Zambia/cluster/data_derived/dat_par_test0.RData", verbose = TRUE)
 
 dat_par2 <- dat_par
 identical(dat_par, dat_par2)
