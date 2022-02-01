@@ -3,7 +3,7 @@
 [![DOI](https://zenodo.org/badge/277938120.svg)](https://zenodo.org/badge/latestdoi/277938120)
 
 This repository houses scripts with data and analyses for:
-> Crawford C.L.\*, Estes L.D., Searchinger T.D., and Wilcove, D.S. 2021. Consequences of under-explored variation in biodiversity indices used for land-use prioritization. *Ecological Applications.*
+> Crawford C.L.\*, Estes L.D., Searchinger T.D., and Wilcove, D.S. 2021. Consequences of under-explored variation in biodiversity indices used for land-use prioritization. *Ecological Applications* 31(7): e02396. [10.1002/eap.2396](https://onlinelibrary.wiley.com/doi/10.1002/eap.2396)
 
 \*@chriscra, ccrawford@princeton.edu, Robertson Hall, Princeton University, Princeton, NJ
 
