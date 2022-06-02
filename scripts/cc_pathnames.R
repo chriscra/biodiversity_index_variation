@@ -1,7 +1,8 @@
 ## Pathnames --------------------------------------------------------------------------------
 
 # Zambia specific file path names
-p_proj <- "/Users/christophercrawford/Google_Drive/_Projects/Zambia/agroEcoTradeoff"
+p_proj <- "/Volumes/GoogleDrive/My Drive/Zambia/agroEcoTradeoff" # new, 4/27/2022
+# p_proj <- "/Users/christophercrawford/Google_Drive/_Projects/Zambia/agroEcoTradeoff"
 p_dat <-     fp(p_proj,"external/data") # this has the "input_key" folders: ZA
 p_ZA <-      fp(p_dat,"ZA")
 p_datnew <-  fp(p_proj,"external/data_new")
@@ -16,7 +17,9 @@ p_final_inputs <-  fp(p_proj,"external/data_new/final_inputs")
 p_mod_inputs <- fp(p_proj, "external/data_new/final_mod_input_rasters")
 
 # for General data sources
-p_dat_main <- "/Users/christophercrawford/Google_Drive/_Projects/data"
+p_dat_main <- "/Volumes/GoogleDrive/My Drive/data" # new, 4/27/2022
+# p_dat_main <- "/Users/christophercrawford/Google_Drive/_Projects/data"
+
 p_dat_ag <-  fp(p_dat_main,"Ag")
 p_dat_bd <-  fp(p_dat_main,"Bd")
 p_dat_clim <-  fp(p_dat_main,"Climate")
@@ -40,4 +43,6 @@ p_wilder_dev <-  fp(p_datnew,"7_wilderness_dev")
 p_basemaps <- fp(p_datnew,"basemaps")
 
 p_temp <- fp(p_datnew, "temp")
-p_plots <- "/Users/christophercrawford/Google_Drive/_Projects/Zambia/agroEcoTradeoff/external/plots"
+
+p_plots <- "/Volumes/GoogleDrive/My Drive/Zambia/agroEcoTradeoff/external/plots" # new, 4/27/2022
+# p_plots <- "/Users/christophercrawford/Google_Drive/_Projects/Zambia/agroEcoTradeoff/external/plots"
